@@ -1,0 +1,55 @@
+@props([
+    'title',
+    'subtitle' => null,
+    'description' => null,
+    'image' => 'images/project-1.jpg',
+    'height' => 'large',
+    'align' => 'center',
+    'overlay' => true,
+])
+
+@php
+    $heightClass = match ($height) {
+        'full' => 'min-h-screen',
+        'medium' => 'min-h-[50vh]',
+        default => 'min-h-[80vh]',
+    };
+    $alignClass = $align === 'left' ? 'hero-left text-left' : 'hero-center';
+    $imageUrl = $image ? \App\Support\AssetPath::url($image) : null;
+    $extension = strtolower(pathinfo((string) parse_url((string) $image, PHP_URL_PATH), PATHINFO_EXTENSION));
+    $isVideo = in_array($extension, ['mp4', 'webm', 'ogg', 'mov'], true);
+@endphp
+
+<section class="hero-shell {{ $heightClass }} {{ $alignClass }} flex items-center" data-hero-shell>
+    @if ($imageUrl)
+        @if ($isVideo)
+            <video autoplay muted loop playsinline class="hero-media" data-hero-media>
+                <source src="{{ $imageUrl }}">
+            </video>
+        @else
+            <img src="{{ $imageUrl }}" alt="{{ $title }}" class="hero-media" data-hero-media>
+        @endif
+        @if ($overlay)
+            <div class="hero-soft-overlay"></div>
+        @endif
+        <div class="hero-overlay"></div>
+    @else
+        <div class="absolute inset-0 bg-gradient-to-b from-secondary/50 to-background"></div>
+    @endif
+    <div class="container-luxury relative z-10 py-32">
+        <div class="hero-copy" data-hero-copy>
+            @if ($subtitle)
+                <p class="section-label mb-6">{{ $subtitle }}</p>
+            @endif
+            <h1 class="public-hero-title font-display text-4xl font-bold leading-[1.1] md:text-5xl lg:text-7xl">{{ $title }}</h1>
+            @if ($description)
+                <p class="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground md:text-xl {{ $align === 'left' ? 'mx-0' : '' }}">{{ $description }}</p>
+            @endif
+            @if (trim($slot))
+                <div class="mt-10 flex flex-wrap gap-4 {{ $align === 'left' ? 'justify-start' : 'justify-center' }}">
+                    {{ $slot }}
+                </div>
+            @endif
+        </div>
+    </div>
+</section>

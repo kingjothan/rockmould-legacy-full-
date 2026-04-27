@@ -1,0 +1,744 @@
+import './bootstrap';
+
+document.addEventListener('change', (event) => {
+    const input = event.target;
+
+    if (!(input instanceof HTMLInputElement) || input.type !== 'file') {
+        return;
+    }
+
+    const targetSelector = input.dataset.previewTarget;
+
+    if (!targetSelector) {
+        return;
+    }
+
+    const preview = document.querySelector(targetSelector);
+
+    if (preview) {
+        preview.textContent = input.files?.[0]?.name ?? 'No file selected';
+    }
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    const root = document.documentElement;
+    const themeToggles = document.querySelectorAll('[data-theme-toggle]');
+    const themeMedia = window.matchMedia('(prefers-color-scheme: light)');
+    const themeStorageKey = 'rockmould-theme';
+
+    const getStoredTheme = () => {
+        try {
+            const theme = window.localStorage.getItem(themeStorageKey);
+            return theme === 'light' || theme === 'dark' ? theme : null;
+        } catch {
+            return null;
+        }
+    };
+
+    const resolveTheme = () => getStoredTheme() ?? (themeMedia.matches ? 'light' : 'dark');
+
+    const syncThemeToggle = (theme) => {
+        themeToggles.forEach((toggle) => {
+            if (!(toggle instanceof HTMLButtonElement)) {
+                return;
+            }
+
+            const isLight = theme === 'light';
+            toggle.setAttribute('aria-pressed', isLight ? 'true' : 'false');
+            toggle.setAttribute('aria-label', isLight ? 'Switch to dark theme' : 'Switch to light theme');
+
+            const label = toggle.querySelector('[data-theme-label]');
+
+            if (label) {
+                label.textContent = isLight ? 'Light Mode' : 'Dark Mode';
+            }
+        });
+    };
+
+    const applyTheme = (theme, persist = false) => {
+        root.dataset.theme = theme;
+        root.style.colorScheme = theme;
+        syncThemeToggle(theme);
+
+        if (persist) {
+            try {
+                window.localStorage.setItem(themeStorageKey, theme);
+            } catch {
+                // Ignore localStorage restrictions.
+            }
+        }
+    };
+
+    applyTheme(resolveTheme());
+
+    themeToggles.forEach((toggle) => {
+        toggle.addEventListener('click', () => {
+            const nextTheme = root.dataset.theme === 'light' ? 'dark' : 'light';
+            applyTheme(nextTheme, true);
+        });
+    });
+
+    const handleSystemThemeChange = (event) => {
+        if (!getStoredTheme()) {
+            applyTheme(event.matches ? 'light' : 'dark');
+        }
+    };
+
+    if (typeof themeMedia.addEventListener === 'function') {
+        themeMedia.addEventListener('change', handleSystemThemeChange);
+    } else if (typeof themeMedia.addListener === 'function') {
+        themeMedia.addListener(handleSystemThemeChange);
+    }
+
+    requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+            document.body.classList.add('is-page-ready');
+        });
+    });
+
+    document.querySelectorAll('[data-auto-hide]').forEach((element) => {
+        window.setTimeout(() => {
+            element.classList.add('opacity-0');
+            window.setTimeout(() => element.remove(), 300);
+        }, 4500);
+    });
+
+    const progressBar = document.getElementById('page-progress');
+
+    if (progressBar) {
+        window.addEventListener(
+            'scroll',
+            () => {
+                const scrolled = window.scrollY;
+                const total = document.documentElement.scrollHeight - window.innerHeight;
+                const pct = total > 0 ? Math.round((scrolled / total) * 100) : 0;
+                progressBar.style.width = pct + '%';
+            },
+            { passive: true }
+        );
+    }
+
+    const header = document.querySelector('[data-site-header]');
+
+    if (header) {
+        const syncHeader = () => {
+            header.classList.toggle('is-scrolled', window.scrollY > 50);
+        };
+
+        syncHeader();
+        window.addEventListener('scroll', syncHeader, { passive: true });
+    }
+
+    const drawer = document.querySelector('[data-mobile-drawer]');
+    const openButton = document.querySelector('[data-mobile-open]');
+    const triggerButton = document.querySelector('[data-mobile-trigger]');
+    const closeButtons = document.querySelectorAll('[data-mobile-close]');
+    const expandButtons = document.querySelectorAll('[data-mobile-expand]');
+    const subnavs = document.querySelectorAll('[data-mobile-subnav]');
+
+    if (drawer && openButton) {
+        const syncTrigger = (open) => {
+            if (triggerButton instanceof HTMLElement) {
+                triggerButton.setAttribute('aria-expanded', open ? 'true' : 'false');
+            }
+        };
+
+        const closeAllSubnavs = () => {
+            expandButtons.forEach((button) => {
+                if (!(button instanceof HTMLElement)) {
+                    return;
+                }
+
+                button.setAttribute('aria-expanded', 'false');
+            });
+
+            subnavs.forEach((subnav) => {
+                if (!(subnav instanceof HTMLElement)) {
+                    return;
+                }
+
+                subnav.setAttribute('data-open', 'false');
+            });
+        };
+
+        const setDrawer = (open) => {
+            drawer.setAttribute('data-open', open ? 'true' : 'false');
+            syncTrigger(open);
+            document.body.classList.toggle('overflow-hidden', open);
+            document.body.classList.toggle('is-mobile-drawer-open', open);
+            document.documentElement.classList.toggle('overflow-hidden', open);
+            document.documentElement.classList.toggle('is-mobile-drawer-open', open);
+
+            if (!open) {
+                window.setTimeout(closeAllSubnavs, 220);
+            }
+        };
+
+        openButton.addEventListener('click', () => setDrawer(true));
+
+        closeButtons.forEach((button) => {
+            button.addEventListener('click', () => setDrawer(false));
+        });
+
+        expandButtons.forEach((button) => {
+            button.addEventListener('click', () => {
+                if (!(button instanceof HTMLElement)) {
+                    return;
+                }
+
+                const target = button.dataset.target;
+
+                if (!target) {
+                    return;
+                }
+
+                const current = document.getElementById(target);
+
+                if (!(current instanceof HTMLElement)) {
+                    return;
+                }
+
+                const isOpen = current.getAttribute('data-open') === 'true';
+
+                expandButtons.forEach((otherButton) => {
+                    if (!(otherButton instanceof HTMLElement)) {
+                        return;
+                    }
+
+                    if (otherButton !== button) {
+                        otherButton.setAttribute('aria-expanded', 'false');
+                    }
+                });
+
+                subnavs.forEach((subnav) => {
+                    if (!(subnav instanceof HTMLElement)) {
+                        return;
+                    }
+
+                    if (subnav !== current) {
+                        subnav.setAttribute('data-open', 'false');
+                    }
+                });
+
+                button.setAttribute('aria-expanded', isOpen ? 'false' : 'true');
+                current.setAttribute('data-open', isOpen ? 'false' : 'true');
+            });
+        });
+
+        window.addEventListener('resize', () => {
+            if (window.innerWidth >= 1024) {
+                setDrawer(false);
+            }
+        });
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') {
+                setDrawer(false);
+            }
+        });
+    }
+
+    const sidebarDrawer = document.querySelector('[data-sidebar-drawer]');
+    const sidebarOpenBtn = document.querySelector('[data-sidebar-open]');
+    const sidebarCloseBtns = document.querySelectorAll('[data-sidebar-close]');
+
+    if (sidebarDrawer) {
+        const setSidebar = (open) => {
+            sidebarDrawer.setAttribute('data-open', open ? 'true' : 'false');
+            document.body.classList.toggle('overflow-hidden', open);
+        };
+
+        sidebarOpenBtn?.addEventListener('click', () => setSidebar(true));
+
+        sidebarCloseBtns.forEach((button) => {
+            button.addEventListener('click', () => setSidebar(false));
+        });
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') {
+                setSidebar(false);
+            }
+        });
+    }
+
+    const portalShell = document.querySelector('[data-portal-shell]');
+    const portalToggle = document.querySelector('[data-portal-toggle]');
+
+    if (portalShell && portalToggle) {
+        const storageKey = 'rockmould-portal-collapsed';
+
+        const setCollapsed = (collapsed) => {
+            portalShell.setAttribute('data-collapsed', collapsed ? 'true' : 'false');
+
+            try {
+                window.localStorage.setItem(storageKey, collapsed ? 'true' : 'false');
+            } catch {
+                // Ignore localStorage restrictions.
+            }
+        };
+
+        let initialCollapsed = false;
+
+        try {
+            initialCollapsed = window.localStorage.getItem(storageKey) === 'true';
+        } catch {
+            initialCollapsed = false;
+        }
+
+        setCollapsed(initialCollapsed);
+
+        portalToggle.addEventListener('click', () => {
+            setCollapsed(portalShell.getAttribute('data-collapsed') !== 'true');
+        });
+    }
+
+    const adminShell = document.querySelector('[data-admin-shell]');
+    const adminToggle = document.querySelector('[data-admin-toggle]');
+
+    if (adminShell && adminToggle) {
+        const storageKey = 'rockmould-admin-collapsed';
+
+        const setCollapsed = (collapsed) => {
+            adminShell.setAttribute('data-collapsed', collapsed ? 'true' : 'false');
+
+            try {
+                window.localStorage.setItem(storageKey, collapsed ? 'true' : 'false');
+            } catch {
+                // Ignore localStorage restrictions.
+            }
+        };
+
+        let initialCollapsed = false;
+
+        try {
+            initialCollapsed = window.localStorage.getItem(storageKey) === 'true';
+        } catch {
+            initialCollapsed = false;
+        }
+
+        setCollapsed(initialCollapsed);
+
+        adminToggle.addEventListener('click', () => {
+            setCollapsed(adminShell.getAttribute('data-collapsed') !== 'true');
+        });
+    }
+
+    const backToTop = document.getElementById('back-to-top');
+
+    if (backToTop) {
+        const syncVisibility = () => {
+            backToTop.classList.toggle('is-visible', window.scrollY > 400);
+        };
+
+        syncVisibility();
+        window.addEventListener('scroll', syncVisibility, { passive: true });
+
+        backToTop.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    }
+
+    const revealElements = document.querySelectorAll('.reveal, .reveal-left, .reveal-right');
+
+    if (revealElements.length > 0 && 'IntersectionObserver' in window) {
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    if (!entry.isIntersecting) {
+                        return;
+                    }
+
+                    entry.target.classList.add('is-visible');
+
+                    const revealChildren = entry.target.querySelectorAll('[data-reveal-item]');
+
+                    revealChildren.forEach((child, index) => {
+                        if (!(child instanceof HTMLElement)) {
+                            return;
+                        }
+
+                        child.style.transitionDelay = `${Math.min(index * 90, 420)}ms`;
+                        child.classList.add('is-visible');
+                    });
+
+                    observer.unobserve(entry.target);
+                });
+            },
+            { threshold: 0.12, rootMargin: '0px 0px -40px 0px' }
+        );
+
+        revealElements.forEach((element) => observer.observe(element));
+    }
+
+    const animateCounters = () => {
+        document.querySelectorAll('[data-counter]').forEach((element) => {
+            if (!(element instanceof HTMLElement) || element.dataset.animated) {
+                return;
+            }
+
+            const target = parseFloat(element.dataset.counter ?? '0');
+
+            if (Number.isNaN(target)) {
+                return;
+            }
+
+            const duration = 1500;
+            const startTime = performance.now();
+            const isDecimal = (element.dataset.counter ?? '').includes('.');
+
+            element.dataset.animated = 'true';
+
+            const tick = (now) => {
+                const elapsed = now - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const eased = 1 - Math.pow(1 - progress, 3);
+                const current = target * eased;
+
+                element.textContent = isDecimal
+                    ? current.toFixed(1)
+                    : Math.round(current).toLocaleString();
+
+                if (progress < 1) {
+                    requestAnimationFrame(tick);
+                }
+            };
+
+            requestAnimationFrame(tick);
+        });
+    };
+
+    if ('IntersectionObserver' in window) {
+        const counterObserver = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        animateCounters();
+                    }
+                });
+            },
+            { threshold: 0.3 }
+        );
+
+        document.querySelectorAll('[data-counter]').forEach((element) => {
+            counterObserver.observe(element);
+        });
+    }
+
+    const consultationRoot = document.querySelector('[data-consultation-booking]');
+
+    if (consultationRoot instanceof HTMLElement) {
+        const availabilityUrl = consultationRoot.dataset.availabilityUrl;
+        const typeInput = consultationRoot.querySelector('[data-consultation-type-input]');
+        const dateInput = consultationRoot.querySelector('[data-consultation-date-input]');
+        const timeInput = consultationRoot.querySelector('[data-consultation-time-input]');
+        const timezoneInput = consultationRoot.querySelector('[data-consultation-timezone-input]');
+        const calendarContainer = consultationRoot.querySelector('[data-consultation-calendar]');
+        const slotsContainer = consultationRoot.querySelector('[data-consultation-slots]');
+        const panels = consultationRoot.querySelectorAll('[data-consultation-panel]');
+        const summaryType = consultationRoot.querySelector('[data-summary-type]');
+        const summaryDate = consultationRoot.querySelector('[data-summary-date]');
+        const summaryTime = consultationRoot.querySelector('[data-summary-time]');
+        const summaryTimezone = consultationRoot.querySelector('[data-summary-timezone]');
+        const progressSteps = consultationRoot.querySelectorAll('[data-progress-step]');
+        const panelMap = {
+            type: consultationRoot.querySelector('[data-consultation-panel="type"]'),
+            date: consultationRoot.querySelector('[data-consultation-panel="date"]'),
+            slot: consultationRoot.querySelector('[data-consultation-panel="slot"]'),
+            details: consultationRoot.querySelector('[data-consultation-panel="details"]'),
+        };
+
+        const state = {
+            type: typeInput instanceof HTMLInputElement ? typeInput.value : '',
+            date: dateInput instanceof HTMLInputElement ? dateInput.value : '',
+            time: timeInput instanceof HTMLInputElement ? timeInput.value : '',
+        };
+
+        const typeLabels = new Map(
+            Array.from(consultationRoot.querySelectorAll('[data-consultation-type]')).map((button) => [
+                button instanceof HTMLElement ? button.dataset.value ?? '' : '',
+                button.querySelector('.consultation-type-title')?.textContent?.trim() ?? '',
+            ])
+        );
+
+        const formatDate = (value) => {
+            if (!value) {
+                return 'Choose a date';
+            }
+
+            const date = new Date(`${value}T12:00:00`);
+
+            if (Number.isNaN(date.getTime())) {
+                return value;
+            }
+
+            return new Intl.DateTimeFormat('en-NG', {
+                weekday: 'short',
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric',
+            }).format(date);
+        };
+
+        const formatTime = (value) => {
+            if (!value) {
+                return 'Choose a slot';
+            }
+
+            const [hours, minutes] = value.split(':');
+            const date = new Date();
+            date.setHours(Number(hours), Number(minutes), 0, 0);
+
+            return new Intl.DateTimeFormat('en-NG', {
+                hour: 'numeric',
+                minute: '2-digit',
+            }).format(date);
+        };
+
+        const syncSummaries = () => {
+            if (summaryType) {
+                summaryType.textContent = typeLabels.get(state.type) || 'Not selected yet';
+            }
+
+            if (summaryDate) {
+                summaryDate.textContent = formatDate(state.date);
+            }
+
+            if (summaryTime) {
+                const selectedSlot = slotsContainer?.querySelector(`[data-consultation-slot][data-start="${state.time}"]`);
+                summaryTime.textContent = selectedSlot instanceof HTMLElement
+                    ? selectedSlot.dataset.end
+                        ? `${formatTime(state.time)} - ${formatTime(selectedSlot.dataset.end)}`
+                        : formatTime(state.time)
+                    : formatTime(state.time);
+            }
+
+            if (summaryTimezone && timezoneInput instanceof HTMLInputElement) {
+                summaryTimezone.textContent = timezoneInput.value || 'Africa/Lagos';
+            }
+        };
+
+        const syncPanels = () => {
+            panels.forEach((panel) => {
+                if (!(panel instanceof HTMLElement)) {
+                    return;
+                }
+
+                const key = panel.dataset.consultationPanel;
+
+                if (key === 'date') {
+                    panel.classList.toggle('is-locked', !state.type);
+                }
+
+                if (key === 'slot') {
+                    panel.classList.toggle('is-locked', !state.date);
+                }
+
+                if (key === 'details') {
+                    panel.classList.toggle('is-locked', !state.time);
+                }
+            });
+        };
+
+        const syncProgress = () => {
+            const activeIndex = !state.type ? 0 : !state.date ? 1 : !state.time ? 2 : 3;
+
+            progressSteps.forEach((step, index) => {
+                if (!(step instanceof HTMLElement)) {
+                    return;
+                }
+
+                step.dataset.state = index < activeIndex ? 'complete' : index === activeIndex ? 'active' : 'upcoming';
+            });
+        };
+
+        const focusPanel = (key) => {
+            const panel = panelMap[key];
+
+            if (!(panel instanceof HTMLElement)) {
+                return;
+            }
+
+            window.requestAnimationFrame(() => {
+                panel.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start',
+                });
+            });
+        };
+
+        const bindTypeButtons = () => {
+            consultationRoot.querySelectorAll('[data-consultation-type]').forEach((button) => {
+                button.addEventListener('click', () => {
+                    if (!(button instanceof HTMLElement)) {
+                        return;
+                    }
+
+                    state.type = button.dataset.value ?? '';
+
+                    if (typeInput instanceof HTMLInputElement) {
+                        typeInput.value = state.type;
+                    }
+
+                    consultationRoot.querySelectorAll('[data-consultation-type]').forEach((item) => {
+                        item.classList.toggle('is-selected', item === button);
+                    });
+
+                    syncPanels();
+                    syncProgress();
+                    syncSummaries();
+                    focusPanel('date');
+                });
+            });
+        };
+
+        const bindSlotButtons = () => {
+            slotsContainer?.querySelectorAll('[data-consultation-slot]').forEach((button) => {
+                button.addEventListener('click', () => {
+                    if (!(button instanceof HTMLElement)) {
+                        return;
+                    }
+
+                    state.time = button.dataset.start ?? '';
+
+                    if (timeInput instanceof HTMLInputElement) {
+                        timeInput.value = state.time;
+                    }
+
+                    slotsContainer.querySelectorAll('[data-consultation-slot]').forEach((item) => {
+                        item.classList.toggle('is-selected', item === button);
+                    });
+
+                    syncPanels();
+                    syncProgress();
+                    syncSummaries();
+                    focusPanel('details');
+                });
+            });
+        };
+
+        const fetchAvailability = async (month, selectedDate = '') => {
+            if (!availabilityUrl || !(calendarContainer instanceof HTMLElement) || !(slotsContainer instanceof HTMLElement)) {
+                return;
+            }
+
+            const url = new URL(availabilityUrl, window.location.origin);
+
+            if (month) {
+                url.searchParams.set('month', month);
+            }
+
+            if (selectedDate) {
+                url.searchParams.set('date', selectedDate);
+            }
+
+            calendarContainer.classList.add('opacity-60');
+            slotsContainer.classList.add('opacity-60');
+            slotsContainer.innerHTML = `
+                <div class="rounded-2xl border border-border bg-card/60 px-5 py-8 text-center text-sm text-muted-foreground">
+                    Loading available times...
+                </div>
+            `;
+
+            try {
+                const response = await window.fetch(url.toString(), {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        Accept: 'application/json',
+                    },
+                });
+
+                if (!response.ok) {
+                    throw new Error('Unable to load consultation availability.');
+                }
+
+                const payload = await response.json();
+                calendarContainer.innerHTML = payload.calendar;
+                slotsContainer.innerHTML = payload.slots;
+
+                bindCalendar();
+                bindSlotButtons();
+            } catch (error) {
+                slotsContainer.innerHTML = `
+                    <div class="rounded-2xl border border-destructive/30 bg-destructive/10 px-5 py-6 text-sm text-destructive">
+                        We could not load the available times right now. Please refresh the page and try again.
+                    </div>
+                `;
+            } finally {
+                calendarContainer.classList.remove('opacity-60');
+                slotsContainer.classList.remove('opacity-60');
+                syncSummaries();
+                syncPanels();
+                syncProgress();
+            }
+        };
+
+        const bindCalendar = () => {
+            calendarContainer?.querySelectorAll('[data-calendar-nav]').forEach((button) => {
+                button.addEventListener('click', () => {
+                    if (!(button instanceof HTMLElement)) {
+                        return;
+                    }
+
+                    const targetMonth = button.dataset.month ?? '';
+                    const selectedDate = state.date.startsWith(targetMonth) ? state.date : '';
+
+                    if (!selectedDate) {
+                        state.date = '';
+                        state.time = '';
+
+                        if (dateInput instanceof HTMLInputElement) {
+                            dateInput.value = '';
+                        }
+
+                        if (timeInput instanceof HTMLInputElement) {
+                            timeInput.value = '';
+                        }
+                    }
+
+                    fetchAvailability(targetMonth, selectedDate);
+                });
+            });
+
+            calendarContainer?.querySelectorAll('[data-calendar-day]').forEach((button) => {
+                button.addEventListener('click', () => {
+                    if (!(button instanceof HTMLElement)) {
+                        return;
+                    }
+
+                    state.date = button.dataset.date ?? '';
+                    state.time = '';
+
+                    if (dateInput instanceof HTMLInputElement) {
+                        dateInput.value = state.date;
+                    }
+
+                    if (timeInput instanceof HTMLInputElement) {
+                        timeInput.value = '';
+                    }
+
+                    fetchAvailability(state.date.slice(0, 7), state.date);
+                    focusPanel('slot');
+                });
+            });
+        };
+
+        if (timezoneInput instanceof HTMLInputElement) {
+            const browserTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+            if (browserTimezone) {
+                timezoneInput.value = browserTimezone;
+            }
+        }
+
+        bindTypeButtons();
+        bindCalendar();
+        bindSlotButtons();
+        syncSummaries();
+        syncPanels();
+        syncProgress();
+    }
+
+    document.addEventListener('click', () => {
+        // Reserved for future dropdown interactions.
+    });
+});
