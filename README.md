@@ -61,15 +61,31 @@ If you are using `php artisan serve`, do not add `/public` to the URL. The `publ
 
 ## Demo access
 
-### Admin
+### Admin / CMS staff
 
-- Email: `admin@rockmould.com`
-- Password: `password`
+All seeded admin-side staff accounts use the same demo password: `password`.
 
-### Portal
+| Name | Role | Login email | Password | Status |
+| --- | --- | --- | --- | --- |
+| Adaeze Okafor | Admin | `admin@rockmould.com` | `password` | Active |
+| Damilola Akin | Editor | `editor@rockmould.com` | `password` | Active |
+| Oluwaseun Adebayo | Project Manager | `projects@rockmould.com` | `password` | Active |
+| Ifeoma George | Finance | `finance@rockmould.com` | `password` | Active |
 
-- Client phone: `08012345678`
-- Inactive demo phone: `08045678901`
+Use these at: `http://127.0.0.1:8000/admin/login`
+
+### Client portal
+
+Client portal access is phone-number only. There is no password or OTP in this phase.
+
+| Client | Email | Portal phone in database | Local phone shortcut | Status |
+| --- | --- | --- | --- | --- |
+| Adebayo Ogunleye | `adebayo@example.com` | `+2348012345678` | `08012345678` | Active |
+| Chioma Nwankwo | `chioma@example.com` | `+2348023456789` | `08023456789` | Active |
+| Ibrahim Musa | `ibrahim@example.com` | `+2348034567890` | `08034567890` | Active |
+| Folake Bakare | `folake@example.com` | `+2348045678901` | `08045678901` | Inactive / pending |
+
+Use these at: `http://127.0.0.1:8000/portal`
 
 ## Application areas
 
