@@ -165,8 +165,8 @@
                                                     <a href="{{ $asset->file_url }}" data-video-lightbox-trigger data-video-src="{{ $asset->file_url }}" data-video-title="{{ $asset->title }}" class="luxury-btn-outline text-xs">Preview</a>
                                                     <a href="{{ $asset->file_url }}" data-video-lightbox-trigger data-video-src="{{ $asset->file_url }}" data-video-title="{{ $asset->title }}" class="luxury-btn-primary text-xs">Open Asset</a>
                                                 @else
-                                                    <a href="{{ $asset->file_url }}" target="_blank" class="luxury-btn-outline text-xs">Preview</a>
-                                                    <a href="{{ $asset->file_url }}" target="_blank" class="luxury-btn-primary text-xs">Open Asset</a>
+                                                    <a href="{{ $asset->file_url }}" data-image-lightbox-trigger data-image-src="{{ $asset->file_url }}" data-image-title="{{ $asset->title }}" class="luxury-btn-outline text-xs">Preview</a>
+                                                    <a href="{{ $asset->file_url }}" data-image-lightbox-trigger data-image-src="{{ $asset->file_url }}" data-image-title="{{ $asset->title }}" class="luxury-btn-primary text-xs">Open Asset</a>
                                                 @endif
                                             @else
                                                 <span class="text-xs uppercase tracking-[0.18em] text-muted-foreground">Awaiting upload</span>

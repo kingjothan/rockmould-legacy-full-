@@ -84,8 +84,10 @@
                                     @endphp
                                     @if ($isVideoAsset && $asset->file_url)
                                         <a href="{{ $asset->file_url }}" data-video-lightbox-trigger data-video-src="{{ $asset->file_url }}" data-video-title="{{ $asset->title }}" class="gallery-item group reveal border border-border bg-card">
+                                    @elseif ($asset->file_url)
+                                        <a href="{{ $asset->file_url }}" data-image-lightbox-trigger data-image-src="{{ $asset->file_url }}" data-image-title="{{ $asset->title }}" class="gallery-item group reveal border border-border bg-card">
                                     @else
-                                        <a href="{{ $asset->file_url ?: '#' }}" target="{{ $asset->file_url ? '_blank' : '_self' }}" class="gallery-item group reveal border border-border bg-card">
+                                        <a href="#" class="gallery-item group reveal border border-border bg-card">
                                     @endif
                                         <div class="relative aspect-[16/10] w-full bg-muted">
                                             <x-media

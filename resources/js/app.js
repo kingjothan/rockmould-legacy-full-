@@ -273,10 +273,126 @@ document.addEventListener('DOMContentLoaded', () => {
         return '';
     };
 
+    const ensureImageLightbox = () => {
+        let lightbox = document.querySelector('[data-image-lightbox-modal]');
+
+        if (lightbox instanceof HTMLElement) {
+            return lightbox;
+        }
+
+        lightbox = document.createElement('div');
+        lightbox.className = 'image-lightbox';
+        lightbox.setAttribute('data-image-lightbox-modal', '');
+        lightbox.setAttribute('data-open', 'false');
+        lightbox.setAttribute('aria-hidden', 'true');
+        lightbox.setAttribute('hidden', '');
+        lightbox.innerHTML = `
+            <div class="image-lightbox-backdrop" data-image-lightbox-close></div>
+            <div class="image-lightbox-panel" role="dialog" aria-modal="true" aria-labelledby="image-lightbox-title">
+                <div class="image-lightbox-header">
+                    <p id="image-lightbox-title" class="image-lightbox-title">Project image</p>
+                    <button type="button" class="image-lightbox-close" data-image-lightbox-close aria-label="Close image preview">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="image-lightbox-frame">
+                    <img class="image-lightbox-image" alt="">
+                </div>
+                <p class="image-lightbox-helper">Click outside the image or press Escape to close this preview.</p>
+            </div>
+        `;
+
+        document.body.appendChild(lightbox);
+
+        lightbox.querySelectorAll('[data-image-lightbox-close]').forEach((button) => {
+            button.addEventListener('click', closeImageLightbox);
+        });
+
+        return lightbox;
+    };
+
+    const closeImageLightbox = () => {
+        const lightbox = document.querySelector('[data-image-lightbox-modal]');
+
+        if (!(lightbox instanceof HTMLElement)) {
+            return;
+        }
+
+        const image = lightbox.querySelector('img');
+
+        if (image instanceof HTMLImageElement) {
+            image.removeAttribute('src');
+            image.removeAttribute('alt');
+        }
+
+        lightbox.setAttribute('data-open', 'false');
+        lightbox.setAttribute('aria-hidden', 'true');
+        lightbox.setAttribute('hidden', '');
+        document.body.classList.remove('overflow-hidden');
+        document.documentElement.classList.remove('overflow-hidden');
+    };
+
+    const openImageLightbox = (src, title = 'Project image') => {
+        if (!src) {
+            return;
+        }
+
+        const lightbox = ensureImageLightbox();
+        const image = lightbox.querySelector('img');
+        const titleElement = lightbox.querySelector('#image-lightbox-title');
+        const closeButton = lightbox.querySelector('[data-image-lightbox-close]');
+
+        if (!(image instanceof HTMLImageElement)) {
+            return;
+        }
+
+        if (titleElement) {
+            titleElement.textContent = title || 'Project image';
+        }
+
+        image.src = src;
+        image.alt = title || 'Project image';
+
+        lightbox.removeAttribute('hidden');
+        lightbox.setAttribute('aria-hidden', 'false');
+        lightbox.setAttribute('data-open', 'true');
+        document.body.classList.add('overflow-hidden');
+        document.documentElement.classList.add('overflow-hidden');
+
+        if (closeButton instanceof HTMLElement) {
+            closeButton.focus({ preventScroll: true });
+        }
+    };
+
+    const imageSourceFromElement = (element) => {
+        if (!(element instanceof HTMLElement)) {
+            return '';
+        }
+
+        const triggerSource = element.dataset.imageSrc;
+
+        if (triggerSource) {
+            return triggerSource;
+        }
+
+        const image = element instanceof HTMLImageElement
+            ? element
+            : element.querySelector('img');
+
+        if (image instanceof HTMLImageElement) {
+            return image.dataset.imageSrc
+                || image.currentSrc
+                || image.getAttribute('src')
+                || '';
+        }
+
+        return '';
+    };
+
     document.addEventListener('click', (event) => {
         const target = event.target;
 
-        if (!(target instanceof Element) || target.closest('[data-video-lightbox-modal]')) {
+        if (!(target instanceof Element) || target.closest('[data-video-lightbox-modal], [data-image-lightbox-modal]')) {
             return;
         }
 
@@ -303,9 +419,47 @@ document.addEventListener('DOMContentLoaded', () => {
         openVideoLightbox(src, title.replace(/^Play\s+/i, ''));
     });
 
+    document.addEventListener('click', (event) => {
+        const target = event.target;
+
+        if (!(target instanceof Element) || target.closest('[data-image-lightbox-modal], [data-video-lightbox-modal]')) {
+            return;
+        }
+
+        let trigger = target.closest('[data-image-lightbox-trigger]');
+
+        if (!(trigger instanceof HTMLElement)) {
+            const image = target.closest('img[data-image-lightbox]');
+
+            if (!(image instanceof HTMLElement) || image.closest('a')) {
+                return;
+            }
+
+            trigger = image;
+        }
+
+        const src = imageSourceFromElement(trigger);
+
+        if (!src) {
+            return;
+        }
+
+        event.preventDefault();
+        event.stopPropagation();
+
+        const title = trigger.dataset.imageTitle
+            || trigger.querySelector('img')?.dataset.imageTitle
+            || trigger.getAttribute('aria-label')
+            || trigger.getAttribute('alt')
+            || document.title;
+
+        openImageLightbox(src, title.replace(/^Preview\s+/i, ''));
+    });
+
     document.addEventListener('keydown', (event) => {
         if (event.key === 'Escape') {
             closeVideoLightbox();
+            closeImageLightbox();
         }
     });
 

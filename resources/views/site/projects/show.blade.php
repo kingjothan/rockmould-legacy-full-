@@ -120,8 +120,10 @@
                                                 @endphp
                                                 @if ($isVideoAsset && $asset->file_url)
                                                     <a href="{{ $asset->file_url }}" data-video-lightbox-trigger data-video-src="{{ $asset->file_url }}" data-video-title="{{ $asset->title }}" aria-label="{{ $asset->title }}" class="group gallery-item aspect-square border border-border bg-card">
+                                                @elseif ($asset->file_url)
+                                                    <a href="{{ $asset->file_url }}" data-image-lightbox-trigger data-image-src="{{ $asset->file_url }}" data-image-title="{{ $asset->title }}" aria-label="{{ $asset->title }}" class="group gallery-item aspect-square border border-border bg-card">
                                                 @else
-                                                    <a href="{{ $asset->file_url ?: '#' }}" target="{{ $asset->file_url ? '_blank' : '_self' }}" aria-label="{{ $asset->title }}" class="group gallery-item aspect-square border border-border bg-card">
+                                                    <a href="#" aria-label="{{ $asset->title }}" class="group gallery-item aspect-square border border-border bg-card">
                                                 @endif
                                                     <x-media
                                                         :path="$previewPath"

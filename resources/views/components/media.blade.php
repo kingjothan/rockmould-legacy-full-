@@ -35,7 +35,14 @@
         <source src="{{ $mediaUrl }}">
     </video>
 @elseif ($mediaUrl)
-    <img src="{{ $mediaUrl }}" alt="{{ $alt }}" {{ $attributes->merge(['class' => $class]) }}>
+    <img
+        src="{{ $mediaUrl }}"
+        alt="{{ $alt }}"
+        data-image-lightbox
+        data-image-src="{{ $mediaUrl }}"
+        data-image-title="{{ $alt }}"
+        {{ $attributes->merge(['class' => $class]) }}
+    >
 @else
     <div {{ $attributes->merge(['class' => $class.' flex items-center justify-center bg-muted text-muted-foreground']) }}>
         {{ $slot->isEmpty() ? 'Media unavailable' : $slot }}
