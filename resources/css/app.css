@@ -568,6 +568,11 @@
       transform 1.8s cubic-bezier(0.22, 1, 0.36, 1);
   }
 
+  .hero-media[data-background-video],
+  video[data-background-video] {
+    @apply pointer-events-none;
+  }
+
   .hero-overlay {
     @apply absolute inset-0;
     background: var(--gradient-hero);

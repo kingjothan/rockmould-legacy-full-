@@ -117,6 +117,13 @@ document.addEventListener('DOMContentLoaded', () => {
             video.setAttribute('autoplay', '');
             video.setAttribute('playsinline', '');
 
+            if (video.matches('[data-background-video]')) {
+                video.loop = true;
+                video.defaultMuted = true;
+                video.removeAttribute('controls');
+                video.setAttribute('loop', '');
+            }
+
             if (!video.hasAttribute('preload')) {
                 video.setAttribute('preload', 'auto');
             }

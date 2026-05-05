@@ -16,18 +16,17 @@
     };
     $alignClass = $align === 'left' ? 'hero-left text-left' : 'hero-center';
     $imageUrl = $image ? \App\Support\AssetPath::url($image) : null;
-    $extension = strtolower(pathinfo((string) parse_url((string) $image, PHP_URL_PATH), PATHINFO_EXTENSION));
-    $isVideo = in_array($extension, ['mp4', 'webm', 'ogg', 'mov'], true);
+    $isVideo = \App\Support\AssetPath::isVideo($image);
 @endphp
 
 <section class="hero-shell {{ $heightClass }} {{ $alignClass }} flex items-center" data-hero-shell>
     @if ($imageUrl)
         @if ($isVideo)
-            <video autoplay muted loop playsinline preload="auto" class="hero-media" data-hero-media data-video-lightbox data-video-src="{{ $imageUrl }}" data-video-title="{{ $title }}" tabindex="0" role="button" aria-label="Play {{ $title }} video">
+            <video autoplay muted loop playsinline preload="auto" class="hero-media" data-hero-media data-background-video aria-hidden="true">
                 <source src="{{ $imageUrl }}">
             </video>
         @else
-            <img src="{{ $imageUrl }}" alt="{{ $title }}" class="hero-media" data-hero-media>
+            <img src="{{ $imageUrl }}" alt="{{ $title }}" class="hero-media" data-hero-media aria-hidden="true">
         @endif
         @if ($overlay)
             <div class="hero-soft-overlay"></div>

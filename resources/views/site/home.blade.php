@@ -11,7 +11,7 @@
         $finalCta = $homepage['final_cta'] ?? [];
     @endphp
     <section class="hero-shell relative flex min-h-screen items-center overflow-hidden">
-        <x-media :path="$heroMediaPath" fallback="images/project-1.jpg" alt="Rockmould luxury development" class="hero-media" />
+        <x-media :path="$heroMediaPath" fallback="images/project-1.jpg" alt="Rockmould luxury development" class="hero-media" :background="true" :lightbox="false" />
         <div class="hero-soft-overlay"></div>
         <div class="hero-overlay"></div>
         <div class="container-luxury w-full relative z-10 py-32">

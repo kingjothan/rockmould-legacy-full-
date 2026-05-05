@@ -8,7 +8,7 @@
     @endphp
 
     <section class="relative flex min-h-[60vh] items-end overflow-hidden pt-20">
-        <x-media :path="$project->cover_image" fallback="images/project-1.jpg" alt="{{ $project->title }}" class="absolute inset-0 h-full w-full object-cover" />
+        <x-media :path="$project->cover_image" fallback="images/project-1.jpg" alt="{{ $project->title }}" class="absolute inset-0 h-full w-full object-cover" :background="true" :lightbox="false" />
         <div class="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent"></div>
         <div class="container-luxury relative z-10 pb-12">
             <a href="{{ route('projects.index') }}" class="mb-6 inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-primary">

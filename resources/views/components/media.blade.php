@@ -8,12 +8,15 @@
     'loop' => true,
     'muted' => true,
     'playsinline' => true,
+    'lightbox' => true,
+    'background' => false,
 ])
 
 @php
     $resolvedPath = $path ?: $fallback;
     $mediaUrl = \App\Support\AssetPath::url($path, $fallback);
     $isVideo = \App\Support\AssetPath::isVideo($resolvedPath);
+    $enableLightbox = $lightbox && ! $background;
 @endphp
 
 @if ($mediaUrl && $isVideo)
@@ -24,12 +27,15 @@
         muted
         @if ($playsinline) playsinline @endif
         preload="auto"
-        data-video-lightbox
-        data-video-src="{{ $mediaUrl }}"
-        data-video-title="{{ $alt }}"
-        tabindex="0"
-        role="button"
-        aria-label="{{ trim($alt) ? 'Play '.$alt : 'Play video' }}"
+        @if ($background) data-background-video aria-hidden="true" @endif
+        @if ($enableLightbox)
+            data-video-lightbox
+            data-video-src="{{ $mediaUrl }}"
+            data-video-title="{{ $alt }}"
+            tabindex="0"
+            role="button"
+            aria-label="{{ trim($alt) ? 'Play '.$alt : 'Play video' }}"
+        @endif
         {{ $attributes->merge(['class' => $class]) }}
     >
         <source src="{{ $mediaUrl }}">
@@ -38,9 +44,12 @@
     <img
         src="{{ $mediaUrl }}"
         alt="{{ $alt }}"
-        data-image-lightbox
-        data-image-src="{{ $mediaUrl }}"
-        data-image-title="{{ $alt }}"
+        @if ($background) aria-hidden="true" @endif
+        @if ($enableLightbox)
+            data-image-lightbox
+            data-image-src="{{ $mediaUrl }}"
+            data-image-title="{{ $alt }}"
+        @endif
         {{ $attributes->merge(['class' => $class]) }}
     >
 @else
