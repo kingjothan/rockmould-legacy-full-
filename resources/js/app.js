@@ -103,6 +103,214 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 4500);
     });
 
+    const prepareAutoplayVideos = () => {
+        document.querySelectorAll('video').forEach((video) => {
+            if (!(video instanceof HTMLVideoElement) || video.closest('[data-video-lightbox-modal]')) {
+                return;
+            }
+
+            video.muted = true;
+            video.defaultMuted = true;
+            video.autoplay = true;
+            video.playsInline = true;
+            video.setAttribute('muted', '');
+            video.setAttribute('autoplay', '');
+            video.setAttribute('playsinline', '');
+
+            if (!video.hasAttribute('preload')) {
+                video.setAttribute('preload', 'auto');
+            }
+
+            const playPromise = video.play();
+
+            if (playPromise && typeof playPromise.catch === 'function') {
+                playPromise.catch(() => {
+                    // Some browsers delay autoplay until the video is visible or interacted with.
+                });
+            }
+        });
+    };
+
+    const ensureVideoLightbox = () => {
+        let lightbox = document.querySelector('[data-video-lightbox-modal]');
+
+        if (lightbox instanceof HTMLElement) {
+            return lightbox;
+        }
+
+        lightbox = document.createElement('div');
+        lightbox.className = 'video-lightbox';
+        lightbox.setAttribute('data-video-lightbox-modal', '');
+        lightbox.setAttribute('data-open', 'false');
+        lightbox.setAttribute('aria-hidden', 'true');
+        lightbox.setAttribute('hidden', '');
+        lightbox.innerHTML = `
+            <div class="video-lightbox-backdrop" data-video-lightbox-close></div>
+            <div class="video-lightbox-panel" role="dialog" aria-modal="true" aria-labelledby="video-lightbox-title">
+                <div class="video-lightbox-header">
+                    <p id="video-lightbox-title" class="video-lightbox-title">Project video</p>
+                    <button type="button" class="video-lightbox-close" data-video-lightbox-close aria-label="Close video">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <video class="video-lightbox-player" controls autoplay muted playsinline preload="auto">
+                    <source data-video-lightbox-source>
+                </video>
+                <p class="video-lightbox-helper">The video starts muted. Use the player controls to unmute, pause, or seek.</p>
+            </div>
+        `;
+
+        document.body.appendChild(lightbox);
+
+        lightbox.querySelectorAll('[data-video-lightbox-close]').forEach((button) => {
+            button.addEventListener('click', closeVideoLightbox);
+        });
+
+        return lightbox;
+    };
+
+    const closeVideoLightbox = () => {
+        const lightbox = document.querySelector('[data-video-lightbox-modal]');
+
+        if (!(lightbox instanceof HTMLElement)) {
+            return;
+        }
+
+        const player = lightbox.querySelector('video');
+        const source = lightbox.querySelector('[data-video-lightbox-source]');
+
+        if (player instanceof HTMLVideoElement) {
+            player.pause();
+            player.currentTime = 0;
+        }
+
+        if (source instanceof HTMLSourceElement) {
+            source.removeAttribute('src');
+        }
+
+        if (player instanceof HTMLVideoElement) {
+            player.load();
+        }
+
+        lightbox.setAttribute('data-open', 'false');
+        lightbox.setAttribute('aria-hidden', 'true');
+        lightbox.setAttribute('hidden', '');
+        document.body.classList.remove('overflow-hidden');
+        document.documentElement.classList.remove('overflow-hidden');
+    };
+
+    const openVideoLightbox = (src, title = 'Project video') => {
+        if (!src) {
+            return;
+        }
+
+        const lightbox = ensureVideoLightbox();
+        const player = lightbox.querySelector('video');
+        const source = lightbox.querySelector('[data-video-lightbox-source]');
+        const titleElement = lightbox.querySelector('#video-lightbox-title');
+        const closeButton = lightbox.querySelector('[data-video-lightbox-close]');
+
+        if (!(player instanceof HTMLVideoElement) || !(source instanceof HTMLSourceElement)) {
+            return;
+        }
+
+        if (titleElement) {
+            titleElement.textContent = title || 'Project video';
+        }
+
+        source.src = src;
+        player.muted = true;
+        player.defaultMuted = true;
+        player.autoplay = true;
+        player.playsInline = true;
+        player.setAttribute('muted', '');
+        player.setAttribute('autoplay', '');
+        player.setAttribute('playsinline', '');
+        player.load();
+
+        lightbox.removeAttribute('hidden');
+        lightbox.setAttribute('aria-hidden', 'false');
+        lightbox.setAttribute('data-open', 'true');
+        document.body.classList.add('overflow-hidden');
+        document.documentElement.classList.add('overflow-hidden');
+
+        const playPromise = player.play();
+
+        if (playPromise && typeof playPromise.catch === 'function') {
+            playPromise.catch(() => {
+                // The controls remain available if autoplay is delayed by the browser.
+            });
+        }
+
+        if (closeButton instanceof HTMLElement) {
+            closeButton.focus({ preventScroll: true });
+        }
+    };
+
+    const videoSourceFromElement = (element) => {
+        if (!(element instanceof HTMLElement)) {
+            return '';
+        }
+
+        const triggerSource = element.dataset.videoSrc;
+
+        if (triggerSource) {
+            return triggerSource;
+        }
+
+        const video = element instanceof HTMLVideoElement
+            ? element
+            : element.querySelector('video');
+
+        if (video instanceof HTMLVideoElement) {
+            return video.dataset.videoSrc
+                || video.currentSrc
+                || video.getAttribute('src')
+                || video.querySelector('source')?.getAttribute('src')
+                || '';
+        }
+
+        return '';
+    };
+
+    document.addEventListener('click', (event) => {
+        const target = event.target;
+
+        if (!(target instanceof Element) || target.closest('[data-video-lightbox-modal]')) {
+            return;
+        }
+
+        const trigger = target.closest('[data-video-lightbox-trigger], [data-video-lightbox], video');
+
+        if (!(trigger instanceof HTMLElement)) {
+            return;
+        }
+
+        const src = videoSourceFromElement(trigger);
+
+        if (!src) {
+            return;
+        }
+
+        event.preventDefault();
+        event.stopPropagation();
+
+        const title = trigger.dataset.videoTitle
+            || trigger.querySelector('video')?.dataset.videoTitle
+            || trigger.getAttribute('aria-label')
+            || document.title;
+
+        openVideoLightbox(src, title.replace(/^Play\s+/i, ''));
+    });
+
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
+            closeVideoLightbox();
+        }
+    });
+
+    prepareAutoplayVideos();
+
     const progressBar = document.getElementById('page-progress');
 
     if (progressBar) {

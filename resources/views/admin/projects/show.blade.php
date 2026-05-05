@@ -130,7 +130,7 @@
                         @forelse ($project->mediaAssets->sortBy([['gallery_section', 'asc'], ['sort_order', 'asc']])->take(6) as $asset)
                             <a href="{{ route('admin.media.index', ['project_id' => $project->id, 'q' => $asset->title]) }}" class="group overflow-hidden rounded-sm border border-border/60 bg-card transition hover:border-primary/30">
                                 <div class="relative aspect-[5/4] bg-muted">
-                                    <x-media :path="$asset->thumbnail_path ?: $asset->file_path" fallback="images/project-1.jpg" alt="{{ $asset->title }}" class="h-full w-full object-cover transition duration-500 group-hover:scale-105" :autoplay="false" :loop="false" />
+                                    <x-media :path="$asset->media_type === 'video' ? $asset->file_path : ($asset->thumbnail_path ?: $asset->file_path)" fallback="images/project-1.jpg" alt="{{ $asset->title }}" class="h-full w-full object-cover transition duration-500 group-hover:scale-105" :loop="false" />
                                     <div class="absolute left-3 top-3 flex flex-wrap gap-2">
                                         <span class="rounded-full border border-white/15 bg-black/55 px-2 py-1 text-[10px] uppercase tracking-[0.18em] text-white/80">{{ $asset->media_type }}</span>
                                         <span class="rounded-full border border-white/15 bg-black/55 px-2 py-1 text-[10px] uppercase tracking-[0.18em] text-white/80">{{ $asset->gallery_section_label }}</span>

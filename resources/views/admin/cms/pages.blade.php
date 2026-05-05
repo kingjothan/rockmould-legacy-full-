@@ -134,7 +134,7 @@
                                 <div class="aspect-[16/10] bg-muted">
                                     @if ($pageHeroPreview[$key]['url'])
                                         @if ($pageHeroPreview[$key]['is_video'])
-                                            <video controls muted playsinline class="h-full w-full object-cover">
+                                            <video controls autoplay muted playsinline preload="auto" class="h-full w-full object-cover" data-video-lightbox data-video-src="{{ $pageHeroPreview[$key]['url'] }}" data-video-title="{{ $pageMeta[$key]['label'] }} hero media" tabindex="0" role="button" aria-label="Play {{ $pageMeta[$key]['label'] }} hero media video">
                                                 <source src="{{ $pageHeroPreview[$key]['url'] }}">
                                             </video>
                                         @else

@@ -18,7 +18,7 @@
         <div class="relative hidden overflow-hidden border-r border-border bg-card lg:flex lg:w-1/2 lg:items-center lg:justify-center lg:p-12">
             @if ($loginMediaUrl)
                 @if ($loginMediaIsVideo)
-                    <video autoplay muted loop playsinline class="hero-media">
+                    <video autoplay muted loop playsinline preload="auto" class="hero-media" data-video-lightbox data-video-src="{{ $loginMediaUrl }}" data-video-title="Client portal background" tabindex="0" role="button" aria-label="Play client portal background video">
                         <source src="{{ $loginMediaUrl }}">
                     </video>
                 @else

@@ -19,10 +19,17 @@
 @if ($mediaUrl && $isVideo)
     <video
         @if ($controls) controls @endif
-        @if ($autoplay) autoplay @endif
+        autoplay
         @if ($loop) loop @endif
-        @if ($muted) muted @endif
+        muted
         @if ($playsinline) playsinline @endif
+        preload="auto"
+        data-video-lightbox
+        data-video-src="{{ $mediaUrl }}"
+        data-video-title="{{ $alt }}"
+        tabindex="0"
+        role="button"
+        aria-label="{{ trim($alt) ? 'Play '.$alt : 'Play video' }}"
         {{ $attributes->merge(['class' => $class]) }}
     >
         <source src="{{ $mediaUrl }}">

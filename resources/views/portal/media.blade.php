@@ -82,6 +82,7 @@
                             'project' => $currentProject !== 'all' ? $currentProject : null,
                             'preview' => $asset->id,
                         ]);
+                        $previewPath = $asset->media_type === 'video' ? $asset->file_path : ($asset->thumbnail_path ?: $asset->file_path);
                     @endphp
                     <a
                         href="{{ route('portal.media', $previewQuery) }}"
@@ -89,11 +90,10 @@
                     >
                         <div class="relative aspect-square bg-muted">
                             <x-media
-                                :path="$asset->thumbnail_path ?: $asset->file_path"
+                                :path="$previewPath"
                                 fallback="images/project-1.jpg"
                                 alt="{{ $asset->title }}"
                                 class="h-full w-full object-cover"
-                                :autoplay="false"
                                 :loop="false"
                             />
                             <div class="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 transition-opacity group-hover:opacity-100">
@@ -132,9 +132,9 @@
 
                     <div class="mb-4 aspect-video overflow-hidden rounded-sm bg-muted">
                         @if ($assetUrl && $activeMedia->media_type === 'video')
-                            <x-media :path="$activeMedia->file_path" alt="{{ $activeMedia->title }}" class="h-full w-full object-cover" :controls="true" :autoplay="false" :loop="false" />
+                            <x-media :path="$activeMedia->file_path" alt="{{ $activeMedia->title }}" class="h-full w-full object-cover" :controls="true" :loop="false" />
                         @elseif ($assetUrl)
-                            <x-media :path="$activeMedia->file_path" alt="{{ $activeMedia->title }}" class="h-full w-full object-cover" :autoplay="false" :loop="false" />
+                            <x-media :path="$activeMedia->file_path" alt="{{ $activeMedia->title }}" class="h-full w-full object-cover" :loop="false" />
                         @else
                             <div class="flex h-full items-center justify-center">
                                 <x-portal-icon :name="$activeMedia->media_type === 'video' ? 'video' : 'image'" class="h-16 w-16 text-muted-foreground" />

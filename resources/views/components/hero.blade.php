@@ -23,7 +23,7 @@
 <section class="hero-shell {{ $heightClass }} {{ $alignClass }} flex items-center" data-hero-shell>
     @if ($imageUrl)
         @if ($isVideo)
-            <video autoplay muted loop playsinline class="hero-media" data-hero-media>
+            <video autoplay muted loop playsinline preload="auto" class="hero-media" data-hero-media data-video-lightbox data-video-src="{{ $imageUrl }}" data-video-title="{{ $title }}" tabindex="0" role="button" aria-label="Play {{ $title }} video">
                 <source src="{{ $imageUrl }}">
             </video>
         @else

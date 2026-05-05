@@ -118,7 +118,7 @@
                             @foreach ($media as $asset)
                                 <article class="overflow-hidden rounded-lg border border-border bg-card">
                                     <div class="relative aspect-[16/10] bg-muted">
-                                        <x-media :path="$asset->thumbnail_path ?: $asset->file_path" fallback="images/project-1.jpg" alt="{{ $asset->title }}" class="h-full w-full object-cover" :autoplay="false" :loop="false" />
+                                        <x-media :path="$asset->media_type === 'video' ? $asset->file_path : ($asset->thumbnail_path ?: $asset->file_path)" fallback="images/project-1.jpg" alt="{{ $asset->title }}" class="h-full w-full object-cover" :loop="false" />
                                         <div class="absolute left-4 top-4 flex flex-wrap items-center gap-2">
                                             <x-status-badge :value="$asset->media_type" />
                                             @if ($asset->is_featured)
@@ -161,8 +161,13 @@
                                                 {{ $asset->visible_to_client ? 'Client visible' : 'Internal only' }}
                                             </span>
                                             @if ($asset->file_url)
-                                                <a href="{{ $asset->file_url }}" target="_blank" class="luxury-btn-outline text-xs">Preview</a>
-                                                <a href="{{ $asset->file_url }}" target="_blank" class="luxury-btn-primary text-xs">Open Asset</a>
+                                                @if ($asset->media_type === 'video')
+                                                    <a href="{{ $asset->file_url }}" data-video-lightbox-trigger data-video-src="{{ $asset->file_url }}" data-video-title="{{ $asset->title }}" class="luxury-btn-outline text-xs">Preview</a>
+                                                    <a href="{{ $asset->file_url }}" data-video-lightbox-trigger data-video-src="{{ $asset->file_url }}" data-video-title="{{ $asset->title }}" class="luxury-btn-primary text-xs">Open Asset</a>
+                                                @else
+                                                    <a href="{{ $asset->file_url }}" target="_blank" class="luxury-btn-outline text-xs">Preview</a>
+                                                    <a href="{{ $asset->file_url }}" target="_blank" class="luxury-btn-primary text-xs">Open Asset</a>
+                                                @endif
                                             @else
                                                 <span class="text-xs uppercase tracking-[0.18em] text-muted-foreground">Awaiting upload</span>
                                             @endif

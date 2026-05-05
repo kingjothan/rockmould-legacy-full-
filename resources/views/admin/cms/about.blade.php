@@ -193,7 +193,7 @@
                         <div class="rounded-lg border border-border bg-card/60 p-4">
                             <div class="grid gap-4 lg:grid-cols-[160px_1fr]">
                                 <div class="overflow-hidden rounded-md border border-border bg-muted">
-                                    <x-media :path="$member->image_path" fallback="images/project-2.jpg" alt="{{ $member->name }}" class="aspect-[4/5] w-full object-cover" :controls="true" :autoplay="false" :loop="false" />
+                                    <x-media :path="$member->image_path" fallback="images/project-2.jpg" alt="{{ $member->name }}" class="aspect-[4/5] w-full object-cover" :controls="true" :loop="false" />
                                 </div>
                                 <div class="space-y-4">
                                     <form action="{{ route('admin.cms.about.team.update', $member) }}" method="POST" enctype="multipart/form-data" class="space-y-4">

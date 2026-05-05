@@ -67,7 +67,7 @@
                     <div class="luxury-card text-center reveal">
                         @if ($member->image_path)
                             <div class="mx-auto mb-6 aspect-[4/5] max-w-[220px] overflow-hidden rounded-md border border-border bg-muted">
-                                <x-media :path="$member->image_path" alt="{{ $member->name }}" class="h-full w-full object-cover" :controls="true" :autoplay="false" :loop="false" />
+                                <x-media :path="$member->image_path" alt="{{ $member->name }}" class="h-full w-full object-cover" :controls="true" :loop="false" />
                             </div>
                         @else
                             <div class="avatar-lg mx-auto mb-6" style="background: linear-gradient(135deg, hsl(var(--primary)/0.2), hsl(var(--primary)/0.05));">

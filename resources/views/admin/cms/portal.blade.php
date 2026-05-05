@@ -76,7 +76,7 @@
                             <div class="aspect-[16/10] bg-muted">
                                 @if ($loginMediaUrl)
                                     @if ($loginMediaIsVideo)
-                                        <video controls muted playsinline class="h-full w-full object-cover">
+                                        <video controls autoplay muted playsinline preload="auto" class="h-full w-full object-cover" data-video-lightbox data-video-src="{{ $loginMediaUrl }}" data-video-title="Portal login media" tabindex="0" role="button" aria-label="Play portal login media video">
                                             <source src="{{ $loginMediaUrl }}">
                                         </video>
                                     @else

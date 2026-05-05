@@ -95,7 +95,9 @@
                             <h2 class="mb-6 font-display text-2xl font-semibold">Project Media</h2>
                             <div class="space-y-8">
                                 @foreach ($gallerySections as $sectionKey => $sectionLabel)
-                                    @php($sectionMedia = $publicMediaSections[$sectionKey] ?? collect())
+                                    @php
+                                        $sectionMedia = $publicMediaSections[$sectionKey] ?? collect();
+                                    @endphp
 
                                     @continue($sectionMedia->isEmpty())
 
@@ -112,13 +114,20 @@
 
                                         <div class="grid grid-cols-2 gap-3 md:grid-cols-4">
                                             @foreach ($sectionMedia as $asset)
-                                                <a href="{{ $asset->file_url ?: '#' }}" target="{{ $asset->file_url ? '_blank' : '_self' }}" aria-label="{{ $asset->title }}" class="group gallery-item aspect-square border border-border bg-card">
+                                                @php
+                                                    $isVideoAsset = $asset->media_type === 'video';
+                                                    $previewPath = $isVideoAsset ? $asset->file_path : ($asset->thumbnail_path ?: $asset->file_path);
+                                                @endphp
+                                                @if ($isVideoAsset && $asset->file_url)
+                                                    <a href="{{ $asset->file_url }}" data-video-lightbox-trigger data-video-src="{{ $asset->file_url }}" data-video-title="{{ $asset->title }}" aria-label="{{ $asset->title }}" class="group gallery-item aspect-square border border-border bg-card">
+                                                @else
+                                                    <a href="{{ $asset->file_url ?: '#' }}" target="{{ $asset->file_url ? '_blank' : '_self' }}" aria-label="{{ $asset->title }}" class="group gallery-item aspect-square border border-border bg-card">
+                                                @endif
                                                     <x-media
-                                                        :path="$asset->thumbnail_path ?: $asset->file_path"
+                                                        :path="$previewPath"
                                                         fallback="images/project-1.jpg"
                                                         alt="{{ $asset->title }}"
                                                         class="h-full w-full object-cover"
-                                                        :autoplay="false"
                                                         :loop="false"
                                                     />
                                                     <div class="gallery-item-overlay">

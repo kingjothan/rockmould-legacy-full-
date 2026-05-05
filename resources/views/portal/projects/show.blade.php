@@ -112,11 +112,10 @@
                                 >
                                     <div class="relative aspect-[5/4] bg-muted">
                                         <x-media
-                                            :path="$asset->thumbnail_path ?: $asset->file_path"
+                                            :path="$asset->media_type === 'video' ? $asset->file_path : ($asset->thumbnail_path ?: $asset->file_path)"
                                             fallback="images/project-1.jpg"
                                             alt="{{ $asset->title }}"
                                             class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                                            :autoplay="false"
                                             :loop="false"
                                         />
                                         <div class="absolute left-3 top-3 flex flex-wrap items-center gap-2">

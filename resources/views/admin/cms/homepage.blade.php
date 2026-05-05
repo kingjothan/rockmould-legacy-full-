@@ -68,7 +68,7 @@
                             <div class="overflow-hidden rounded-lg border border-border bg-card">
                                 <div class="aspect-[16/9] bg-muted">
                                     @if ($heroMediaPath)
-                                        <x-media :path="$heroMediaPath" alt="Current homepage hero media" class="h-full w-full object-cover" :controls="true" :autoplay="false" :loop="false" />
+                                        <x-media :path="$heroMediaPath" alt="Current homepage hero media" class="h-full w-full object-cover" :controls="true" :loop="false" />
                                     @else
                                         <div class="flex h-full items-center justify-center text-sm text-muted-foreground">No hero media selected</div>
                                     @endif
@@ -100,7 +100,7 @@
                             @if ($featureImagePath)
                                 <div class="overflow-hidden rounded-lg border border-border bg-card">
                                     <div class="aspect-[4/3] bg-muted">
-                                        <x-media :path="$featureImagePath" alt="Current homepage feature media" class="h-full w-full object-cover" :controls="true" :autoplay="false" :loop="false" />
+                                        <x-media :path="$featureImagePath" alt="Current homepage feature media" class="h-full w-full object-cover" :controls="true" :loop="false" />
                                     </div>
                                     <div class="border-t border-border px-4 py-4">
                                         <p class="text-xs uppercase tracking-[0.18em] text-primary/70">Current Feature Media</p>

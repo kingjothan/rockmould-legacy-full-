@@ -59,7 +59,9 @@
             @else
                 <div class="space-y-12">
                     @foreach ($gallerySections as $sectionKey => $sectionLabel)
-                        @php($sectionMedia = $groupedMedia[$sectionKey] ?? collect())
+                        @php
+                            $sectionMedia = $groupedMedia[$sectionKey] ?? collect();
+                        @endphp
 
                         @continue($sectionMedia->isEmpty())
 
@@ -76,14 +78,21 @@
 
                             <div class="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
                                 @foreach ($sectionMedia as $asset)
-                                    <a href="{{ $asset->file_url ?: '#' }}" target="{{ $asset->file_url ? '_blank' : '_self' }}" class="gallery-item group reveal border border-border bg-card">
+                                    @php
+                                        $isVideoAsset = $asset->media_type === 'video';
+                                        $previewPath = $isVideoAsset ? $asset->file_path : ($asset->thumbnail_path ?: $asset->file_path);
+                                    @endphp
+                                    @if ($isVideoAsset && $asset->file_url)
+                                        <a href="{{ $asset->file_url }}" data-video-lightbox-trigger data-video-src="{{ $asset->file_url }}" data-video-title="{{ $asset->title }}" class="gallery-item group reveal border border-border bg-card">
+                                    @else
+                                        <a href="{{ $asset->file_url ?: '#' }}" target="{{ $asset->file_url ? '_blank' : '_self' }}" class="gallery-item group reveal border border-border bg-card">
+                                    @endif
                                         <div class="relative aspect-[16/10] w-full bg-muted">
                                             <x-media
-                                                :path="$asset->thumbnail_path ?: $asset->file_path"
+                                                :path="$previewPath"
                                                 fallback="images/project-1.jpg"
                                                 alt="{{ $asset->title }}"
                                                 class="aspect-[16/10] w-full object-cover"
-                                                :autoplay="false"
                                                 :loop="false"
                                             />
                                             <div class="gallery-item-overlay">
