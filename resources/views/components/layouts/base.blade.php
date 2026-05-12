@@ -12,7 +12,7 @@
                 const storedTheme = window.localStorage.getItem('rockmould-theme');
                 const theme = storedTheme === 'light' || storedTheme === 'dark'
                     ? storedTheme
-                    : (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+                    : 'dark';
 
                 document.documentElement.dataset.theme = theme;
                 document.documentElement.style.colorScheme = theme;

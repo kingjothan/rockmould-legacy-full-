@@ -23,7 +23,6 @@ document.addEventListener('change', (event) => {
 document.addEventListener('DOMContentLoaded', () => {
     const root = document.documentElement;
     const themeToggles = document.querySelectorAll('[data-theme-toggle]');
-    const themeMedia = window.matchMedia('(prefers-color-scheme: light)');
     const themeStorageKey = 'rockmould-theme';
 
     const getStoredTheme = () => {
@@ -35,7 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    const resolveTheme = () => getStoredTheme() ?? (themeMedia.matches ? 'light' : 'dark');
+    const resolveTheme = () => getStoredTheme() ?? 'dark';
 
     const syncThemeToggle = (theme) => {
         themeToggles.forEach((toggle) => {
@@ -77,18 +76,6 @@ document.addEventListener('DOMContentLoaded', () => {
             applyTheme(nextTheme, true);
         });
     });
-
-    const handleSystemThemeChange = (event) => {
-        if (!getStoredTheme()) {
-            applyTheme(event.matches ? 'light' : 'dark');
-        }
-    };
-
-    if (typeof themeMedia.addEventListener === 'function') {
-        themeMedia.addEventListener('change', handleSystemThemeChange);
-    } else if (typeof themeMedia.addListener === 'function') {
-        themeMedia.addListener(handleSystemThemeChange);
-    }
 
     requestAnimationFrame(() => {
         requestAnimationFrame(() => {
