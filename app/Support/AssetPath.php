@@ -21,11 +21,15 @@ class AssetPath
             return $resolved;
         }
 
-        if (Str::startsWith($normalized, ['images/', 'storage/'])) {
+        if (Str::startsWith($normalized, ['images/'])) {
             return asset($normalized);
         }
 
-        return Storage::disk('public')->url($normalized);
+        if (Str::startsWith($normalized, ['storage/'])) {
+            return static::publicDiskUrl(Str::after($normalized, 'storage/'));
+        }
+
+        return static::publicDiskUrl($normalized);
     }
 
     public static function localPath(?string $path): ?string
@@ -61,5 +65,26 @@ class AssetPath
     public static function isVideo(?string $path): bool
     {
         return in_array(static::extension($path), ['mp4', 'webm', 'ogg', 'mov'], true);
+    }
+
+    private static function publicDiskUrl(string $path): string
+    {
+        $normalized = trim(str_replace('\\', '/', $path), '/');
+        $publicPath = public_path('storage/'.$normalized);
+
+        if (is_file($publicPath)) {
+            return asset('storage/'.$normalized);
+        }
+
+        if (Storage::disk('public')->exists($normalized)) {
+            return url('uploaded-media/'.static::encodePath($normalized));
+        }
+
+        return Storage::disk('public')->url($normalized);
+    }
+
+    private static function encodePath(string $path): string
+    {
+        return implode('/', array_map('rawurlencode', explode('/', $path)));
     }
 }

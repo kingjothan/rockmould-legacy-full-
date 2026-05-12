@@ -30,6 +30,19 @@ use App\Http\Controllers\PublicFormController;
 use App\Http\Controllers\SiteController;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+
+Route::get('/uploaded-media/{path}', function (string $path) {
+    $normalized = trim(str_replace('\\', '/', $path), '/');
+
+    abort_if($normalized === '' || Str::contains($normalized, ['..']), 404);
+    abort_unless(Storage::disk('public')->exists($normalized), 404);
+
+    return Storage::disk('public')->response($normalized, null, [
+        'Cache-Control' => 'public, max-age=31536000, immutable',
+    ]);
+})->where('path', '.*')->name('uploaded-media.show');
 
 Route::get('/public/{path?}', function (?string $path = null): RedirectResponse {
     $target = $path ? '/'.ltrim($path, '/') : '/';

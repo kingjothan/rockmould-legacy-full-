@@ -5,8 +5,11 @@ namespace Tests\Feature;
 use App\Models\CareerOpening;
 use App\Models\Post;
 use App\Models\Project;
+use App\Support\AssetPath;
 use Database\Seeders\RockmouldSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 class PublicSiteTest extends TestCase
@@ -158,5 +161,19 @@ class PublicSiteTest extends TestCase
             'email' => 'blocked-applicant@example.com',
             'message' => 'This should not be accepted.',
         ])->assertNotFound();
+    }
+
+    public function test_uploaded_media_fallback_route_serves_public_disk_files(): void
+    {
+        $path = 'fallback-test/'.Str::uuid().'.txt';
+
+        Storage::disk('public')->put($path, 'public media fallback');
+
+        $url = AssetPath::url($path);
+
+        $this->assertStringContainsString('/uploaded-media/', $url);
+        $this->get(parse_url($url, PHP_URL_PATH))->assertOk();
+
+        Storage::disk('public')->delete($path);
     }
 }
