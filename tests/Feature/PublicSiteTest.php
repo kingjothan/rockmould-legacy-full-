@@ -2,12 +2,14 @@
 
 namespace Tests\Feature;
 
+use App\Mail\ContactSubmissionReceivedMail;
 use App\Models\CareerOpening;
 use App\Models\Post;
 use App\Models\Project;
 use App\Support\AssetPath;
 use Database\Seeders\RockmouldSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Tests\TestCase;
@@ -55,6 +57,8 @@ class PublicSiteTest extends TestCase
 
     public function test_public_forms_persist_records(): void
     {
+        Mail::fake();
+
         $project = Project::query()->where('slug', 'azure-towers')->firstOrFail();
         $career = CareerOpening::query()->where('slug', 'project-coordinator')->firstOrFail();
 
@@ -70,6 +74,13 @@ class PublicSiteTest extends TestCase
             'email' => 'visitor@example.com',
             'department' => 'Sales',
         ]);
+
+        Mail::assertSent(
+            ContactSubmissionReceivedMail::class,
+            fn (ContactSubmissionReceivedMail $mail) => $mail->hasTo('info@rockmould.com')
+                && $mail->submission->email === 'visitor@example.com'
+                && $mail->submission->full_name === 'Test Visitor'
+        );
 
         $this->from('/blog')->post('/newsletter', [
             'email' => 'newsletter-test@example.com',

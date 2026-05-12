@@ -2,14 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\ContactSubmissionReceivedMail;
 use App\Models\CareerOpening;
 use App\Models\ContactSubmission;
 use App\Models\NewsletterSubscriber;
 use App\Models\PartnershipInquiry;
 use App\Models\Project;
 use App\Support\Activity;
+use App\Support\SiteData;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class PublicFormController extends Controller
 {
@@ -25,6 +28,12 @@ class PublicFormController extends Controller
 
         $submission = ContactSubmission::query()->create($data + ['status' => 'new']);
         Activity::log('contact.created', 'New public contact submission received.', null, $submission);
+
+        Mail::to('info@rockmould.com')->send(new ContactSubmissionReceivedMail(
+            $submission,
+            SiteData::company(),
+            route('admin.forms.index'),
+        ));
 
         return back()->with('success', 'Your message has been sent. A Rockmould advisor will reach out shortly.');
     }
