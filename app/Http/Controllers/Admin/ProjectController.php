@@ -9,11 +9,11 @@ use App\Models\Project;
 use App\Models\ProjectAssignment;
 use App\Models\User;
 use App\Support\Activity;
+use App\Support\PublicStorage;
 use App\Support\SiteData;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
@@ -134,7 +134,7 @@ class ProjectController extends Controller
         $coverImage = ($data['cover_image'] ?? null) ?: $project?->cover_image;
 
         if ($request->hasFile('cover_image_upload')) {
-            $coverImage = $request->file('cover_image_upload')->store('projects/covers', 'public');
+            $coverImage = PublicStorage::store($request->file('cover_image_upload'), 'projects/covers');
 
             if ($project?->cover_image && $project->cover_image !== $coverImage) {
                 $this->deleteStoredAsset($project->cover_image);
@@ -187,7 +187,7 @@ class ProjectController extends Controller
         foreach ($files as $index => $file) {
             $extension = strtolower($file->getClientOriginalExtension());
             $isVideo = in_array($extension, ['mp4', 'webm', 'mov', 'ogg'], true);
-            $path = $file->store($isVideo ? 'media/videos' : 'media/images', 'public');
+            $path = PublicStorage::store($file, $isVideo ? 'media/videos' : 'media/images');
 
             $payload = [
                 'project_id' => $project->id,
@@ -226,7 +226,7 @@ class ProjectController extends Controller
         $version = $request->string('document_version')->trim()->toString() ?: 'v1';
 
         foreach ($files as $file) {
-            $path = $file->store('documents', 'public');
+            $path = PublicStorage::store($file, 'documents');
 
             Document::query()->create([
                 'project_id' => $project->id,
@@ -270,6 +270,6 @@ class ProjectController extends Controller
             return;
         }
 
-        Storage::disk('public')->delete($normalized);
+        PublicStorage::delete($normalized);
     }
 }

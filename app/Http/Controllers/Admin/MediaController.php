@@ -7,10 +7,10 @@ use App\Models\MediaAsset;
 use App\Models\Project;
 use App\Models\ProjectAssignment;
 use App\Support\Activity;
+use App\Support\PublicStorage;
 use App\Support\SiteData;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
@@ -62,9 +62,10 @@ class MediaController extends Controller
         $data = $this->validatedMedia($request, requireAsset: true);
         $assignment = $this->resolvedAssignment($data['project_assignment_id'] ?? null);
         $projectId = $assignment?->project_id ?? ($data['project_id'] ?? null);
-        $path = $request->file('asset')?->store($this->directoryForType($data['media_type']), 'public');
-        $thumbnailPath = $request->file('thumbnail')?->store('media/thumbnails', 'public')
-            ?? ($data['media_type'] === 'image' ? $path : null);
+        $assetFile = $request->file('asset');
+        $thumbnailFile = $request->file('thumbnail');
+        $path = $assetFile ? PublicStorage::store($assetFile, $this->directoryForType($data['media_type'])) : null;
+        $thumbnailPath = $thumbnailFile ? PublicStorage::store($thumbnailFile, 'media/thumbnails') : ($data['media_type'] === 'image' ? $path : null);
 
         $payload = [
             'project_id' => $projectId,
@@ -103,7 +104,7 @@ class MediaController extends Controller
         $thumbnailPath = $currentThumbnailPath;
 
         if ($request->hasFile('asset')) {
-            $filePath = $request->file('asset')->store($this->directoryForType($data['media_type']), 'public');
+            $filePath = PublicStorage::store($request->file('asset'), $this->directoryForType($data['media_type']));
 
             if ($currentFilePath && $currentFilePath !== $filePath) {
                 $this->deleteStoredAsset($currentFilePath);
@@ -123,7 +124,7 @@ class MediaController extends Controller
                 $this->deleteStoredAsset($currentThumbnailPath);
             }
 
-            $thumbnailPath = $request->file('thumbnail')->store('media/thumbnails', 'public');
+            $thumbnailPath = PublicStorage::store($request->file('thumbnail'), 'media/thumbnails');
         }
 
         $payload = [
@@ -268,6 +269,6 @@ class MediaController extends Controller
             return;
         }
 
-        Storage::disk('public')->delete($normalized);
+        PublicStorage::delete($normalized);
     }
 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Portal;
 use App\Http\Controllers\Controller;
 use App\Models\KycRequest;
 use App\Models\User;
+use App\Support\PublicStorage;
 use App\Support\SiteData;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -66,7 +67,8 @@ class AuthController extends Controller
             'identification' => ['nullable', 'file', 'max:4096'],
         ]);
 
-        $path = $request->file('identification')?->store('kyc', 'public');
+        $identification = $request->file('identification');
+        $path = $identification ? PublicStorage::store($identification, 'kyc') : null;
 
         KycRequest::query()->create([
             'full_name' => $data['full_name'],

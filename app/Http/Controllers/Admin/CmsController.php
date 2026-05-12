@@ -13,10 +13,10 @@ use App\Models\TeamMember;
 use App\Models\Testimonial;
 use App\Models\TimelineEntry;
 use App\Support\Activity;
+use App\Support\PublicStorage;
 use App\Support\SiteData;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 
@@ -1140,7 +1140,8 @@ class CmsController extends Controller
             return $currentPath;
         }
 
-        $path = $request->file($field)?->store($directory, 'public');
+        $file = $request->file($field);
+        $path = $file ? PublicStorage::store($file, $directory) : null;
 
         if ($currentPath && $currentPath !== $path) {
             $this->deleteStoredAsset($currentPath);
@@ -1161,6 +1162,6 @@ class CmsController extends Controller
             return;
         }
 
-        Storage::disk('public')->delete($normalized);
+        PublicStorage::delete($normalized);
     }
 }

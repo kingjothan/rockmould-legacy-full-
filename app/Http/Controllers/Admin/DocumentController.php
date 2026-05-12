@@ -7,10 +7,10 @@ use App\Models\Document;
 use App\Models\Project;
 use App\Models\ProjectAssignment;
 use App\Support\Activity;
+use App\Support\PublicStorage;
 use App\Support\SiteData;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
@@ -31,7 +31,8 @@ class DocumentController extends Controller
         $data = $this->validatedDocument($request, requireFile: true);
         $assignment = $this->resolvedAssignment($data['project_assignment_id'] ?? null);
         $projectId = $assignment?->project_id ?? ($data['project_id'] ?? null);
-        $path = $request->file('file')?->store('documents', 'public');
+        $uploadedFile = $request->file('file');
+        $path = $uploadedFile ? PublicStorage::store($uploadedFile, 'documents') : null;
 
         $document = Document::query()->create([
             'project_id' => $projectId,
@@ -63,7 +64,7 @@ class DocumentController extends Controller
         $filePath = $document->file_path;
 
         if ($request->hasFile('file')) {
-            $filePath = $request->file('file')->store('documents', 'public');
+            $filePath = PublicStorage::store($request->file('file'), 'documents');
 
             if ($document->file_path && $document->file_path !== $filePath) {
                 $this->deleteStoredAsset($document->file_path);
@@ -140,6 +141,6 @@ class DocumentController extends Controller
             return;
         }
 
-        Storage::disk('public')->delete($normalized);
+        PublicStorage::delete($normalized);
     }
 }
