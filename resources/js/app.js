@@ -581,12 +581,6 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
 
-        window.addEventListener('resize', () => {
-            if (window.innerWidth >= 1024) {
-                setDrawer(false);
-            }
-        });
-
         document.addEventListener('keydown', (event) => {
             if (event.key === 'Escape') {
                 setDrawer(false);

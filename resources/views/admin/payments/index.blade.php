@@ -75,7 +75,7 @@
                         <label class="mb-2 block text-xs uppercase tracking-[0.18em] text-muted-foreground">Assignment</label>
                         <select name="project_assignment_id" class="input-shell">
                             @foreach ($assignments as $assignment)
-                                <option value="{{ $assignment->id }}">{{ $assignment->user->name }} &middot; {{ $assignment->project->title }} &middot; {{ $assignment->unit_label }}</option>
+                                <option value="{{ $assignment->id }}">{{ $assignment->user?->name ?? 'Client' }} &middot; {{ $assignment->project?->title ?? 'Project' }} &middot; {{ $assignment->unit?->label ?? $assignment->unit_label }}</option>
                             @endforeach
                         </select>
                     </div>

@@ -28,9 +28,9 @@
                 <section class="luxury-card">
                     <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                         <div>
-                            <p class="text-xs uppercase tracking-[0.24em] text-primary/70">{{ $assignment->project->title }}</p>
-                            <h2 class="mt-2 font-display text-3xl">{{ $assignment->unit_label }}</h2>
-                            <p class="mt-2 text-sm text-muted-foreground">{{ $assignment->project->location }} &middot; {{ str($assignment->status)->title() }}</p>
+                            <p class="text-xs uppercase tracking-[0.24em] text-primary/70">{{ $assignment->project?->title ?? 'Project' }}</p>
+                            <h2 class="mt-2 font-display text-3xl">{{ $assignment->unit?->label ?? $assignment->unit_label }}</h2>
+                            <p class="mt-2 text-sm text-muted-foreground">{{ $assignment->project?->location ?? 'Location pending' }} &middot; {{ str($assignment->status)->title() }}</p>
                         </div>
                         <x-status-badge :value="$assignment->status" />
                     </div>
@@ -67,7 +67,7 @@
                                                 <p class="text-sm font-medium">{{ $payment->reference ?: 'Project payment record' }}</p>
                                                 <p class="mt-1 text-xs text-muted-foreground">
                                                     {{ optional($payment->paid_at ?: $payment->due_at)->format('M j, Y') ?: 'Pending date' }}
-                                                    &middot; {{ $assignment->project->title }}
+                                                    &middot; {{ $assignment->project?->title ?? 'Project' }}
                                                     @if ($payment->payment_method)
                                                         &middot; {{ $payment->payment_method }}
                                                     @endif

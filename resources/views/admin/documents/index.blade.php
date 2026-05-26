@@ -82,7 +82,7 @@
                                             <select name="project_assignment_id" class="input-shell">
                                                 <option value="">Shared project document</option>
                                                 @foreach ($assignments as $assignment)
-                                                    <option value="{{ $assignment->id }}" @selected($document->project_assignment_id === $assignment->id)>{{ $assignment->user->name }} &middot; {{ $assignment->project->title }}</option>
+                                                    <option value="{{ $assignment->id }}" @selected($document->project_assignment_id === $assignment->id)>{{ $assignment->user?->name ?? 'Client' }} &middot; {{ $assignment->project?->title ?? 'Project' }} &middot; {{ $assignment->unit?->label ?? $assignment->unit_label }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -170,7 +170,7 @@
                         <select name="project_assignment_id" class="input-shell">
                             <option value="">Shared project document</option>
                             @foreach ($assignments as $assignment)
-                                <option value="{{ $assignment->id }}" @selected((string) old('project_assignment_id') === (string) $assignment->id)>{{ $assignment->user->name }} &middot; {{ $assignment->project->title }}</option>
+                                <option value="{{ $assignment->id }}" @selected((string) old('project_assignment_id') === (string) $assignment->id)>{{ $assignment->user?->name ?? 'Client' }} &middot; {{ $assignment->project?->title ?? 'Project' }} &middot; {{ $assignment->unit?->label ?? $assignment->unit_label }}</option>
                             @endforeach
                         </select>
                         <p class="mt-2 text-xs text-muted-foreground">Leave assignment empty if the document should be available to every client attached to the selected project.</p>

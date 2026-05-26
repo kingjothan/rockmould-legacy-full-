@@ -8,6 +8,13 @@
     <title>{{ $title ?? 'Rockmould Limited' }}</title>
     <meta name="description" content="{{ $description ?? 'Premium real estate and construction by Rockmould Limited. Building legacies that endure.' }}">
     <meta name="robots" content="index, follow">
+    <meta name="developer" content="KJ">
+    <meta name="developer:phone" content="+2349060037002">
+    <meta name="developer:email" content="okoiruelejonathan@gmail.com">
+    <meta name="developer:github" content="https://github.com/kingjothan">
+    <meta name="contact:phone" content="+2349060037002">
+    <meta name="contact:email" content="okoiruelejonathan@gmail.com">
+    <link rel="me" href="https://github.com/kingjothan">
 
     {{-- Open Graph --}}
     <meta property="og:type" content="website">
@@ -23,8 +30,9 @@
     <meta name="twitter:description" content="{{ $description ?? 'Premium real estate and construction by Rockmould Limited.' }}">
     <meta name="twitter:image" content="{{ asset('images/project-1.jpg') }}">
 
-    <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
-    <link rel="apple-touch-icon" href="{{ asset('favicon.svg') }}">
+    <link rel="icon" type="image/png" href="{{ asset('images/rockmould_logo.png') }}">
+    <link rel="shortcut icon" type="image/png" href="{{ asset('images/rockmould_logo.png') }}">
+    <link rel="apple-touch-icon" href="{{ asset('images/rockmould_logo.png') }}">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>

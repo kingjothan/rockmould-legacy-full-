@@ -8,7 +8,6 @@ use App\Support\Activity;
 use App\Support\SiteData;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
 class SettingController extends Controller
@@ -31,12 +30,12 @@ class SettingController extends Controller
             'hours' => ['required', 'string', 'max:255'],
             'support_phone' => ['nullable', 'string', 'max:50'],
             'support_email' => ['nullable', 'email', 'max:255'],
-            'public_copy_scale' => ['required', Rule::in(['1', '1.08', '1.16', '1.24'])],
-            'public_heading_scale' => ['required', Rule::in(['1', '1.08', '1.16', '1.24'])],
-            'portal_copy_scale' => ['required', Rule::in(['1', '1.08', '1.16', '1.24'])],
-            'portal_heading_scale' => ['required', Rule::in(['1', '1.08', '1.16', '1.24'])],
-            'admin_copy_scale' => ['required', Rule::in(['1', '1.08', '1.16', '1.24'])],
-            'admin_heading_scale' => ['required', Rule::in(['1', '1.08', '1.16', '1.24'])],
+            'public_copy_scale' => ['required', 'numeric', 'min:0.7', 'max:2.5'],
+            'public_heading_scale' => ['required', 'numeric', 'min:0.7', 'max:2.5'],
+            'portal_copy_scale' => ['required', 'numeric', 'min:0.7', 'max:2.5'],
+            'portal_heading_scale' => ['required', 'numeric', 'min:0.7', 'max:2.5'],
+            'admin_copy_scale' => ['required', 'numeric', 'min:0.7', 'max:2.5'],
+            'admin_heading_scale' => ['required', 'numeric', 'min:0.7', 'max:2.5'],
         ]);
 
         Setting::query()->updateOrCreate(['key' => 'company'], ['value' => $data]);

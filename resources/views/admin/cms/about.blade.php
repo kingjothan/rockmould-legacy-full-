@@ -49,14 +49,32 @@
                         </div>
                         <div class="grid gap-4 md:grid-cols-2">
                             <div>
-                                <label class="admin-label">Hero Media</label>
-                                <input type="file" name="hero_media" accept="image/*,video/*" data-preview-target="#about-hero-media-preview" class="input-shell">
-                                <p id="about-hero-media-preview" class="mt-2 text-xs text-muted-foreground">{{ $about['hero_media_path'] ?? 'No new file selected' }}</p>
+                                <label class="admin-label">Hero Media Link or Path</label>
+                                <input name="hero_media_path" value="{{ old('hero_media_path', $about['hero_media_path'] ?? '') }}" class="input-shell" placeholder="https://cdn.example.com/about-hero.mp4">
+                                <p class="mt-2 text-xs text-muted-foreground">Paste a CDN/direct image or video URL, or keep a local path.</p>
                             </div>
                             <div>
-                                <label class="admin-label">Story Media</label>
+                                <label class="admin-label">Story Media Link or Path</label>
+                                <input name="story_image_path" value="{{ old('story_image_path', $about['story_image'] ?? '') }}" class="input-shell" placeholder="https://cdn.example.com/about-story.jpg">
+                                <p class="mt-2 text-xs text-muted-foreground">Use a CDN/direct image or video for the company story block.</p>
+                            </div>
+                            <div>
+                                <label class="admin-label">Upload Hero Media</label>
+                                <input type="file" name="hero_media" accept="image/*,video/*" data-preview-target="#about-hero-media-preview" class="input-shell">
+                                <p id="about-hero-media-preview" class="mt-2 text-xs text-muted-foreground">{{ $about['hero_media_path'] ?? 'No new file selected' }}</p>
+                                <label class="mt-3 flex items-center gap-2 text-xs text-muted-foreground">
+                                    <input type="checkbox" name="remove_hero_media" value="1" class="h-4 w-4 rounded border-border bg-transparent text-primary focus:ring-primary">
+                                    Remove current hero media if no new link or upload is provided
+                                </label>
+                            </div>
+                            <div>
+                                <label class="admin-label">Upload Story Media</label>
                                 <input type="file" name="story_image" accept="image/*,video/*" data-preview-target="#about-story-image-preview" class="input-shell">
                                 <p id="about-story-image-preview" class="mt-2 text-xs text-muted-foreground">{{ $about['story_image'] ?? 'No new file selected' }}</p>
+                                <label class="mt-3 flex items-center gap-2 text-xs text-muted-foreground">
+                                    <input type="checkbox" name="remove_story_image" value="1" class="h-4 w-4 rounded border-border bg-transparent text-primary focus:ring-primary">
+                                    Remove current story media if no new link or upload is provided
+                                </label>
                             </div>
                         </div>
                         <div class="grid gap-4 md:grid-cols-[0.5fr_1fr]">
@@ -212,6 +230,10 @@
                                             <label class="admin-label">Replace Leadership Photo or Video</label>
                                             <input type="file" name="image_upload" accept="image/*,video/*" data-preview-target="#team-member-preview-{{ $member->id }}" class="input-shell">
                                             <p id="team-member-preview-{{ $member->id }}" class="mt-2 text-xs text-muted-foreground">Leave empty to keep current media. Accepts image or video.</p>
+                                            <label class="mt-3 flex items-center gap-2 text-xs text-muted-foreground">
+                                                <input type="checkbox" name="remove_image_path" value="1" class="h-4 w-4 rounded border-border bg-transparent text-primary focus:ring-primary">
+                                                Remove current member media if no new link or upload is provided
+                                            </label>
                                         </div>
                                         <div class="flex flex-wrap items-center justify-between gap-3">
                                             <label class="flex items-center gap-2 text-sm text-muted-foreground">

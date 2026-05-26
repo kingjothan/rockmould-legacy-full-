@@ -8,6 +8,7 @@ use App\Support\SiteData;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
 class SupportController extends Controller
@@ -19,7 +20,7 @@ class SupportController extends Controller
         return view('portal.support', [
             'company' => SiteData::company(),
             'content' => $content,
-            'assignments' => Auth::user()->assignments()->with('project')->get(),
+            'assignments' => Auth::user()->assignments()->with(['project', 'unit'])->get(),
             'tickets' => Auth::user()->supportTickets()->with('assignment.project')->latest()->get(),
         ]);
     }
@@ -27,7 +28,7 @@ class SupportController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $data = $request->validate([
-            'project_assignment_id' => ['nullable', 'integer'],
+            'project_assignment_id' => ['nullable', 'integer', Rule::exists('project_assignments', 'id')->where(fn ($query) => $query->where('user_id', Auth::id()))],
             'subject' => ['required', 'string', 'max:255'],
             'message' => ['required', 'string'],
         ]);

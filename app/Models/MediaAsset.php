@@ -58,6 +58,7 @@ class MediaAsset extends Model
 
         return $query
             ->where('visible_to_client', true)
+            ->whereNotNull('file_path')
             ->where(function (Builder $builder) use ($assignmentIds, $projectIds) {
                 if ($assignmentIds->isNotEmpty()) {
                     $builder->whereIn('project_assignment_id', $assignmentIds->all());
@@ -78,6 +79,7 @@ class MediaAsset extends Model
         return $query
             ->where('project_id', $assignment->project_id)
             ->where('visible_to_client', true)
+            ->whereNotNull('file_path')
             ->where(function (Builder $builder) use ($assignment) {
                 $builder
                     ->whereNull('project_assignment_id')
@@ -89,6 +91,7 @@ class MediaAsset extends Model
     {
         return $query
             ->where('visible_to_client', true)
+            ->whereNotNull('file_path')
             ->whereNull('project_assignment_id')
             ->whereNotNull('project_id')
             ->whereHas('project', fn (Builder $projectQuery) => $projectQuery->published());

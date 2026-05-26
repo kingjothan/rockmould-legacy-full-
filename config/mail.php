@@ -113,4 +113,19 @@ return [
         'name' => env('MAIL_FROM_NAME', 'Example'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Rockmould Notification Recipients
+    |--------------------------------------------------------------------------
+    |
+    | Public website form notifications are delivered here. Keep this in env so
+    | production can change the destination without editing application code.
+    |
+    */
+
+    'rockmould' => [
+        'contact_to' => env('CONTACT_MAIL_TO', 'info@rockmould.com'),
+        'logo_url' => env('MAIL_LOGO_URL'),
+    ],
+
 ];

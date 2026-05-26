@@ -1,11 +1,12 @@
 <x-layouts.admin :company="$company" page-heading="Settings">
     @php
-        $typographyScaleOptions = [
-            '1' => 'Default',
-            '1.08' => 'Comfortable',
-            '1.16' => 'Large',
-            '1.24' => 'Extra Large',
-        ];
+        $fontSizeScale = function (string $key) use ($company) {
+            $value = $company[$key] ?? '1';
+            $number = is_numeric($value) ? (float) $value : 1.0;
+            $number = max(0.7, min(2.5, $number));
+
+            return rtrim(rtrim(number_format($number, 2, '.', ''), '0'), '.');
+        };
     @endphp
     <div class="max-w-4xl">
         <div class="luxury-card-flat overflow-hidden p-0">
@@ -82,26 +83,18 @@
 
                 <div class="form-section mb-6">
                     <p class="form-section-title">System Typography</p>
-                    <p class="mb-4 text-sm text-muted-foreground">Control write-up and heading size across the public website, client portal, and admin CMS from one place.</p>
+                    <p class="mb-4 text-sm text-muted-foreground">Control every major write-up and heading scale across the public website, client portal, and admin CMS. Use any value from 0.70 to 2.50; 1 is default, 1.50 is 50% larger.</p>
                     <div class="grid gap-5">
                         <div class="rounded-lg border border-border bg-background/40 p-4">
                             <p class="mb-3 text-sm font-medium text-foreground">Public Website</p>
                             <div class="grid gap-4 md:grid-cols-2">
                                 <div>
                                     <label class="admin-label">Public Copy Size</label>
-                                    <select name="public_copy_scale" class="input-shell">
-                                        @foreach ($typographyScaleOptions as $value => $label)
-                                            <option value="{{ $value }}" @selected(($company['public_copy_scale'] ?? '1') === $value)>{{ $label }}</option>
-                                        @endforeach
-                                    </select>
+                                    <input type="number" name="public_copy_scale" value="{{ old('public_copy_scale', $fontSizeScale('public_copy_scale')) }}" min="0.7" max="2.5" step="0.01" class="input-shell">
                                 </div>
                                 <div>
                                     <label class="admin-label">Public Heading Size</label>
-                                    <select name="public_heading_scale" class="input-shell">
-                                        @foreach ($typographyScaleOptions as $value => $label)
-                                            <option value="{{ $value }}" @selected(($company['public_heading_scale'] ?? '1') === $value)>{{ $label }}</option>
-                                        @endforeach
-                                    </select>
+                                    <input type="number" name="public_heading_scale" value="{{ old('public_heading_scale', $fontSizeScale('public_heading_scale')) }}" min="0.7" max="2.5" step="0.01" class="input-shell">
                                 </div>
                             </div>
                         </div>
@@ -111,19 +104,11 @@
                             <div class="grid gap-4 md:grid-cols-2">
                                 <div>
                                     <label class="admin-label">Portal Copy Size</label>
-                                    <select name="portal_copy_scale" class="input-shell">
-                                        @foreach ($typographyScaleOptions as $value => $label)
-                                            <option value="{{ $value }}" @selected(($company['portal_copy_scale'] ?? '1') === $value)>{{ $label }}</option>
-                                        @endforeach
-                                    </select>
+                                    <input type="number" name="portal_copy_scale" value="{{ old('portal_copy_scale', $fontSizeScale('portal_copy_scale')) }}" min="0.7" max="2.5" step="0.01" class="input-shell">
                                 </div>
                                 <div>
                                     <label class="admin-label">Portal Heading Size</label>
-                                    <select name="portal_heading_scale" class="input-shell">
-                                        @foreach ($typographyScaleOptions as $value => $label)
-                                            <option value="{{ $value }}" @selected(($company['portal_heading_scale'] ?? '1') === $value)>{{ $label }}</option>
-                                        @endforeach
-                                    </select>
+                                    <input type="number" name="portal_heading_scale" value="{{ old('portal_heading_scale', $fontSizeScale('portal_heading_scale')) }}" min="0.7" max="2.5" step="0.01" class="input-shell">
                                 </div>
                             </div>
                         </div>
@@ -133,19 +118,11 @@
                             <div class="grid gap-4 md:grid-cols-2">
                                 <div>
                                     <label class="admin-label">Admin Copy Size</label>
-                                    <select name="admin_copy_scale" class="input-shell">
-                                        @foreach ($typographyScaleOptions as $value => $label)
-                                            <option value="{{ $value }}" @selected(($company['admin_copy_scale'] ?? '1') === $value)>{{ $label }}</option>
-                                        @endforeach
-                                    </select>
+                                    <input type="number" name="admin_copy_scale" value="{{ old('admin_copy_scale', $fontSizeScale('admin_copy_scale')) }}" min="0.7" max="2.5" step="0.01" class="input-shell">
                                 </div>
                                 <div>
                                     <label class="admin-label">Admin Heading Size</label>
-                                    <select name="admin_heading_scale" class="input-shell">
-                                        @foreach ($typographyScaleOptions as $value => $label)
-                                            <option value="{{ $value }}" @selected(($company['admin_heading_scale'] ?? '1') === $value)>{{ $label }}</option>
-                                        @endforeach
-                                    </select>
+                                    <input type="number" name="admin_heading_scale" value="{{ old('admin_heading_scale', $fontSizeScale('admin_heading_scale')) }}" min="0.7" max="2.5" step="0.01" class="input-shell">
                                 </div>
                             </div>
                         </div>

@@ -92,12 +92,17 @@
                             </div>
                         </div>
                         <div>
-                            <label class="admin-label">Login Media Path</label>
-                            <input name="login_media_path" value="{{ old('login_media_path', $loginMediaPath) }}" class="input-shell">
+                            <label class="admin-label">Login Media Link or Path</label>
+                            <input name="login_media_path" value="{{ old('login_media_path', $loginMediaPath) }}" class="input-shell" placeholder="https://cdn.example.com/portal-login.mp4">
+                            <p class="mt-2 text-xs text-muted-foreground">Paste a CDN/direct image or video URL, or use a local path.</p>
                         </div>
                         <div>
                             <label class="admin-label">Upload Login Media</label>
                             <input type="file" name="login_media_upload" accept="image/*,video/*" class="input-shell">
+                            <label class="mt-3 flex items-center gap-2 text-xs text-muted-foreground">
+                                <input type="checkbox" name="remove_login_media" value="1" class="h-4 w-4 rounded border-border bg-transparent text-primary focus:ring-primary">
+                                Remove current login media if no new link or upload is provided
+                            </label>
                         </div>
                         <div>
                             <label class="admin-label">Pending Title</label>

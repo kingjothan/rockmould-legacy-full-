@@ -150,13 +150,18 @@
                                 </div>
                             </div>
                             <div>
-                                <label class="admin-label">Hero Background Path</label>
-                                <input name="{{ $key }}_hero_media_path" value="{{ old($key.'_hero_media_path', data_get($pages, $key.'.hero_media_path')) }}" class="input-shell">
+                                <label class="admin-label">Hero Background Link or Path</label>
+                                <input name="{{ $key }}_hero_media_path" value="{{ old($key.'_hero_media_path', data_get($pages, $key.'.hero_media_path')) }}" class="input-shell" placeholder="https://cdn.example.com/{{ $key }}-hero.mp4">
+                                <p class="mt-2 text-xs text-muted-foreground">Paste a CDN/direct image or video URL, or use a local path. Uploading a new file overrides it.</p>
                             </div>
                             <div>
                                 <label class="admin-label">Upload Hero Media</label>
                                 <input type="file" name="{{ $key }}_hero_media_upload" accept="image/*,video/*" class="input-shell">
                                 <p class="mt-2 text-xs text-muted-foreground">Accepted: image or video. Recommended: 1920x1080 or better.</p>
+                                <label class="mt-3 flex items-center gap-2 text-xs text-muted-foreground">
+                                    <input type="checkbox" name="remove_{{ $key }}_hero_media" value="1" class="h-4 w-4 rounded border-border bg-transparent text-primary focus:ring-primary">
+                                    Remove current hero media if no new link or upload is provided
+                                </label>
                             </div>
 
                             @if ($key === 'careers')

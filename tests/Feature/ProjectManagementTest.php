@@ -5,6 +5,8 @@ namespace Tests\Feature;
 use App\Models\Document;
 use App\Models\MediaAsset;
 use App\Models\Project;
+use App\Models\ProjectAssignment;
+use App\Models\Unit;
 use App\Models\User;
 use Database\Seeders\RockmouldSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -83,5 +85,97 @@ class ProjectManagementTest extends TestCase
         $this->assertTrue(Storage::disk('public')->exists($media[0]->file_path));
         $this->assertTrue(Storage::disk('public')->exists($media[1]->file_path));
         $this->assertTrue(Storage::disk('public')->exists($documents->first()->file_path));
+    }
+
+    public function test_admin_can_create_project_with_cdn_cover_and_gallery_links(): void
+    {
+        $admin = User::query()->where('email', 'admin@rockmould.com')->firstOrFail();
+
+        $response = $this->actingAs($admin)->post(route('admin.projects.store'), [
+            'title' => 'CDN Harbour Residences',
+            'location' => 'Victoria Island, Lagos',
+            'category' => 'Luxury Residential',
+            'status' => 'upcoming',
+            'overview' => 'A premium waterfront scheme with CDN-hosted project media.',
+            'description' => 'Designed to validate direct media links inside project creation.',
+            'cover_image' => 'https://cdn.rockmould.test/projects/harbour-cover.mp4',
+            'progress' => 5,
+            'budget' => 2500000000,
+            'price_from' => 95000000,
+            'features_text' => "Waterfront arrival\nPrivate lounge",
+            'gallery_text' => '',
+            'highlights_json' => json_encode([
+                ['label' => 'Residences', 'value' => '36'],
+            ], JSON_THROW_ON_ERROR),
+            'media_urls_text' => "https://cdn.rockmould.test/projects/harbour-exterior.jpg\nhttps://cdn.rockmould.test/projects/harbour-walkthrough.mp4",
+            'uploaded_media_gallery_section' => 'general',
+            'uploaded_media_visible_to_client' => '1',
+            'is_featured' => '1',
+            'is_portfolio' => '1',
+            'is_published' => '1',
+        ]);
+
+        $project = Project::query()->where('slug', 'cdn-harbour-residences')->firstOrFail();
+
+        $response->assertRedirect(route('admin.projects.show', $project));
+
+        $this->assertSame('https://cdn.rockmould.test/projects/harbour-cover.mp4', $project->cover_image);
+
+        $media = MediaAsset::query()->where('project_id', $project->id)->orderBy('sort_order')->get();
+
+        $this->assertCount(2, $media);
+        $this->assertSame(['image', 'video'], $media->pluck('media_type')->all());
+        $this->assertSame(['general', 'general'], $media->pluck('gallery_section')->all());
+        $this->assertSame('https://cdn.rockmould.test/projects/harbour-exterior.jpg', $media[0]->file_path);
+        $this->assertSame('https://cdn.rockmould.test/projects/harbour-walkthrough.mp4', $media[1]->file_path);
+    }
+
+    public function test_admin_can_assign_multiple_units_and_update_ownership(): void
+    {
+        $admin = User::query()->where('email', 'admin@rockmould.com')->firstOrFail();
+        $client = User::query()->where('email', 'adebayo@example.com')->firstOrFail();
+        $nextClient = User::query()->where('email', 'chioma@example.com')->firstOrFail();
+        $project = Project::query()->where('slug', 'azure-towers')->firstOrFail();
+
+        $this->actingAs($admin)->post(route('admin.projects.assignments.store', $project), [
+            'user_id' => $client->id,
+            'unit_labels' => "Unit 21A\nUnit 21B",
+            'status' => 'active',
+            'progress_percentage' => 50,
+            'contract_amount' => 30000000,
+            'amount_paid' => 10000000,
+        ])->assertRedirect();
+
+        $this->assertDatabaseHas('units', [
+            'project_id' => $project->id,
+            'client_id' => $client->id,
+            'label' => 'Unit 21A',
+        ]);
+        $this->assertDatabaseHas('project_assignments', [
+            'project_id' => $project->id,
+            'user_id' => $client->id,
+            'unit_label' => 'Unit 21B',
+            'outstanding_balance' => 20000000,
+        ]);
+
+        $assignment = ProjectAssignment::query()->where('unit_label', 'Unit 21A')->firstOrFail();
+
+        $this->actingAs($admin)->put(route('admin.projects.assignments.update', [$project, $assignment]), [
+            'user_id' => $nextClient->id,
+            'unit_label' => 'Unit 21A-R',
+            'status' => 'completed',
+            'progress_percentage' => 100,
+            'contract_amount' => 32000000,
+            'amount_paid' => 32000000,
+            'client_notes' => 'Ownership updated.',
+        ])->assertRedirect();
+
+        $assignment->refresh();
+        $unit = Unit::query()->where('project_id', $project->id)->where('label', 'Unit 21A-R')->firstOrFail();
+
+        $this->assertSame($nextClient->id, $assignment->user_id);
+        $this->assertSame($unit->id, $assignment->unit_id);
+        $this->assertSame('0.00', $assignment->outstanding_balance);
+        $this->assertSame($nextClient->id, $unit->client_id);
     }
 }

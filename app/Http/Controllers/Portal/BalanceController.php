@@ -11,7 +11,7 @@ class BalanceController extends Controller
 {
     public function index(): View
     {
-        $assignments = Auth::user()->assignments()->with(['project', 'payments'])->get();
+        $assignments = Auth::user()->assignments()->with(['project', 'unit', 'payments'])->get();
 
         return view('portal.balance', [
             'company' => SiteData::company(),

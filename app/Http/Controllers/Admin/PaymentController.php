@@ -17,8 +17,8 @@ class PaymentController extends Controller
     {
         return view('admin.payments.index', [
             'company' => SiteData::company(),
-            'payments' => Payment::query()->with('assignment.project', 'assignment.user')->latest('paid_at')->latest()->get(),
-            'assignments' => ProjectAssignment::query()->with('project', 'user')->orderByDesc('created_at')->get(),
+            'payments' => Payment::query()->with('assignment.project', 'assignment.user', 'assignment.unit')->latest('paid_at')->latest()->get(),
+            'assignments' => ProjectAssignment::query()->with('project', 'user', 'unit')->orderByDesc('created_at')->get(),
         ]);
     }
 

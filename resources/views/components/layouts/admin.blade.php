@@ -9,12 +9,14 @@
     $nameParts = preg_split('/\s+/', $fullName, -1, PREG_SPLIT_NO_EMPTY) ?: [$fullName];
     $firstName = $nameParts[0] ?? $fullName;
     $lastInitial = count($nameParts) > 1 ? strtoupper(substr(end($nameParts), 0, 1)).'.' : '';
-    $adminCopyScale = in_array((string) ($company['admin_copy_scale'] ?? '1'), ['1', '1.08', '1.16', '1.24'], true)
-        ? (string) $company['admin_copy_scale']
-        : '1';
-    $adminHeadingScale = in_array((string) ($company['admin_heading_scale'] ?? '1'), ['1', '1.08', '1.16', '1.24'], true)
-        ? (string) $company['admin_heading_scale']
-        : '1';
+    $formatScale = function ($value) {
+        $number = is_numeric($value) ? (float) $value : 1.0;
+        $number = max(0.7, min(2.5, $number));
+
+        return rtrim(rtrim(number_format($number, 2, '.', ''), '0'), '.');
+    };
+    $adminCopyScale = $formatScale($company['admin_copy_scale'] ?? '1');
+    $adminHeadingScale = $formatScale($company['admin_heading_scale'] ?? '1');
 @endphp
 
 <x-layouts.base :title="$title ?? 'Admin CMS | Rockmould Limited'">

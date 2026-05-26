@@ -20,11 +20,16 @@
             </form>
         </div>
 
-        <div class="grid gap-4 md:grid-cols-3">
+        <div class="grid gap-4 md:grid-cols-4">
             <div class="luxury-card">
                 <p class="text-[10px] uppercase tracking-[0.24em] text-muted-foreground">{{ $content['assigned_label'] ?? 'Assigned Projects' }}</p>
-                <p class="mt-2 font-display text-4xl">{{ $assignments->count() }}</p>
-                <p class="mt-2 text-sm text-muted-foreground">{{ $content['assigned_description'] ?? 'Every active and completed client allocation.' }}</p>
+                <p class="mt-2 font-display text-4xl">{{ $projectCount ?? $assignments->pluck('project_id')->filter()->unique()->count() }}</p>
+                <p class="mt-2 text-sm text-muted-foreground">{{ $content['assigned_description'] ?? 'Unique developments assigned to your account.' }}</p>
+            </div>
+            <div class="luxury-card">
+                <p class="text-[10px] uppercase tracking-[0.24em] text-muted-foreground">Owned Units</p>
+                <p class="mt-2 font-display text-4xl">{{ $unitCount ?? $assignments->count() }}</p>
+                <p class="mt-2 text-sm text-muted-foreground">Individual properties linked to your portfolio.</p>
             </div>
             <div class="luxury-card">
                 <p class="text-[10px] uppercase tracking-[0.24em] text-muted-foreground">{{ $content['paid_label'] ?? 'Amount Paid' }}</p>
@@ -52,15 +57,15 @@
                     <article class="luxury-card group">
                         <a href="{{ route('portal.projects.show', $assignment) }}" class="block">
                             <div class="relative overflow-hidden rounded-sm">
-                                <x-media :path="$assignment->project->cover_image" fallback="images/project-1.jpg" alt="{{ $assignment->project->title }}" class="aspect-[16/9] w-full object-cover transition duration-700 group-hover:scale-[1.04]" />
+                                <x-media :path="$assignment->project?->cover_image" fallback="images/project-1.jpg" alt="{{ $assignment->project?->title ?? 'Project' }}" class="aspect-[16/9] w-full object-cover transition duration-700 group-hover:scale-[1.04]" />
                                 <div class="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/70 to-transparent"></div>
                                 <div class="absolute left-4 top-4">
                                     <x-status-badge :value="$assignment->status" />
                                 </div>
                                 <div class="absolute bottom-4 left-4 right-4 flex items-end justify-between gap-4">
                                     <div>
-                                        <p class="text-[10px] uppercase tracking-[0.24em] text-white/70">{{ $assignment->project->category }}</p>
-                                        <p class="mt-1 text-sm text-white/80">{{ $assignment->project->location }}</p>
+                                        <p class="text-[10px] uppercase tracking-[0.24em] text-white/70">{{ $assignment->project?->category ?? 'Project' }}</p>
+                                        <p class="mt-1 text-sm text-white/80">{{ $assignment->project?->location ?? 'Location pending' }}</p>
                                     </div>
                                     <p class="text-xs uppercase tracking-[0.24em] text-white/80">{{ $assignment->progress_percentage }}%</p>
                                 </div>
@@ -68,9 +73,9 @@
                         </a>
 
                         <div class="mt-5">
-                            <h2 class="font-display text-3xl">{{ $assignment->project->title }}</h2>
+                            <h2 class="font-display text-3xl">{{ $assignment->project?->title ?? 'Project' }}</h2>
                             <p class="mt-2 text-sm text-muted-foreground">
-                                {{ $assignment->unit_label }} &middot; updated {{ optional($assignment->updated_at)->format('F j, Y') }}
+                                {{ $assignment->unit?->label ?? $assignment->unit_label }} &middot; updated {{ optional($assignment->updated_at)->format('F j, Y') }}
                             </p>
                         </div>
 
@@ -80,7 +85,7 @@
 
                         <div class="mt-3 flex items-center justify-between text-xs text-muted-foreground">
                             <span>{{ $assignment->progress_percentage }}% complete</span>
-                            <span>{{ str($assignment->project->status)->title() }}</span>
+                            <span>{{ str($assignment->project?->status ?? $assignment->status)->title() }}</span>
                         </div>
 
                         <div class="my-5 h-px bg-border"></div>

@@ -80,21 +80,35 @@
                             </div>
 
                             <div>
-                                <label class="admin-label">Hero Background Path</label>
+                                <label class="admin-label">Hero Background Link or Path</label>
                                 <input name="hero_media_path" value="{{ old('hero_media_path', $homepage['hero_media_path'] ?? '') }}" class="input-shell" placeholder="images/project-1.jpg or storage/cms/homepage/hero.mp4">
-                                <p class="mt-2 text-xs text-muted-foreground">Use this if you want to point the hero to an existing image or video path. Uploading a new file below overrides it.</p>
+                                <p class="mt-2 text-xs text-muted-foreground">Paste a CDN/direct image or video URL, or use a local path. Uploading a new file below overrides this value.</p>
                             </div>
 
                             <div>
                                 <label class="admin-label">Upload New Hero Background</label>
                                 <input type="file" name="hero_media" accept="image/*,video/*" data-preview-target="#homepage-hero-media-preview" class="input-shell">
                                 <p id="homepage-hero-media-preview" class="mt-2 text-xs text-muted-foreground">Accepted: image or video. Recommended: 1920x1080 or better.</p>
+                                <label class="mt-3 flex items-center gap-2 text-xs text-muted-foreground">
+                                    <input type="checkbox" name="remove_hero_media" value="1" class="h-4 w-4 rounded border-border bg-transparent text-primary focus:ring-primary">
+                                    Remove current hero media if no new link or upload is provided
+                                </label>
+                            </div>
+
+                            <div>
+                                <label class="admin-label">Feature Media Link or Path</label>
+                                <input name="feature_image_path" value="{{ old('feature_image_path', $featureImagePath ?? '') }}" class="input-shell" placeholder="https://cdn.example.com/feature.mp4">
+                                <p class="mt-2 text-xs text-muted-foreground">Use this for CDN-hosted homepage feature images or videos.</p>
                             </div>
 
                             <div>
                                 <label class="admin-label">Upload Feature Media</label>
                                 <input type="file" name="feature_image" accept="image/*,video/*" data-preview-target="#homepage-feature-image-preview" class="input-shell">
                                 <p id="homepage-feature-image-preview" class="mt-2 text-xs text-muted-foreground">Accepted: image or video up to 200MB. Recommended visual crop: 4:3 or better.</p>
+                                <label class="mt-3 flex items-center gap-2 text-xs text-muted-foreground">
+                                    <input type="checkbox" name="remove_feature_image" value="1" class="h-4 w-4 rounded border-border bg-transparent text-primary focus:ring-primary">
+                                    Remove current feature media if no new link or upload is provided
+                                </label>
                             </div>
 
                             @if ($featureImagePath)

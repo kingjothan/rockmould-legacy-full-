@@ -24,12 +24,14 @@
             return $item;
         })
         ->all();
-    $portalCopyScale = in_array((string) ($company['portal_copy_scale'] ?? '1'), ['1', '1.08', '1.16', '1.24'], true)
-        ? (string) $company['portal_copy_scale']
-        : '1';
-    $portalHeadingScale = in_array((string) ($company['portal_heading_scale'] ?? '1'), ['1', '1.08', '1.16', '1.24'], true)
-        ? (string) $company['portal_heading_scale']
-        : '1';
+    $formatScale = function ($value) {
+        $number = is_numeric($value) ? (float) $value : 1.0;
+        $number = max(0.7, min(2.5, $number));
+
+        return rtrim(rtrim(number_format($number, 2, '.', ''), '0'), '.');
+    };
+    $portalCopyScale = $formatScale($company['portal_copy_scale'] ?? '1');
+    $portalHeadingScale = $formatScale($company['portal_heading_scale'] ?? '1');
 @endphp
 
 <x-layouts.base :title="$title ?? 'Client Portal | Rockmould Limited'">

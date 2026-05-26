@@ -15,7 +15,7 @@ class ClientController extends Controller
 {
     public function index(Request $request): View
     {
-        $query = User::query()->where('role', 'client')->with('assignments.project');
+        $query = User::query()->where('role', 'client')->with('assignments.project', 'units.project');
 
         if ($request->filled('q')) {
             $search = $request->string('q')->toString();
@@ -38,7 +38,7 @@ class ClientController extends Controller
 
         return view('admin.clients.show', [
             'company' => SiteData::company(),
-            'client' => $user->load(['assignments.project', 'supportTickets', 'documents']),
+            'client' => $user->load(['assignments.project', 'assignments.unit', 'units.project', 'otps' => fn ($query) => $query->latest()->take(10), 'supportTickets', 'documents']),
         ]);
     }
 
@@ -46,7 +46,7 @@ class ClientController extends Controller
     {
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['nullable', 'email', 'max:255', 'unique:users,email'],
+            'email' => ['required', 'email', 'max:255', 'unique:users,email'],
             'phone' => ['required', 'string', 'max:50', 'unique:users,phone'],
             'address' => ['nullable', 'string'],
             'status' => ['required', 'string', 'max:50'],
@@ -64,7 +64,7 @@ class ClientController extends Controller
 
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['nullable', 'email', 'max:255', Rule::unique('users', 'email')->ignore($user->id)],
+            'email' => ['required', 'email', 'max:255', Rule::unique('users', 'email')->ignore($user->id)],
             'phone' => ['required', 'string', 'max:50', Rule::unique('users', 'phone')->ignore($user->id)],
             'address' => ['nullable', 'string'],
             'status' => ['required', 'string', 'max:50'],

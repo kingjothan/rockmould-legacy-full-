@@ -35,4 +35,11 @@ return [
         ],
     ],
 
+    'otp' => [
+        'expiry_minutes' => (int) env('OTP_EXPIRY_MINUTES', 10),
+        'resend_cooldown_seconds' => (int) env('OTP_RESEND_COOLDOWN_SECONDS', 60),
+        'max_attempts' => (int) env('OTP_MAX_ATTEMPTS', 5),
+        'testing_code' => env('OTP_TESTING_CODE', '123456'),
+    ],
+
 ];

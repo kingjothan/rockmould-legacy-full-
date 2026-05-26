@@ -19,7 +19,9 @@
                     <h2 class="font-display text-3xl">{{ $project->title }}</h2>
                     <div class="flex flex-wrap items-center justify-end gap-2">
                         <x-status-badge :value="$project->status" />
+                        <span class="rounded-full border border-border px-3 py-1 text-xs text-muted-foreground">{{ $project->units_count }} units</span>
                         <a href="{{ route('admin.media.index', ['project_id' => $project->id]) }}" class="luxury-btn-outline text-xs">Manage Gallery Media</a>
+                        <a href="{{ route('admin.projects.show', $project) }}" class="luxury-btn-outline text-xs">Manage Units</a>
                     </div>
                 </div>
                 <form action="{{ route('admin.cms.projects.update', $project) }}" method="POST" enctype="multipart/form-data" class="mt-5 grid gap-4 md:grid-cols-2">
@@ -31,10 +33,14 @@
                     <input name="category" value="{{ $project->category }}" class="input-shell">
                     <textarea name="overview" rows="3" class="input-shell md:col-span-2">{{ $project->overview }}</textarea>
                     <textarea name="description" rows="4" class="input-shell md:col-span-2">{{ $project->description }}</textarea>
-                    <input name="cover_image" value="{{ $project->cover_image }}" class="input-shell">
+                    <input name="cover_image" value="{{ $project->cover_image }}" class="input-shell" placeholder="CDN cover image/video URL or local path">
                     <div class="md:col-span-2">
                         <input type="file" name="cover_image_upload" accept="image/*,video/*" data-preview-target="#project-cover-preview-{{ $project->id }}" class="input-shell">
                         <p id="project-cover-preview-{{ $project->id }}" class="mt-2 text-xs text-muted-foreground">{{ $project->cover_image ?: 'No new file selected' }}</p>
+                        <label class="mt-3 flex items-center gap-2 text-xs text-muted-foreground">
+                            <input type="checkbox" name="remove_cover_image" value="1" class="h-4 w-4 rounded border-border bg-transparent text-primary focus:ring-primary">
+                            Remove current project cover if no new link or upload is provided
+                        </label>
                     </div>
                     <input name="status" value="{{ $project->status }}" class="input-shell">
                     <div>

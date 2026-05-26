@@ -90,7 +90,9 @@ Route::prefix('consultation')->name('consultations.')->controller(ConsultationCo
 Route::prefix('portal')->name('portal.')->group(function () {
     Route::middleware('guest')->group(function () {
         Route::get('/', [PortalAuthController::class, 'showLogin'])->name('login');
-        Route::post('/login', [PortalAuthController::class, 'login'])->name('authenticate');
+        Route::post('/login', [PortalAuthController::class, 'login'])->middleware('throttle:portal-otp-request')->name('authenticate');
+        Route::post('/otp', [PortalAuthController::class, 'verifyOtp'])->middleware('throttle:portal-otp-verify')->name('otp.verify');
+        Route::post('/otp/resend', [PortalAuthController::class, 'resendOtp'])->middleware('throttle:portal-otp-request')->name('otp.resend');
         Route::post('/kyc', [PortalAuthController::class, 'kyc'])->name('kyc.store');
     });
 
@@ -145,6 +147,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/projects/{project}', [AdminProjectController::class, 'show'])->name('projects.show');
         Route::match(['PUT', 'POST'], '/projects/{project}', [AdminProjectController::class, 'update'])->name('projects.update');
         Route::post('/projects/{project}/assignments', [AdminProjectController::class, 'storeAssignment'])->name('projects.assignments.store');
+        Route::put('/projects/{project}/assignments/{assignment}', [AdminProjectController::class, 'updateAssignment'])->name('projects.assignments.update');
 
         Route::get('/payments', [AdminPaymentController::class, 'index'])->name('payments.index');
         Route::post('/payments', [AdminPaymentController::class, 'store'])->name('payments.store');

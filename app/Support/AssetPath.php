@@ -15,11 +15,11 @@ class AssetPath
             return null;
         }
 
-        $normalized = ltrim($resolved, '/');
-
-        if (Str::startsWith($normalized, ['http://', 'https://', '//', 'data:'])) {
+        if (Str::startsWith($resolved, ['http://', 'https://', '//', 'data:'])) {
             return $resolved;
         }
+
+        $normalized = ltrim($resolved, '/');
 
         if (Str::startsWith($normalized, ['images/'])) {
             return asset($normalized);
@@ -38,11 +38,11 @@ class AssetPath
             return null;
         }
 
-        $normalized = ltrim($path, '/');
-
-        if (Str::startsWith($normalized, ['http://', 'https://', '//', 'data:'])) {
+        if (Str::startsWith($path, ['http://', 'https://', '//', 'data:'])) {
             return null;
         }
+
+        $normalized = ltrim($path, '/');
 
         if (Str::startsWith($normalized, ['images/', 'storage/'])) {
             return public_path($normalized);

@@ -50,7 +50,7 @@ class MediaController extends Controller
             'company' => SiteData::company(),
             'media' => $query->get(),
             'projects' => Project::query()->orderBy('title')->get(),
-            'assignments' => ProjectAssignment::query()->with('project', 'user')->latest()->get(),
+            'assignments' => ProjectAssignment::query()->with('project', 'user', 'unit')->latest()->get(),
             'gallerySections' => MediaAsset::gallerySectionOptions(),
             'supportsGallerySections' => $supportsGallerySections,
             'uploadLimits' => $this->uploadLimits(),
@@ -64,8 +64,21 @@ class MediaController extends Controller
         $projectId = $assignment?->project_id ?? ($data['project_id'] ?? null);
         $assetFile = $request->file('asset');
         $thumbnailFile = $request->file('thumbnail');
-        $path = $assetFile ? PublicStorage::store($assetFile, $this->directoryForType($data['media_type'])) : null;
-        $thumbnailPath = $thumbnailFile ? PublicStorage::store($thumbnailFile, 'media/thumbnails') : ($data['media_type'] === 'image' ? $path : null);
+        $path = trim((string) ($data['asset_url'] ?? ''));
+
+        if ($assetFile) {
+            $path = PublicStorage::store($assetFile, $this->directoryForType($data['media_type']));
+        }
+
+        $thumbnailPath = trim((string) ($data['thumbnail_url'] ?? '')) ?: null;
+
+        if ($thumbnailFile) {
+            $thumbnailPath = PublicStorage::store($thumbnailFile, 'media/thumbnails');
+        }
+
+        if (! $thumbnailPath && $data['media_type'] === 'image') {
+            $thumbnailPath = $path;
+        }
 
         $payload = [
             'project_id' => $projectId,
@@ -102,6 +115,8 @@ class MediaController extends Controller
         $currentThumbnailPath = $mediaAsset->thumbnail_path;
         $filePath = $currentFilePath;
         $thumbnailPath = $currentThumbnailPath;
+        $assetUrl = trim((string) ($data['asset_url'] ?? ''));
+        $thumbnailUrl = trim((string) ($data['thumbnail_url'] ?? ''));
 
         if ($request->hasFile('asset')) {
             $filePath = PublicStorage::store($request->file('asset'), $this->directoryForType($data['media_type']));
@@ -117,6 +132,30 @@ class MediaController extends Controller
             if (($currentThumbnailPath === $currentFilePath || blank($currentThumbnailPath)) && $data['media_type'] === 'video') {
                 $thumbnailPath = null;
             }
+        } elseif ($assetUrl !== '' && $assetUrl !== $currentFilePath) {
+            if ($currentFilePath) {
+                $this->deleteStoredAsset($currentFilePath);
+            }
+
+            $filePath = $assetUrl;
+
+            if (($currentThumbnailPath === $currentFilePath || blank($currentThumbnailPath)) && $data['media_type'] === 'image') {
+                $thumbnailPath = $filePath;
+            }
+
+            if (($currentThumbnailPath === $currentFilePath || blank($currentThumbnailPath)) && $data['media_type'] === 'video') {
+                $thumbnailPath = null;
+            }
+        } elseif ($request->boolean('remove_asset')) {
+            if ($currentFilePath) {
+                $this->deleteStoredAsset($currentFilePath);
+            }
+
+            $filePath = null;
+
+            if ($currentThumbnailPath === $currentFilePath) {
+                $thumbnailPath = null;
+            }
         }
 
         if ($request->hasFile('thumbnail')) {
@@ -125,6 +164,26 @@ class MediaController extends Controller
             }
 
             $thumbnailPath = PublicStorage::store($request->file('thumbnail'), 'media/thumbnails');
+        } elseif ($thumbnailUrl !== '' && $thumbnailUrl !== $currentThumbnailPath) {
+            if ($currentThumbnailPath && $currentThumbnailPath !== $currentFilePath) {
+                $this->deleteStoredAsset($currentThumbnailPath);
+            }
+
+            $thumbnailPath = $thumbnailUrl;
+        } elseif ($request->boolean('remove_thumbnail')) {
+            if ($currentThumbnailPath && $currentThumbnailPath !== $currentFilePath) {
+                $this->deleteStoredAsset($currentThumbnailPath);
+            }
+
+            $thumbnailPath = $data['media_type'] === 'image' ? $filePath : null;
+        }
+
+        if ($data['media_type'] === 'image' && blank($thumbnailPath) && $filePath) {
+            $thumbnailPath = $filePath;
+        }
+
+        if ($data['media_type'] === 'video' && $thumbnailPath === $filePath) {
+            $thumbnailPath = null;
         }
 
         $payload = [
@@ -181,7 +240,9 @@ class MediaController extends Controller
             'media_type' => ['required', Rule::in(['image', 'video'])],
             'notes' => ['nullable', 'string'],
             'sort_order' => ['nullable', 'integer', 'min:0'],
-            'asset' => [$requireAsset ? 'required' : 'nullable', 'file', 'max:204800'],
+            'asset_url' => ['nullable', 'string', 'max:2048'],
+            'thumbnail_url' => ['nullable', 'string', 'max:2048'],
+            'asset' => ['nullable', 'file', 'max:204800'],
             'thumbnail' => ['nullable', 'image', 'max:204800'],
         ];
 
@@ -195,6 +256,12 @@ class MediaController extends Controller
             'asset.max' => 'The media file must not be larger than 200MB. Compress it or upload a smaller file.',
             'thumbnail.max' => 'The thumbnail must not be larger than 200MB.',
         ]);
+
+        if ($requireAsset && ! $request->hasFile('asset') && blank($data['asset_url'] ?? null)) {
+            throw ValidationException::withMessages([
+                'asset' => 'Upload a media file or paste a CDN/direct media link before saving.',
+            ]);
+        }
 
         if (blank($data['project_id'] ?? null) && blank($data['project_assignment_id'] ?? null)) {
             throw ValidationException::withMessages([
@@ -260,6 +327,15 @@ class MediaController extends Controller
     private function deleteStoredAsset(?string $path): void
     {
         if (! $path) {
+            return;
+        }
+
+        if (
+            str_starts_with($path, 'http://')
+            || str_starts_with($path, 'https://')
+            || str_starts_with($path, '//')
+            || str_starts_with($path, 'data:')
+        ) {
             return;
         }
 

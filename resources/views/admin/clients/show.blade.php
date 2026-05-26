@@ -59,7 +59,7 @@
                             </div>
                             <div>
                                 <label class="admin-label">Email Address</label>
-                                <input type="email" name="email" value="{{ old('email', $client->email) }}" class="input-shell">
+                                <input type="email" name="email" value="{{ old('email', $client->email) }}" required class="input-shell">
                             </div>
                             <div>
                                 <label class="admin-label">Phone Number</label>
@@ -105,6 +105,30 @@
                         @endforelse
                     </div>
                 </div>
+
+                <div class="luxury-card-flat overflow-hidden p-0">
+                    <div class="flex items-center justify-between border-b border-border px-6 py-4">
+                        <h2 class="font-display text-lg font-semibold">OTP Logs</h2>
+                        <span class="text-xs text-muted-foreground">{{ $client->otps->count() }} recent</span>
+                    </div>
+                    <div class="divide-y divide-border/60">
+                        @forelse ($client->otps as $otp)
+                            <div class="px-6 py-4 text-sm">
+                                <div class="flex items-center justify-between gap-3">
+                                    <p class="font-medium">{{ $otp->phone }}</p>
+                                    <x-status-badge :value="$otp->delivery_status" />
+                                </div>
+                                <p class="mt-1 text-xs text-muted-foreground">
+                                    Sent {{ optional($otp->sent_at)->diffForHumans() ?? 'not sent' }}
+                                    &middot; expires {{ optional($otp->expires_at)->format('M j, Y g:i A') }}
+                                    &middot; attempts {{ $otp->attempts }}
+                                </p>
+                            </div>
+                        @empty
+                            <div class="px-6 py-8 text-sm text-muted-foreground">No OTP activity for this client yet.</div>
+                        @endforelse
+                    </div>
+                </div>
             </div>
 
             <div class="luxury-card-flat overflow-hidden p-0">
@@ -117,8 +141,8 @@
                         <div class="p-6">
                             <div class="flex items-start justify-between gap-4">
                                 <div>
-                                    <p class="font-medium">{{ $assignment->project->title }}</p>
-                                    <p class="mt-0.5 text-sm text-muted-foreground">{{ $assignment->unit_label }}</p>
+                                    <p class="font-medium">{{ $assignment->project?->title ?? 'Unassigned project' }}</p>
+                                    <p class="mt-0.5 text-sm text-muted-foreground">{{ $assignment->unit?->label ?? $assignment->unit_label }}</p>
                                 </div>
                                 <x-status-badge :value="$assignment->status" />
                             </div>

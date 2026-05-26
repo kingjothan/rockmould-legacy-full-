@@ -2,9 +2,9 @@
 
 namespace Tests\Feature;
 
+use App\Models\CareerOpening;
 use App\Models\MediaAsset;
 use App\Models\Post;
-use App\Models\CareerOpening;
 use App\Models\Project;
 use App\Models\Service;
 use App\Models\Setting;
@@ -182,6 +182,23 @@ class CmsContentManagementTest extends TestCase
 
         $this->assertSame('Amara Okonkwo-Ibe', $member->name);
         $this->assertSame(2, $member->sort_order);
+
+        $this->actingAs($admin)
+            ->put(route('admin.cms.about.team.update', $member), [
+                'name' => 'Amara Okonkwo-Ibe',
+                'role' => 'Director of Client Experience',
+                'bio' => 'Updated leadership profile for the About page.',
+                'image_path' => $member->image_path,
+                'remove_image_path' => '1',
+                'sort_order' => 2,
+                'is_visible' => '1',
+            ])
+            ->assertRedirect()
+            ->assertSessionHasNoErrors();
+
+        $member->refresh();
+
+        $this->assertNull($member->image_path);
 
         $this->actingAs($admin)
             ->post(route('admin.cms.about.timeline.store'), [

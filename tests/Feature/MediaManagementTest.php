@@ -150,6 +150,62 @@ class MediaManagementTest extends TestCase
         $this->assertFalse(Storage::disk('public')->exists($updatedThumbnailPath));
     }
 
+    public function test_admin_can_create_and_replace_media_assets_with_cdn_links(): void
+    {
+        $admin = User::query()->where('email', 'admin@rockmould.com')->firstOrFail();
+        $assignment = ProjectAssignment::query()->with('project')->firstOrFail();
+
+        $this->actingAs($admin)
+            ->post(route('admin.media.store'), [
+                'project_id' => $assignment->project_id,
+                'project_assignment_id' => '',
+                'title' => 'CDN Exterior Flythrough',
+                'media_type' => 'video',
+                'gallery_section' => 'exterior',
+                'notes' => 'Hosted on a CDN for faster loading.',
+                'sort_order' => 3,
+                'visible_to_client' => '1',
+                'is_featured' => '1',
+                'asset_url' => 'https://cdn.rockmould.test/projects/exterior-flythrough.mp4',
+                'thumbnail_url' => 'https://cdn.rockmould.test/projects/exterior-flythrough.jpg',
+            ])
+            ->assertRedirect()
+            ->assertSessionHasNoErrors();
+
+        $asset = MediaAsset::query()->where('title', 'CDN Exterior Flythrough')->firstOrFail();
+
+        $this->assertSame('https://cdn.rockmould.test/projects/exterior-flythrough.mp4', $asset->file_path);
+        $this->assertSame('https://cdn.rockmould.test/projects/exterior-flythrough.jpg', $asset->thumbnail_path);
+        $this->assertSame('video', $asset->media_type);
+        $this->assertTrue($asset->visible_to_client);
+
+        $this->actingAs($admin)
+            ->put(route('admin.media.update', $asset), [
+                'project_id' => $assignment->project_id,
+                'project_assignment_id' => '',
+                'title' => 'CDN Interior Gallery Still',
+                'media_type' => 'image',
+                'gallery_section' => 'interior',
+                'notes' => 'Switched from video to image CDN asset.',
+                'sort_order' => 4,
+                'visible_to_client' => '1',
+                'is_featured' => '0',
+                'asset_url' => 'https://cdn.rockmould.test/projects/interior-gallery.jpg',
+                'thumbnail_url' => '',
+                'remove_thumbnail' => '1',
+            ])
+            ->assertRedirect()
+            ->assertSessionHasNoErrors();
+
+        $asset->refresh();
+
+        $this->assertSame('CDN Interior Gallery Still', $asset->title);
+        $this->assertSame('image', $asset->media_type);
+        $this->assertSame('interior', $asset->gallery_section);
+        $this->assertSame('https://cdn.rockmould.test/projects/interior-gallery.jpg', $asset->file_path);
+        $this->assertSame('https://cdn.rockmould.test/projects/interior-gallery.jpg', $asset->thumbnail_path);
+    }
+
     public function test_public_gallery_hides_media_from_unpublished_projects(): void
     {
         $admin = User::query()->where('email', 'admin@rockmould.com')->firstOrFail();

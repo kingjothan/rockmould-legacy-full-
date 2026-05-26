@@ -95,7 +95,7 @@
                     </div>
                     <div>
                         <label class="mb-2 block text-xs uppercase tracking-[0.18em] text-muted-foreground">Email Address</label>
-                        <input type="email" name="email" placeholder="Email address" class="input-shell">
+                        <input type="email" name="email" required placeholder="Email address" class="input-shell">
                     </div>
                     <div>
                         <label class="mb-2 block text-xs uppercase tracking-[0.18em] text-muted-foreground">Phone Number</label>

@@ -25,6 +25,11 @@ class KycRequest extends Model
         return $this->belongsTo(User::class, 'reviewed_by');
     }
 
+    public function project(): BelongsTo
+    {
+        return $this->belongsTo(Project::class);
+    }
+
     public function getIdentificationUrlAttribute(): ?string
     {
         return AssetPath::url($this->identification_path);

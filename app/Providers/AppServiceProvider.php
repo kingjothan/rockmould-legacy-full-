@@ -29,5 +29,16 @@ class AppServiceProvider extends ServiceProvider
         RateLimiter::for('consultation-availability', function (Request $request) {
             return Limit::perMinute(30)->by($request->ip());
         });
+
+        RateLimiter::for('portal-otp-request', function (Request $request) {
+            return [
+                Limit::perMinute(3)->by($request->ip()),
+                Limit::perHour(10)->by($request->ip()),
+            ];
+        });
+
+        RateLimiter::for('portal-otp-verify', function (Request $request) {
+            return Limit::perMinute(6)->by($request->session()->get('portal_otp_user_id', $request->ip()));
+        });
     }
 }

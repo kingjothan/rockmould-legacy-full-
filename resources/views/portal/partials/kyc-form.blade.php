@@ -3,22 +3,22 @@
 
     <div>
         <label class="mb-1 block text-xs uppercase tracking-wider text-muted-foreground">Full Name</label>
-        <input name="full_name" required placeholder="John Doe" class="input-shell">
+        <input name="full_name" value="{{ old('full_name') }}" required placeholder="John Doe" class="input-shell">
     </div>
 
     <div>
         <label class="mb-1 block text-xs uppercase tracking-wider text-muted-foreground">Phone Number</label>
-        <input name="phone" required placeholder="+234..." class="input-shell">
+        <input name="phone" value="{{ old('phone') }}" required placeholder="+234..." class="input-shell">
     </div>
 
     <div>
         <label class="mb-1 block text-xs uppercase tracking-wider text-muted-foreground">Email</label>
-        <input type="email" name="email" placeholder="john@example.com" class="input-shell">
+        <input type="email" name="email" value="{{ old('email') }}" required placeholder="john@example.com" class="input-shell">
     </div>
 
     <div>
         <label class="mb-1 block text-xs uppercase tracking-wider text-muted-foreground">Address</label>
-        <textarea name="residential_address" rows="3" required placeholder="Your residential address" class="input-shell"></textarea>
+        <textarea name="residential_address" rows="3" required placeholder="Your residential address" class="input-shell">{{ old('residential_address') }}</textarea>
     </div>
 
     <div>
@@ -32,12 +32,24 @@
 
     <div>
         <label class="mb-1 block text-xs uppercase tracking-wider text-muted-foreground">Project of Interest</label>
-        <input name="project_of_interest" placeholder="e.g. Azure Towers" class="input-shell">
+        <select name="project_id" class="input-shell" @disabled(($projectOptions ?? collect())->isEmpty())>
+            <option value="">
+                {{ ($projectOptions ?? collect())->isEmpty() ? 'No published projects available yet' : 'Select a project' }}
+            </option>
+            @foreach (($projectOptions ?? collect()) as $projectOption)
+                <option value="{{ $projectOption->id }}" @selected((string) old('project_id') === (string) $projectOption->id)>
+                    {{ $projectOption->title }}{{ $projectOption->location ? ' — '.$projectOption->location : '' }}
+                </option>
+            @endforeach
+        </select>
+        <p class="mt-2 text-xs text-muted-foreground">
+            Projects are pulled from the Admin/CMS project list.
+        </p>
     </div>
 
     <div>
         <label class="mb-1 block text-xs uppercase tracking-wider text-muted-foreground">Additional Note</label>
-        <textarea name="note" rows="4" placeholder="Additional note" class="input-shell"></textarea>
+        <textarea name="note" rows="4" placeholder="Additional note" class="input-shell">{{ old('note') }}</textarea>
     </div>
 
     <button class="luxury-btn-primary mt-2 w-full justify-center">

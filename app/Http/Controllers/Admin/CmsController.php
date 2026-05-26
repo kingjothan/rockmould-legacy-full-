@@ -33,7 +33,8 @@ class CmsController extends Controller
             'hero_label' => ['required', 'string', 'max:255'],
             'hero_title' => ['required', 'string', 'max:255'],
             'hero_description' => ['required', 'string'],
-            'hero_media_path' => ['nullable', 'string', 'max:255'],
+            'hero_media_path' => ['nullable', 'string', 'max:2048'],
+            'feature_image_path' => ['nullable', 'string', 'max:2048'],
             'hero_primary_cta' => ['required', 'string', 'max:255'],
             'hero_secondary_cta' => ['required', 'string', 'max:255'],
             'hero_portal_cta' => ['required', 'string', 'max:255'],
@@ -123,13 +124,22 @@ class CmsController extends Controller
             'process' => $this->processSteps($data['process_text'] ?? ''),
         ]);
 
-        $updated['hero_media_path'] = $this->syncUploadedAsset(
+        $updated['hero_media_path'] = $this->syncMediaInput(
             $request,
+            'hero_media_path',
             'hero_media',
             'cms/homepage',
-            ($data['hero_media_path'] ?? null) ?: ($current['hero_media_path'] ?? null)
+            $current['hero_media_path'] ?? null,
+            'remove_hero_media'
         );
-        $updated['feature_image'] = $this->syncUploadedAsset($request, 'feature_image', 'cms/homepage', $current['feature_image'] ?? null);
+        $updated['feature_image'] = $this->syncMediaInput(
+            $request,
+            'feature_image_path',
+            'feature_image',
+            'cms/homepage',
+            $current['feature_image'] ?? null,
+            'remove_feature_image'
+        );
 
         $this->saveSetting('homepage', $updated);
         Activity::log('cms.homepage.updated', 'Homepage content updated.', $request->user());
@@ -158,7 +168,7 @@ class CmsController extends Controller
             'services_hero_subtitle' => ['required', 'string', 'max:255'],
             'services_hero_title' => ['required', 'string', 'max:255'],
             'services_hero_description' => ['required', 'string'],
-            'services_hero_media_path' => ['nullable', 'string', 'max:255'],
+            'services_hero_media_path' => ['nullable', 'string', 'max:2048'],
             'services_hero_media_upload' => ['nullable', 'file', 'max:204800'],
             'services_cta_title' => ['required', 'string', 'max:255'],
             'services_cta_description' => ['required', 'string'],
@@ -167,7 +177,7 @@ class CmsController extends Controller
             'projects_hero_subtitle' => ['required', 'string', 'max:255'],
             'projects_hero_title' => ['required', 'string', 'max:255'],
             'projects_hero_description' => ['required', 'string'],
-            'projects_hero_media_path' => ['nullable', 'string', 'max:255'],
+            'projects_hero_media_path' => ['nullable', 'string', 'max:2048'],
             'projects_hero_media_upload' => ['nullable', 'file', 'max:204800'],
             'projects_empty_title' => ['required', 'string', 'max:255'],
             'projects_empty_description' => ['required', 'string'],
@@ -176,7 +186,7 @@ class CmsController extends Controller
             'blog_hero_subtitle' => ['required', 'string', 'max:255'],
             'blog_hero_title' => ['required', 'string', 'max:255'],
             'blog_hero_description' => ['required', 'string'],
-            'blog_hero_media_path' => ['nullable', 'string', 'max:255'],
+            'blog_hero_media_path' => ['nullable', 'string', 'max:2048'],
             'blog_hero_media_upload' => ['nullable', 'file', 'max:204800'],
             'blog_featured_label' => ['required', 'string', 'max:255'],
             'blog_empty_title' => ['required', 'string', 'max:255'],
@@ -188,7 +198,7 @@ class CmsController extends Controller
             'faq_hero_subtitle' => ['required', 'string', 'max:255'],
             'faq_hero_title' => ['required', 'string', 'max:255'],
             'faq_hero_description' => ['required', 'string'],
-            'faq_hero_media_path' => ['nullable', 'string', 'max:255'],
+            'faq_hero_media_path' => ['nullable', 'string', 'max:2048'],
             'faq_hero_media_upload' => ['nullable', 'file', 'max:204800'],
             'faq_empty_title' => ['required', 'string', 'max:255'],
             'faq_empty_description' => ['required', 'string'],
@@ -196,7 +206,7 @@ class CmsController extends Controller
             'careers_hero_subtitle' => ['required', 'string', 'max:255'],
             'careers_hero_title' => ['required', 'string', 'max:255'],
             'careers_hero_description' => ['required', 'string'],
-            'careers_hero_media_path' => ['nullable', 'string', 'max:255'],
+            'careers_hero_media_path' => ['nullable', 'string', 'max:2048'],
             'careers_hero_media_upload' => ['nullable', 'file', 'max:204800'],
             'careers_benefits_text' => ['nullable', 'string'],
             'careers_openings_title' => ['required', 'string', 'max:255'],
@@ -211,7 +221,7 @@ class CmsController extends Controller
             'contact_hero_subtitle' => ['required', 'string', 'max:255'],
             'contact_hero_title' => ['required', 'string', 'max:255'],
             'contact_hero_description' => ['required', 'string'],
-            'contact_hero_media_path' => ['nullable', 'string', 'max:255'],
+            'contact_hero_media_path' => ['nullable', 'string', 'max:2048'],
             'contact_hero_media_upload' => ['nullable', 'file', 'max:204800'],
             'contact_info_title' => ['required', 'string', 'max:255'],
             'contact_quick_access_title' => ['required', 'string', 'max:255'],
@@ -220,7 +230,7 @@ class CmsController extends Controller
             'partnerships_hero_subtitle' => ['required', 'string', 'max:255'],
             'partnerships_hero_title' => ['required', 'string', 'max:255'],
             'partnerships_hero_description' => ['required', 'string'],
-            'partnerships_hero_media_path' => ['nullable', 'string', 'max:255'],
+            'partnerships_hero_media_path' => ['nullable', 'string', 'max:2048'],
             'partnerships_hero_media_upload' => ['nullable', 'file', 'max:204800'],
             'partnerships_reasons_title' => ['required', 'string', 'max:255'],
             'partnerships_reasons_text' => ['nullable', 'string'],
@@ -233,13 +243,13 @@ class CmsController extends Controller
             'testimonials_hero_subtitle' => ['required', 'string', 'max:255'],
             'testimonials_hero_title' => ['required', 'string', 'max:255'],
             'testimonials_hero_description' => ['required', 'string'],
-            'testimonials_hero_media_path' => ['nullable', 'string', 'max:255'],
+            'testimonials_hero_media_path' => ['nullable', 'string', 'max:2048'],
             'testimonials_hero_media_upload' => ['nullable', 'file', 'max:204800'],
 
             'gallery_hero_subtitle' => ['required', 'string', 'max:255'],
             'gallery_hero_title' => ['required', 'string', 'max:255'],
             'gallery_hero_description' => ['required', 'string'],
-            'gallery_hero_media_path' => ['nullable', 'string', 'max:255'],
+            'gallery_hero_media_path' => ['nullable', 'string', 'max:2048'],
             'gallery_hero_media_upload' => ['nullable', 'file', 'max:204800'],
             'gallery_empty_title' => ['required', 'string', 'max:255'],
             'gallery_empty_description' => ['required', 'string'],
@@ -340,11 +350,13 @@ class CmsController extends Controller
         ]);
 
         foreach (['services', 'projects', 'blog', 'faq', 'careers', 'contact', 'partnerships', 'testimonials', 'gallery'] as $pageKey) {
-            $updated[$pageKey]['hero_media_path'] = $this->syncUploadedAsset(
+            $updated[$pageKey]['hero_media_path'] = $this->syncMediaInput(
                 $request,
+                $pageKey.'_hero_media_path',
                 $pageKey.'_hero_media_upload',
                 'cms/pages/'.$pageKey,
-                ($data[$pageKey.'_hero_media_path'] ?? null) ?: data_get($current, $pageKey.'.hero_media_path')
+                data_get($current, $pageKey.'.hero_media_path'),
+                'remove_'.$pageKey.'_hero_media'
             );
         }
 
@@ -379,6 +391,8 @@ class CmsController extends Controller
             'cta_secondary' => ['required', 'string', 'max:255'],
             'values_text' => ['nullable', 'string'],
             'metrics_text' => ['nullable', 'string'],
+            'hero_media_path' => ['nullable', 'string', 'max:2048'],
+            'story_image_path' => ['nullable', 'string', 'max:2048'],
             'hero_media' => ['nullable', 'file', 'max:204800'],
             'story_image' => ['nullable', 'file', 'max:204800', 'mimes:jpg,jpeg,png,webp,gif,mp4,webm,mov,ogg'],
         ]);
@@ -406,8 +420,22 @@ class CmsController extends Controller
         $current['cta_description'] = $data['cta_description'];
         $current['cta_primary'] = $data['cta_primary'];
         $current['cta_secondary'] = $data['cta_secondary'];
-        $current['hero_media_path'] = $this->syncUploadedAsset($request, 'hero_media', 'cms/about', $current['hero_media_path'] ?? null);
-        $current['story_image'] = $this->syncUploadedAsset($request, 'story_image', 'cms/about', $current['story_image'] ?? null);
+        $current['hero_media_path'] = $this->syncMediaInput(
+            $request,
+            'hero_media_path',
+            'hero_media',
+            'cms/about',
+            $current['hero_media_path'] ?? null,
+            'remove_hero_media'
+        );
+        $current['story_image'] = $this->syncMediaInput(
+            $request,
+            'story_image_path',
+            'story_image',
+            'cms/about',
+            $current['story_image'] ?? null,
+            'remove_story_image'
+        );
 
         $this->saveSetting('about', $current);
         Activity::log('cms.about.updated', 'About page content updated.', $request->user());
@@ -487,7 +515,10 @@ class CmsController extends Controller
 
     public function projectListings(): View
     {
-        return view('admin.cms.projects', ['company' => SiteData::company(), 'projects' => Project::query()->latest()->get()]);
+        return view('admin.cms.projects', [
+            'company' => SiteData::company(),
+            'projects' => Project::query()->withCount(['assignments', 'units'])->latest()->get(),
+        ]);
     }
 
     public function portfolio(): View
@@ -509,7 +540,7 @@ class CmsController extends Controller
             'status' => ['required', 'string', 'max:50'],
             'overview' => ['required', 'string'],
             'description' => ['nullable', 'string'],
-            'cover_image' => ['nullable', 'string', 'max:255'],
+            'cover_image' => ['nullable', 'string', 'max:2048'],
             'cover_image_upload' => ['nullable', 'file', 'max:204800', 'mimes:jpg,jpeg,png,webp,gif,mp4,webm,mov,ogg'],
             'completion_date' => ['nullable', 'date'],
         ]);
@@ -521,7 +552,7 @@ class CmsController extends Controller
             'category' => $data['category'],
             'overview' => $data['overview'],
             'description' => $data['description'] ?? null,
-            'cover_image' => $this->syncUploadedAsset($request, 'cover_image_upload', 'cms/projects', ($data['cover_image'] ?? null) ?: $project->cover_image),
+            'cover_image' => $this->syncMediaInput($request, 'cover_image', 'cover_image_upload', 'cms/projects', $project->cover_image, 'remove_cover_image'),
             'status' => strtolower($data['status']),
             'completion_date' => $data['completion_date'] ?? null,
             'is_featured' => $request->boolean('is_featured'),
@@ -641,7 +672,7 @@ class CmsController extends Controller
     public function updatePortal(Request $request): RedirectResponse
     {
         $data = $request->validate([
-            'login_media_path' => ['nullable', 'string', 'max:255'],
+            'login_media_path' => ['nullable', 'string', 'max:2048'],
             'login_media_upload' => ['nullable', 'file', 'max:204800'],
             'login_marketing_title' => ['required', 'string', 'max:255'],
             'login_marketing_highlight' => ['nullable', 'string', 'max:255'],
@@ -855,11 +886,13 @@ class CmsController extends Controller
             ],
         ]);
 
-        $updated['login']['media_path'] = $this->syncUploadedAsset(
+        $updated['login']['media_path'] = $this->syncMediaInput(
             $request,
+            'login_media_path',
             'login_media_upload',
             'cms/portal',
-            ($data['login_media_path'] ?? null) ?: data_get($current, 'login.media_path')
+            data_get($current, 'login.media_path'),
+            'remove_login_media'
         );
 
         $this->saveSetting('portal_content', $updated);
@@ -903,7 +936,7 @@ class CmsController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'role' => ['required', 'string', 'max:255'],
             'bio' => ['nullable', 'string'],
-            'image_path' => ['nullable', 'string', 'max:255'],
+            'image_path' => ['nullable', 'string', 'max:2048'],
             'image_upload' => ['nullable', 'file', 'max:204800', 'mimes:jpg,jpeg,png,webp,gif,mp4,webm,mov,ogg'],
             'sort_order' => ['nullable', 'integer', 'min:0'],
         ]);
@@ -912,7 +945,7 @@ class CmsController extends Controller
             'name' => $data['name'],
             'role' => $data['role'],
             'bio' => $data['bio'] ?? null,
-            'image_path' => $this->syncUploadedAsset($request, 'image_upload', 'cms/about/team', ($data['image_path'] ?? null) ?: $teamMember?->image_path),
+            'image_path' => $this->syncMediaInput($request, 'image_path', 'image_upload', 'cms/about/team', $teamMember?->image_path, 'remove_image_path'),
             'sort_order' => $data['sort_order'] ?? ($teamMember?->sort_order ?? 0),
             'is_visible' => $request->boolean('is_visible', true),
         ];
@@ -944,7 +977,7 @@ class CmsController extends Controller
             'tagline' => ['nullable', 'string', 'max:255'],
             'summary' => ['required', 'string'],
             'description' => ['nullable', 'string'],
-            'image_path' => ['nullable', 'string', 'max:255'],
+            'image_path' => ['nullable', 'string', 'max:2048'],
             'image_upload' => ['nullable', 'file', 'max:204800', 'mimes:jpg,jpeg,png,webp,gif,mp4,webm,mov,ogg'],
             'benefits_text' => ['nullable', 'string'],
             'process_steps_text' => ['nullable', 'string'],
@@ -958,7 +991,7 @@ class CmsController extends Controller
             'tagline' => $data['tagline'] ?? null,
             'summary' => $data['summary'],
             'description' => $data['description'] ?? null,
-            'image_path' => $this->syncUploadedAsset($request, 'image_upload', 'cms/services', ($data['image_path'] ?? null) ?: $service?->image_path),
+            'image_path' => $this->syncMediaInput($request, 'image_path', 'image_upload', 'cms/services', $service?->image_path, 'remove_image_path'),
             'benefits' => $this->lines($data['benefits_text'] ?? ''),
             'process_steps' => $this->lines($data['process_steps_text'] ?? ''),
             'related_projects' => $this->lines($data['related_projects_text'] ?? ''),
@@ -979,7 +1012,7 @@ class CmsController extends Controller
             'excerpt' => ['required', 'string'],
             'intro' => ['nullable', 'string'],
             'quote' => ['nullable', 'string'],
-            'cover_image' => ['nullable', 'string', 'max:255'],
+            'cover_image' => ['nullable', 'string', 'max:2048'],
             'cover_image_upload' => ['nullable', 'file', 'max:204800', 'mimes:jpg,jpeg,png,webp,gif,mp4,webm,mov,ogg'],
             'content_json' => ['nullable', 'json'],
             'published_at' => ['nullable', 'date'],
@@ -994,7 +1027,7 @@ class CmsController extends Controller
             'excerpt' => $data['excerpt'],
             'intro' => $data['intro'] ?? null,
             'quote' => $data['quote'] ?? null,
-            'cover_image' => $this->syncUploadedAsset($request, 'cover_image_upload', 'cms/blog', ($data['cover_image'] ?? null) ?: $post?->cover_image),
+            'cover_image' => $this->syncMediaInput($request, 'cover_image', 'cover_image_upload', 'cms/blog', $post?->cover_image, 'remove_cover_image'),
             'content' => ($data['content_json'] ?? null) ? json_decode($data['content_json'], true) : ($post?->content ?? []),
             'featured' => $request->boolean('featured'),
             'is_published' => $request->boolean('is_published', true),
@@ -1011,7 +1044,7 @@ class CmsController extends Controller
             'quote' => ['required', 'string'],
             'rating' => ['nullable', 'integer', 'min:1', 'max:5'],
             'sort_order' => ['nullable', 'integer', 'min:0'],
-            'image_path' => ['nullable', 'string', 'max:255'],
+            'image_path' => ['nullable', 'string', 'max:2048'],
             'image_upload' => ['nullable', 'file', 'max:204800', 'mimes:jpg,jpeg,png,webp,gif,mp4,webm,mov,ogg'],
         ]);
 
@@ -1020,7 +1053,7 @@ class CmsController extends Controller
             'client_name' => $data['client_name'],
             'role' => $data['role'] ?? null,
             'quote' => $data['quote'],
-            'image_path' => $this->syncUploadedAsset($request, 'image_upload', 'cms/testimonials', ($data['image_path'] ?? null) ?: $testimonial?->image_path),
+            'image_path' => $this->syncMediaInput($request, 'image_path', 'image_upload', 'cms/testimonials', $testimonial?->image_path, 'remove_image_path'),
             'rating' => $request->integer('rating', 5),
             'is_visible' => $request->boolean('is_visible', true),
             'sort_order' => $request->integer('sort_order', 0),
@@ -1134,25 +1167,55 @@ class CmsController extends Controller
         }, $this->lines($value))));
     }
 
-    private function syncUploadedAsset(Request $request, string $field, string $directory, ?string $currentPath = null): ?string
+    private function syncMediaInput(Request $request, string $pathField, string $fileField, string $directory, ?string $currentPath = null, ?string $removeField = null): ?string
     {
-        if (! $request->hasFile($field)) {
-            return $currentPath;
+        $submittedPath = trim((string) $request->input($pathField, ''));
+
+        if ($request->hasFile($fileField)) {
+            $path = PublicStorage::store($request->file($fileField), $directory);
+            $this->deleteDifferentStoredAsset($currentPath, $path);
+
+            return $path;
         }
 
-        $file = $request->file($field);
-        $path = $file ? PublicStorage::store($file, $directory) : null;
+        if ($submittedPath !== '' && $submittedPath !== $currentPath) {
+            $this->deleteDifferentStoredAsset($currentPath, $submittedPath);
 
-        if ($currentPath && $currentPath !== $path) {
+            return $submittedPath;
+        }
+
+        if ($request->boolean($removeField ?: 'remove_'.$pathField)) {
+            $this->deleteStoredAsset($currentPath);
+
+            return null;
+        }
+
+        if ($submittedPath !== '') {
+            return $submittedPath;
+        }
+
+        return $currentPath;
+    }
+
+    private function deleteDifferentStoredAsset(?string $currentPath, ?string $nextPath): void
+    {
+        if ($currentPath && $currentPath !== $nextPath) {
             $this->deleteStoredAsset($currentPath);
         }
-
-        return $path;
     }
 
     private function deleteStoredAsset(?string $path): void
     {
         if (! $path) {
+            return;
+        }
+
+        if (
+            str_starts_with($path, 'http://')
+            || str_starts_with($path, 'https://')
+            || str_starts_with($path, '//')
+            || str_starts_with($path, 'data:')
+        ) {
             return;
         }
 

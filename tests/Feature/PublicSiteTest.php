@@ -4,9 +4,11 @@ namespace Tests\Feature;
 
 use App\Mail\ContactSubmissionReceivedMail;
 use App\Models\CareerOpening;
+use App\Models\ContactSubmission;
 use App\Models\Post;
 use App\Models\Project;
 use App\Support\AssetPath;
+use App\Support\SiteData;
 use Database\Seeders\RockmouldSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
@@ -127,6 +129,30 @@ class PublicSiteTest extends TestCase
             'email' => 'applicant@example.com',
             'department' => 'Career Application: Project Coordinator',
         ]);
+    }
+
+    public function test_contact_submission_email_template_renders(): void
+    {
+        $submission = new ContactSubmission([
+            'full_name' => 'Test Visitor',
+            'email' => 'visitor@example.com',
+            'phone' => '+2348001234567',
+            'department' => 'Sales',
+            'message' => 'I want to discuss a premium project.',
+            'status' => 'new',
+        ]);
+        $submission->created_at = now();
+
+        $html = (new ContactSubmissionReceivedMail(
+            $submission,
+            SiteData::company(),
+            route('admin.forms.index'),
+        ))->render();
+
+        $this->assertStringContainsString('Rockmould Limited', $html);
+        $this->assertStringContainsString('New Website Message', $html);
+        $this->assertStringContainsString('Reply Directly', $html);
+        $this->assertStringContainsString('visitor@example.com', $html);
     }
 
     public function test_unpublished_or_future_public_content_is_not_accessible(): void

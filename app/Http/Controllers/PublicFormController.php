@@ -29,11 +29,7 @@ class PublicFormController extends Controller
         $submission = ContactSubmission::query()->create($data + ['status' => 'new']);
         Activity::log('contact.created', 'New public contact submission received.', null, $submission);
 
-        Mail::to('info@rockmould.com')->send(new ContactSubmissionReceivedMail(
-            $submission,
-            SiteData::company(),
-            route('admin.forms.index'),
-        ));
+        $this->notifyContactTeam($submission);
 
         return back()->with('success', 'Your message has been sent. A Rockmould advisor will reach out shortly.');
     }
@@ -80,7 +76,7 @@ class PublicFormController extends Controller
             'message' => ['required', 'string'],
         ]);
 
-        ContactSubmission::query()->create([
+        $submission = ContactSubmission::query()->create([
             'full_name' => $data['full_name'],
             'email' => $data['email'],
             'phone' => $data['phone'] ?? null,
@@ -88,6 +84,9 @@ class PublicFormController extends Controller
             'message' => $data['message'],
             'status' => 'new',
         ]);
+
+        Activity::log('contact.created', 'New public project inquiry received.', null, $submission);
+        $this->notifyContactTeam($submission);
 
         return back()->with('success', 'Your project inquiry has been sent.');
     }
@@ -103,7 +102,7 @@ class PublicFormController extends Controller
             'message' => ['required', 'string'],
         ]);
 
-        ContactSubmission::query()->create([
+        $submission = ContactSubmission::query()->create([
             'full_name' => $data['full_name'],
             'email' => $data['email'],
             'phone' => $data['phone'] ?? null,
@@ -112,6 +111,18 @@ class PublicFormController extends Controller
             'status' => 'new',
         ]);
 
+        Activity::log('contact.created', 'New public career expression of interest received.', null, $submission);
+        $this->notifyContactTeam($submission);
+
         return back()->with('success', 'Your expression of interest has been recorded for this role.');
+    }
+
+    private function notifyContactTeam(ContactSubmission $submission): void
+    {
+        Mail::to(config('mail.rockmould.contact_to', 'info@rockmould.com'))->send(new ContactSubmissionReceivedMail(
+            $submission,
+            SiteData::company(),
+            route('admin.forms.index'),
+        ));
     }
 }

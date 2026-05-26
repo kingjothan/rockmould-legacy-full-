@@ -55,6 +55,18 @@
 
         <div class="flex flex-1 items-center justify-center p-6">
             <div class="w-full max-w-md">
+                @if (session('success'))
+                    <div class="mb-5 rounded-md border border-emerald-500/25 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-200">
+                        {{ session('success') }}
+                    </div>
+                @endif
+
+                @if ($errors->any())
+                    <div class="mb-5 rounded-md border border-destructive/25 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+                        {{ $errors->first() }}
+                    </div>
+                @endif
+
                 @if ($state === 'pending')
                     <div class="text-center">
                         <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
@@ -68,17 +80,71 @@
                 @elseif ($state === 'unrecognized')
                     <div class="text-center">
                         <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-destructive/10">
-                            <x-portal-icon name="phone" class="h-7 w-7 text-destructive" />
+                            <x-portal-icon name="mail" class="h-7 w-7 text-destructive" />
                         </div>
-                        <h2 class="mb-2 font-display text-2xl font-semibold">{{ $content['unrecognized_title'] ?? 'Phone Not Recognized' }}</h2>
-                        <p class="mb-8 text-muted-foreground">{{ $content['unrecognized_description'] ?? 'This number isn’t registered. Submit a KYC request to get started.' }}</p>
+                        <h2 class="mb-2 font-display text-2xl font-semibold">{{ $content['unrecognized_title'] ?? 'Email Not Recognized' }}</h2>
+                        <p class="mb-8 text-muted-foreground">{{ $content['unrecognized_description'] ?? 'This email is not registered. Submit a KYC request to get started.' }}</p>
                         <div class="flex flex-col gap-3">
                             <a href="{{ route('portal.login', ['mode' => 'kyc']) }}" class="luxury-btn-primary w-full justify-center">
                                 {{ $content['unrecognized_button'] ?? 'Submit KYC Request' }}
                                 <x-portal-icon name="arrow-right" class="h-4 w-4" />
                             </a>
-                            <a href="{{ route('portal.login') }}" class="text-sm text-muted-foreground transition hover:text-primary">Try another number</a>
+                            <a href="{{ route('portal.login') }}" class="text-sm text-muted-foreground transition hover:text-primary">Try another email</a>
                         </div>
+                    </div>
+                @elseif ($state === 'otp')
+                    <div>
+                        <h1 class="mb-2 font-display text-3xl font-semibold">Verify Your Email</h1>
+                        <p class="mb-8 text-muted-foreground">
+                            Enter the 6-digit code sent to {{ $otpEmail ?? 'your registered email address' }}.
+                        </p>
+
+                        <form action="{{ route('portal.otp.verify') }}" method="POST" class="space-y-6">
+                            @csrf
+                            <div>
+                                <label class="mb-2 block text-xs uppercase tracking-wider text-muted-foreground">OTP Code</label>
+                                <input name="otp" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="123456" class="input-shell py-3 text-center text-lg tracking-[0.45em]">
+                            </div>
+                            <button type="submit" class="luxury-btn-primary w-full justify-center">
+                                Verify & Access Portal
+                                <x-portal-icon name="arrow-right" class="h-4 w-4" />
+                            </button>
+                        </form>
+
+                        <form action="{{ route('portal.otp.resend') }}" method="POST" class="mt-4">
+                            @csrf
+                            <button id="resend-otp-button" type="submit" class="w-full text-center text-sm text-primary hover:underline" @disabled($otpCooldownSeconds > 0)>
+                                @if ($otpCooldownSeconds > 0)
+                                    Resend OTP in <span data-otp-countdown>{{ $otpCooldownSeconds }}</span>s
+                                @else
+                                    Resend OTP
+                                @endif
+                            </button>
+                        </form>
+
+                        <p class="mt-6 text-center text-xs text-muted-foreground">
+                            <a href="{{ route('portal.login') }}" class="hover:text-primary">Use another email address</a>
+                        </p>
+
+                        @if ($otpCooldownSeconds > 0)
+                            <script>
+                                (() => {
+                                    const countdown = document.querySelector('[data-otp-countdown]');
+                                    const button = document.getElementById('resend-otp-button');
+                                    if (!countdown || !button) return;
+                                    let seconds = Number(countdown.textContent || 0);
+                                    const timer = setInterval(() => {
+                                        seconds -= 1;
+                                        countdown.textContent = seconds;
+                                        if (seconds <= 0) {
+                                            clearInterval(timer);
+                                            button.disabled = false;
+                                            button.textContent = 'Resend OTP';
+                                        }
+                                    }, 1000);
+                                })();
+                            </script>
+                        @endif
                     </div>
                 @elseif ($state === 'kyc')
                     <div>
@@ -89,15 +155,15 @@
                 @else
                     <div>
                         <h1 class="mb-2 font-display text-3xl font-semibold">{{ $content['welcome_title'] ?? 'Welcome Back' }}</h1>
-                        <p class="mb-8 text-muted-foreground">{{ $content['welcome_description'] ?? 'Enter your registered phone number to access your portal.' }}</p>
+                        <p class="mb-8 text-muted-foreground">{{ $content['welcome_description'] ?? 'Enter your registered email address to access your portal.' }}</p>
 
                         <form action="{{ route('portal.authenticate') }}" method="POST" class="space-y-6">
                             @csrf
                             <div>
-                                <label class="mb-2 block text-xs uppercase tracking-wider text-muted-foreground">Phone Number</label>
+                                <label class="mb-2 block text-xs uppercase tracking-wider text-muted-foreground">Email Address</label>
                                 <div class="portal-search-shell">
-                                    <x-portal-icon name="phone" class="h-4 w-4" />
-                                    <input name="phone" value="{{ old('phone') }}" placeholder="+234 xxx xxx xxxx" class="input-shell py-3">
+                                    <x-portal-icon name="mail" class="h-4 w-4" />
+                                    <input type="email" name="email" value="{{ old('email') }}" placeholder="client@example.com" class="input-shell py-3">
                                 </div>
                             </div>
                             <button type="submit" class="luxury-btn-primary w-full justify-center">

@@ -1,14 +1,14 @@
-<x-layouts.portal :company="$company" :page-heading="$assignment->project->title">
+<x-layouts.portal :company="$company" :page-heading="$assignment->project?->title ?? 'Project'">
     <div class="space-y-8">
         <section class="relative overflow-hidden rounded-sm border border-border bg-card">
-            <x-media :path="$assignment->project->cover_image" fallback="images/project-1.jpg" alt="{{ $assignment->project->title }}" class="aspect-[16/8] w-full object-cover" />
+            <x-media :path="$assignment->project?->cover_image" fallback="images/project-1.jpg" alt="{{ $assignment->project?->title ?? 'Project' }}" class="aspect-[16/8] w-full object-cover" />
             <div class="absolute inset-0 bg-gradient-to-t from-black/75 via-black/15 to-transparent"></div>
             <div class="absolute inset-x-0 bottom-0 p-6 md:p-10">
                 <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
                     <div>
-                        <p class="text-xs uppercase tracking-[0.24em] text-white/70">{{ $assignment->project->category }}</p>
-                        <h1 class="mt-3 font-display text-4xl text-white md:text-6xl">{{ $assignment->project->title }}</h1>
-                        <p class="mt-3 text-sm text-white/80 md:text-base">{{ $assignment->unit_label }} &middot; {{ $assignment->project->location }}</p>
+                        <p class="text-xs uppercase tracking-[0.24em] text-white/70">{{ $assignment->project?->category ?? 'Project' }}</p>
+                        <h1 class="mt-3 font-display text-4xl text-white md:text-6xl">{{ $assignment->project?->title ?? 'Project' }}</h1>
+                        <p class="mt-3 text-sm text-white/80 md:text-base">{{ $assignment->unit?->label ?? $assignment->unit_label }} &middot; {{ $assignment->project?->location ?? 'Location pending' }}</p>
                     </div>
                     <x-status-badge :value="$assignment->status" />
                 </div>
@@ -21,9 +21,19 @@
                     <h2 class="font-display text-3xl">Project Overview</h2>
                     <p class="mt-4 text-sm leading-7 text-muted-foreground md:text-base">{{ $assignment->project->description ?: $assignment->project->overview }}</p>
 
-                    @if (! empty($assignment->project->highlights))
+                    @php
+                        $portalHighlights = collect($assignment->project->highlights ?? [])
+                            ->reject(fn ($highlight) => strtolower((string) ($highlight['label'] ?? '')) === 'units')
+                            ->prepend([
+                                'label' => 'Your Unit',
+                                'value' => $assignment->unit?->label ?? $assignment->unit_label,
+                            ])
+                            ->values();
+                    @endphp
+
+                    @if ($portalHighlights->isNotEmpty())
                         <div class="mt-6 grid gap-3 md:grid-cols-2">
-                            @foreach ($assignment->project->highlights as $highlight)
+                            @foreach ($portalHighlights as $highlight)
                                 <div class="rounded-sm border border-border bg-muted/20 px-4 py-3">
                                     <p class="text-xs uppercase tracking-[0.18em] text-muted-foreground">{{ $highlight['label'] }}</p>
                                     <p class="mt-2 font-medium">{{ $highlight['value'] }}</p>
@@ -178,7 +188,7 @@
                 <div class="luxury-card sticky top-24">
                     <h2 class="font-display text-3xl">Client Summary</h2>
                     <div class="mt-5 space-y-4 text-sm">
-                        <div class="flex items-center justify-between"><span class="text-muted-foreground">Unit</span><span>{{ $assignment->unit_label }}</span></div>
+                        <div class="flex items-center justify-between"><span class="text-muted-foreground">Unit</span><span>{{ $assignment->unit?->label ?? $assignment->unit_label }}</span></div>
                         <div class="flex items-center justify-between"><span class="text-muted-foreground">Project Status</span><span>{{ str($assignment->status)->title() }}</span></div>
                         <div class="flex items-center justify-between"><span class="text-muted-foreground">Progress</span><span>{{ $assignment->progress_percentage }}%</span></div>
                         <div class="flex items-center justify-between"><span class="text-muted-foreground">Paid</span><span>NGN {{ number_format((float) $assignment->amount_paid) }}</span></div>

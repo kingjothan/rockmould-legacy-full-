@@ -12,9 +12,13 @@
                         <input name="tagline" value="{{ $service->tagline }}" class="input-shell">
                         <textarea name="summary" rows="3" class="input-shell">{{ $service->summary }}</textarea>
                         <textarea name="description" rows="4" class="input-shell">{{ $service->description }}</textarea>
-                        <input name="image_path" value="{{ $service->image_path }}" class="input-shell" placeholder="Image or video path">
+                        <input name="image_path" value="{{ $service->image_path }}" class="input-shell" placeholder="CDN image/video URL or local path">
                         <input type="file" name="image_upload" accept="image/*,video/*" data-preview-target="#service-image-preview-{{ $service->id }}" class="input-shell">
                         <p id="service-image-preview-{{ $service->id }}" class="text-xs text-muted-foreground">{{ $service->image_path ?: 'No new file selected' }}</p>
+                        <label class="flex items-center gap-2 text-xs text-muted-foreground">
+                            <input type="checkbox" name="remove_image_path" value="1" class="h-4 w-4 rounded border-border bg-transparent text-primary focus:ring-primary">
+                            Remove current service media if no new link or upload is provided
+                        </label>
                         <textarea name="benefits_text" rows="4" class="input-shell">{{ implode("\n", $service->benefits ?? []) }}</textarea>
                         <textarea name="process_steps_text" rows="4" class="input-shell">{{ implode("\n", $service->process_steps ?? []) }}</textarea>
                         <textarea name="related_projects_text" rows="3" class="input-shell">{{ implode("\n", $service->related_projects ?? []) }}</textarea>
@@ -34,7 +38,7 @@
                 <input name="tagline" placeholder="Tagline" class="input-shell">
                 <textarea name="summary" rows="3" required placeholder="Summary" class="input-shell"></textarea>
                 <textarea name="description" rows="4" placeholder="Description" class="input-shell"></textarea>
-                <input name="image_path" placeholder="Image or video path" class="input-shell">
+                <input name="image_path" placeholder="CDN image/video URL or local path" class="input-shell">
                 <input type="file" name="image_upload" accept="image/*,video/*" data-preview-target="#create-service-image-preview" class="input-shell">
                 <p id="create-service-image-preview" class="text-xs text-muted-foreground">No new file selected</p>
                 <textarea name="benefits_text" rows="4" placeholder="Benefits, one per line" class="input-shell"></textarea>

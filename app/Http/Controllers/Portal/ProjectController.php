@@ -15,16 +15,20 @@ class ProjectController extends Controller
 {
     public function index(Request $request): View
     {
-        $query = Auth::user()->assignments()->with('project');
+        $query = Auth::user()->assignments()->with(['project', 'unit']);
 
         if ($request->filled('status')) {
             $query->where('status', $request->string('status')->toString());
         }
 
+        $assignments = $query->latest()->get();
+
         return view('portal.projects.index', [
             'company' => SiteData::company(),
             'content' => SiteData::portalPage('projects'),
-            'assignments' => $query->latest()->get(),
+            'assignments' => $assignments,
+            'projectCount' => $assignments->pluck('project_id')->filter()->unique()->count(),
+            'unitCount' => $assignments->count(),
         ]);
     }
 
@@ -32,7 +36,9 @@ class ProjectController extends Controller
     {
         abort_unless($assignment->user_id === Auth::id(), 403);
 
-        $assignment->load(['project.milestones', 'project.updates', 'payments']);
+        $assignment->load(['project.milestones', 'project.updates', 'payments', 'unit']);
+        abort_unless($assignment->project, 404);
+
         $galleryMedia = MediaAsset::query()
             ->visibleToPortalAssignment($assignment)
             ->with('project', 'assignment.user')

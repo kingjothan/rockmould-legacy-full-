@@ -15,7 +15,7 @@ class KycController extends Controller
 {
     public function index(Request $request): View
     {
-        $query = KycRequest::query()->with('reviewer');
+        $query = KycRequest::query()->with(['project', 'reviewer']);
 
         if ($request->filled('status')) {
             $query->where('status', $request->string('status')->toString());
@@ -43,10 +43,10 @@ class KycController extends Controller
 
         if ($data['status'] === 'approved') {
             User::query()->updateOrCreate(
-                ['phone' => $kycRequest->phone],
+                ['email' => strtolower((string) $kycRequest->email)],
                 [
                     'name' => $kycRequest->full_name,
-                    'email' => $kycRequest->email,
+                    'phone' => $kycRequest->phone,
                     'address' => $kycRequest->residential_address,
                     'status' => 'active',
                     'role' => 'client',

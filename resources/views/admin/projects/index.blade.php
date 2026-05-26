@@ -6,7 +6,7 @@
                 <p class="mt-2 text-sm text-muted-foreground">Create, review, and manage project records that power the public website and client portal.</p>
             </div>
             <div class="rounded-sm border border-border bg-card px-4 py-3 text-xs uppercase tracking-[0.18em] text-muted-foreground">
-                {{ $projects->count() }} projects
+                {{ $projects->count() }} projects &middot; {{ $projects->sum('units_count') }} units
             </div>
         </div>
 
@@ -24,8 +24,9 @@
                 <p class="mt-2 font-display text-3xl">{{ $projects->where('status', 'completed')->count() }}</p>
             </div>
             <div class="luxury-card">
-                <p class="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">Assignments</p>
-                <p class="mt-2 font-display text-3xl">{{ $projects->sum('assignments_count') }}</p>
+                <p class="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">Units</p>
+                <p class="mt-2 font-display text-3xl">{{ $projects->sum('units_count') }}</p>
+                <p class="mt-1 text-xs text-muted-foreground">Owned units</p>
             </div>
         </div>
 
@@ -45,6 +46,7 @@
                                 <th>Project</th>
                                 <th>Status</th>
                                 <th>Clients</th>
+                                <th>Units</th>
                                 <th>Progress</th>
                                 <th>Budget</th>
                                 <th></th>
@@ -59,6 +61,7 @@
                                     </td>
                                     <td><x-status-badge :value="$project->status" /></td>
                                     <td>{{ $project->assignments_count }}</td>
+                                    <td>{{ $project->units_count }}</td>
                                     <td>
                                         <div class="flex items-center gap-3">
                                             <div class="h-1.5 w-24 overflow-hidden rounded-full bg-muted">
@@ -74,7 +77,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="6" class="px-4 py-12 text-center text-sm text-muted-foreground">No projects matched the current search.</td>
+                                    <td colspan="7" class="px-4 py-12 text-center text-sm text-muted-foreground">No projects matched the current search.</td>
                                 </tr>
                             @endforelse
                         </tbody>
@@ -98,7 +101,7 @@
                     </select>
                     <textarea name="overview" rows="4" required placeholder="Overview" class="input-shell"></textarea>
                     <textarea name="description" rows="4" placeholder="Description" class="input-shell"></textarea>
-                    <input name="cover_image" placeholder="Cover image path e.g. images/project-1.jpg" class="input-shell">
+                    <input name="cover_image" placeholder="CDN cover image/video URL or local path" class="input-shell">
                     <div>
                         <label class="admin-label">Upload Cover Media</label>
                         <input type="file" name="cover_image_upload" accept="image/*,video/*" class="input-shell">
@@ -115,6 +118,11 @@
                             <label class="admin-label">Upload Project Media</label>
                             <input type="file" name="media_uploads[]" accept="image/*,video/*" multiple class="input-shell">
                             <p class="mt-2 text-xs text-muted-foreground">Upload photos and videos that should go into the shared project gallery for clients.</p>
+                        </div>
+                        <div>
+                            <label class="admin-label">Project Media CDN Links</label>
+                            <textarea name="media_urls_text" rows="4" placeholder="Paste one direct image/video URL per line" class="input-shell"></textarea>
+                            <p class="mt-2 text-xs text-muted-foreground">Use this instead of uploading when media lives on a CDN, Cloudinary, S3, YouTube-hosted direct file, or another fast storage provider.</p>
                         </div>
                         <div>
                             <label class="admin-label">Gallery Section</label>

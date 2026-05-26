@@ -120,40 +120,40 @@ class AdminFlowTest extends TestCase
                 'hours' => 'Mon - Fri: 9:00 AM - 6:00 PM',
                 'support_phone' => '+234 801 234 5678',
                 'support_email' => 'support@rockmould.com',
-                'public_copy_scale' => '1.16',
-                'public_heading_scale' => '1.08',
-                'portal_copy_scale' => '1.24',
-                'portal_heading_scale' => '1.16',
-                'admin_copy_scale' => '1.08',
-                'admin_heading_scale' => '1.24',
+                'public_copy_scale' => '1.37',
+                'public_heading_scale' => '1.42',
+                'portal_copy_scale' => '1.53',
+                'portal_heading_scale' => '1.31',
+                'admin_copy_scale' => '1.19',
+                'admin_heading_scale' => '1.47',
             ])
             ->assertRedirect()
             ->assertSessionHasNoErrors();
 
         $company = Setting::query()->where('key', 'company')->firstOrFail()->value;
 
-        $this->assertSame('1.16', $company['public_copy_scale']);
-        $this->assertSame('1.08', $company['public_heading_scale']);
-        $this->assertSame('1.24', $company['portal_copy_scale']);
-        $this->assertSame('1.16', $company['portal_heading_scale']);
-        $this->assertSame('1.08', $company['admin_copy_scale']);
-        $this->assertSame('1.24', $company['admin_heading_scale']);
+        $this->assertSame('1.37', $company['public_copy_scale']);
+        $this->assertSame('1.42', $company['public_heading_scale']);
+        $this->assertSame('1.53', $company['portal_copy_scale']);
+        $this->assertSame('1.31', $company['portal_heading_scale']);
+        $this->assertSame('1.19', $company['admin_copy_scale']);
+        $this->assertSame('1.47', $company['admin_heading_scale']);
 
         $this->get('/')
             ->assertOk()
-            ->assertSee('--public-copy-scale: 1.16;', false)
-            ->assertSee('--public-heading-scale: 1.08;', false);
+            ->assertSee('--public-copy-scale: 1.37;', false)
+            ->assertSee('--public-heading-scale: 1.42;', false);
 
         $this->actingAs($admin)
             ->get('/admin/settings')
             ->assertOk()
-            ->assertSee('--shell-copy-scale: 1.08;', false)
-            ->assertSee('--shell-heading-scale: 1.24;', false);
+            ->assertSee('--shell-copy-scale: 1.19;', false)
+            ->assertSee('--shell-heading-scale: 1.47;', false);
 
         $this->actingAs($client)
             ->get('/portal/dashboard')
             ->assertOk()
-            ->assertSee('--shell-copy-scale: 1.24;', false)
-            ->assertSee('--shell-heading-scale: 1.16;', false);
+            ->assertSee('--shell-copy-scale: 1.53;', false)
+            ->assertSee('--shell-heading-scale: 1.31;', false);
     }
 }

@@ -15,8 +15,10 @@ export default {
         },
         extend: {
             fontFamily: {
-                display: ['Playfair Display', 'Georgia', 'serif'],
-                body: ['Inter', 'system-ui', 'sans-serif'],
+                display: ['var(--font-display)'],
+                subheader: ['var(--font-subheader)'],
+                body: ['var(--font-body)'],
+                sans: ['var(--font-body)'],
             },
             colors: {
                 border: 'hsl(var(--border) / <alpha-value>)',

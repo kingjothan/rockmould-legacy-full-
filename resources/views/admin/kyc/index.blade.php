@@ -86,10 +86,19 @@
 
                     <div class="grid gap-6 border-t border-border px-6 py-5 lg:grid-cols-[1.1fr_0.9fr]">
                         <div class="space-y-4">
-                            @if ($requestItem->project_of_interest)
+                            @if ($requestItem->project || $requestItem->project_of_interest)
                                 <div>
                                     <p class="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Project of interest</p>
-                                    <p class="mt-2 text-sm text-foreground">{{ $requestItem->project_of_interest }}</p>
+                                    <p class="mt-2 text-sm text-foreground">{{ $requestItem->project?->title ?? $requestItem->project_of_interest }}</p>
+                                    @if ($requestItem->project)
+                                        <p class="mt-1 text-xs text-muted-foreground">
+                                            {{ $requestItem->project->location }}
+                                            @if ($requestItem->project->status)
+                                                <span aria-hidden="true" class="text-primary/60">&middot;</span>
+                                                {{ str($requestItem->project->status)->replace('_', ' ')->title() }}
+                                            @endif
+                                        </p>
+                                    @endif
                                 </div>
                             @endif
 

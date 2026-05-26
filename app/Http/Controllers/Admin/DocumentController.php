@@ -22,7 +22,7 @@ class DocumentController extends Controller
             'company' => SiteData::company(),
             'documents' => Document::query()->with('project', 'assignment.user')->libraryOrdered()->get(),
             'projects' => Project::query()->orderBy('title')->get(),
-            'assignments' => ProjectAssignment::query()->with('project', 'user')->latest()->get(),
+            'assignments' => ProjectAssignment::query()->with('project', 'user', 'unit')->latest()->get(),
         ]);
     }
 
@@ -132,6 +132,15 @@ class DocumentController extends Controller
     private function deleteStoredAsset(?string $path): void
     {
         if (! $path) {
+            return;
+        }
+
+        if (
+            str_starts_with($path, 'http://')
+            || str_starts_with($path, 'https://')
+            || str_starts_with($path, '//')
+            || str_starts_with($path, 'data:')
+        ) {
             return;
         }
 

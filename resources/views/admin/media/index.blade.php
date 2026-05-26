@@ -146,7 +146,7 @@
 
                                         <div class="space-y-2 text-xs text-muted-foreground">
                                             @if ($asset->assignment?->user)
-                                                <p>Assigned client: {{ $asset->assignment->user->name }} &middot; {{ $asset->assignment->unit_label }}</p>
+                                                <p>Assigned client: {{ $asset->assignment?->user?->name ?? 'Client' }} &middot; {{ $asset->assignment?->unit?->label ?? $asset->assignment?->unit_label }}</p>
                                             @else
                                                 <p>Shared project gallery asset</p>
                                             @endif
@@ -199,7 +199,7 @@
                                                             <select name="project_assignment_id" class="input-shell">
                                                                 <option value="">Shared project gallery</option>
                                                                 @foreach ($assignments as $assignment)
-                                                                    <option value="{{ $assignment->id }}" @selected($asset->project_assignment_id === $assignment->id)>{{ $assignment->user->name }} &middot; {{ $assignment->project->title }}</option>
+                                                                    <option value="{{ $assignment->id }}" @selected($asset->project_assignment_id === $assignment->id)>{{ $assignment->user?->name ?? 'Client' }} &middot; {{ $assignment->project?->title ?? 'Project' }} &middot; {{ $assignment->unit?->label ?? $assignment->unit_label }}</option>
                                                                 @endforeach
                                                             </select>
                                                         </div>
@@ -253,15 +253,36 @@
                                                     </div>
 
                                                     <div class="grid gap-4 md:grid-cols-2">
+                                                        <div>
+                                                            <label class="admin-label">Asset CDN Link or Path</label>
+                                                            <input name="asset_url" value="{{ $asset->file_path }}" placeholder="https://cdn.example.com/project-media.mp4" class="input-shell">
+                                                            <p class="mt-2 text-xs text-muted-foreground">Paste a direct image/video URL or local path. Uploading a file below overrides this.</p>
+                                                        </div>
+                                                        <div>
+                                                            <label class="admin-label">Thumbnail CDN Link or Path</label>
+                                                            <input name="thumbnail_url" value="{{ $asset->thumbnail_path }}" placeholder="https://cdn.example.com/video-thumbnail.jpg" class="input-shell">
+                                                            <p class="mt-2 text-xs text-muted-foreground">Optional for videos. Images can use the same URL as the asset.</p>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="grid gap-4 md:grid-cols-2">
                                                         <div class="rounded-sm border border-dashed border-border bg-muted/10 p-4">
                                                             <label class="admin-label">Replace asset file</label>
                                                             <input type="file" name="asset" accept="image/*,video/*" data-preview-target="#media-replace-file-preview-{{ $asset->id }}" class="input-shell">
                                                             <p id="media-replace-file-preview-{{ $asset->id }}" class="mt-3 text-xs text-muted-foreground">Leave empty to keep the current asset</p>
+                                                            <label class="mt-3 flex items-center gap-2 text-xs text-muted-foreground">
+                                                                <input type="checkbox" name="remove_asset" value="1" class="h-4 w-4 rounded border-border bg-transparent text-primary focus:ring-primary">
+                                                                Remove current asset if no new link or upload is provided
+                                                            </label>
                                                         </div>
                                                         <div class="rounded-sm border border-dashed border-border bg-muted/10 p-4">
                                                             <label class="admin-label">Replace video thumbnail</label>
                                                             <input type="file" name="thumbnail" accept="image/*" data-preview-target="#media-thumbnail-preview-{{ $asset->id }}" class="input-shell">
                                                             <p id="media-thumbnail-preview-{{ $asset->id }}" class="mt-3 text-xs text-muted-foreground">Optional. Use for a cleaner video or hero preview.</p>
+                                                            <label class="mt-3 flex items-center gap-2 text-xs text-muted-foreground">
+                                                                <input type="checkbox" name="remove_thumbnail" value="1" class="h-4 w-4 rounded border-border bg-transparent text-primary focus:ring-primary">
+                                                                Remove current thumbnail if no new link or upload is provided
+                                                            </label>
                                                         </div>
                                                     </div>
 
@@ -291,9 +312,9 @@
             <div class="luxury-card">
                 <div class="flex items-center gap-2">
                     <x-portal-icon name="plus" class="h-4 w-4 text-primary" />
-                    <h2 class="font-display text-3xl">Upload Media</h2>
+                    <h2 class="font-display text-3xl">Upload or Link Media</h2>
                 </div>
-                <p class="mt-2 text-sm text-muted-foreground">Add new images or videos for a project, assignment, or client-facing update.</p>
+                <p class="mt-2 text-sm text-muted-foreground">Add new images or videos by uploading to this server, or paste direct CDN links to keep the site faster.</p>
 
                 <form action="{{ route('admin.media.store') }}" method="POST" enctype="multipart/form-data" class="mt-6 space-y-4">
                     @csrf
@@ -311,7 +332,7 @@
                         <select name="project_assignment_id" class="input-shell">
                             <option value="">Shared project gallery</option>
                             @foreach ($assignments as $assignment)
-                                <option value="{{ $assignment->id }}" @selected((string) old('project_assignment_id') === (string) $assignment->id)>{{ $assignment->user->name }} | {{ $assignment->project->title }}</option>
+                                <option value="{{ $assignment->id }}" @selected((string) old('project_assignment_id') === (string) $assignment->id)>{{ $assignment->user?->name ?? 'Client' }} | {{ $assignment->project?->title ?? 'Project' }} | {{ $assignment->unit?->label ?? $assignment->unit_label }}</option>
                             @endforeach
                         </select>
                         <p class="mt-2 text-xs text-muted-foreground">Leave assignment empty if the media should be visible to every client attached to this project.</p>
@@ -349,10 +370,22 @@
                         <p class="text-xs text-muted-foreground">Use <span class="font-medium text-foreground">Exterior</span> for building facades, site progress, landscaping, and arrival views. Use <span class="font-medium text-foreground">Interior</span> for lobbies, living spaces, kitchens, amenities, and fit-out visuals. Use <span class="font-medium text-foreground">Gallery</span> for the project’s general mixed media collection.</p>
                     </div>
                     <div class="grid gap-4 md:grid-cols-2">
+                        <div>
+                            <label class="admin-label">Asset CDN Link or Path</label>
+                            <input name="asset_url" value="{{ old('asset_url') }}" placeholder="https://cdn.example.com/project-video.mp4" class="input-shell">
+                            <p class="mt-2 text-xs text-muted-foreground">Use this instead of uploading when the image or video is hosted elsewhere.</p>
+                        </div>
+                        <div>
+                            <label class="admin-label">Thumbnail CDN Link or Path</label>
+                            <input name="thumbnail_url" value="{{ old('thumbnail_url') }}" placeholder="https://cdn.example.com/video-cover.jpg" class="input-shell">
+                            <p class="mt-2 text-xs text-muted-foreground">Optional for video previews. Leave empty for images unless you want a separate thumbnail.</p>
+                        </div>
+                    </div>
+                    <div class="grid gap-4 md:grid-cols-2">
                         <div class="rounded-md border border-dashed border-border bg-muted/10 p-4">
                             <label class="admin-label">Upload file</label>
                             <input type="file" name="asset" accept="image/*,video/*" data-preview-target="#media-file-preview" class="input-shell">
-                            <p id="media-file-preview" class="mt-3 text-xs text-muted-foreground">No file selected</p>
+                            <p id="media-file-preview" class="mt-3 text-xs text-muted-foreground">No file selected. Uploading a file overrides the asset link above.</p>
                         </div>
                         <div class="rounded-md border border-dashed border-border bg-muted/10 p-4">
                             <label class="admin-label">Video thumbnail</label>

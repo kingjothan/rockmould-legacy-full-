@@ -8,8 +8,13 @@
         <div class="grid grid-cols-2 gap-4 lg:grid-cols-4">
             <div class="luxury-card">
                 <x-portal-icon name="folder-kanban" class="portal-stat-icon h-5 w-5 text-emerald-400" />
-                <p class="font-display text-2xl font-bold">{{ $totals['active'] }}</p>
-                <p class="mt-1 text-xs text-muted-foreground">{{ $content['active_projects_label'] ?? 'Active Projects' }}</p>
+                <p class="font-display text-2xl font-bold">{{ $totals['projects'] }}</p>
+                <p class="mt-1 text-xs text-muted-foreground">{{ $content['active_projects_label'] ?? 'Assigned Projects' }}</p>
+            </div>
+            <div class="luxury-card">
+                <x-portal-icon name="home" class="portal-stat-icon h-5 w-5 text-sky-400" />
+                <p class="font-display text-2xl font-bold">{{ $totals['units'] }}</p>
+                <p class="mt-1 text-xs text-muted-foreground">Owned Units</p>
             </div>
             <div class="luxury-card">
                 <x-portal-icon name="receipt" class="portal-stat-icon h-5 w-5 text-primary" />
@@ -20,11 +25,6 @@
                 <x-portal-icon name="trending-up" class="portal-stat-icon h-5 w-5 text-amber-400" />
                 <p class="font-display text-2xl font-bold">NGN {{ number_format($totals['outstanding']) }}</p>
                 <p class="mt-1 text-xs text-muted-foreground">{{ $content['outstanding_label'] ?? 'Outstanding' }}</p>
-            </div>
-            <div class="luxury-card">
-                <x-portal-icon name="file-text" class="portal-stat-icon h-5 w-5 text-sky-400" />
-                <p class="font-display text-2xl font-bold">{{ $recentDocuments->count() }}</p>
-                <p class="mt-1 text-xs text-muted-foreground">{{ $content['documents_label'] ?? 'Documents' }}</p>
             </div>
         </div>
 
@@ -43,7 +43,7 @@
                             <x-status-badge :value="$assignment->status" />
                             <span class="text-xs text-muted-foreground">{{ $assignment->progress_percentage }}%</span>
                         </div>
-                        <h3 class="mb-3 text-sm font-semibold transition-colors group-hover:text-primary">{{ $assignment->project->title }} - {{ $assignment->unit_label }}</h3>
+                        <h3 class="mb-3 text-sm font-semibold transition-colors group-hover:text-primary">{{ $assignment->project?->title ?? 'Project' }} - {{ $assignment->unit?->label ?? $assignment->unit_label }}</h3>
                         <div class="mb-4 h-1.5 overflow-hidden rounded-full bg-muted">
                             <div class="h-full rounded-full bg-primary" style="width: {{ $assignment->progress_percentage }}%"></div>
                         </div>

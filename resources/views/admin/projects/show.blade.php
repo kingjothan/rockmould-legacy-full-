@@ -10,8 +10,8 @@
                 <p class="mt-2 font-display text-3xl">{{ $project->progress }}%</p>
             </div>
             <div class="luxury-card">
-                <p class="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">Assignments</p>
-                <p class="mt-2 font-display text-3xl">{{ $project->assignments->count() }}</p>
+                <p class="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">Client Units</p>
+                <p class="mt-2 font-display text-3xl">{{ $project->units->count() }}</p>
             </div>
             <div class="luxury-card">
                 <p class="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">Documents</p>
@@ -33,11 +33,15 @@
                         <input name="status" value="{{ $project->status }}" class="input-shell">
                         <textarea name="overview" rows="3" class="input-shell">{{ $project->overview }}</textarea>
                         <textarea name="description" rows="4" class="input-shell">{{ $project->description }}</textarea>
-                        <input name="cover_image" value="{{ $project->cover_image }}" class="input-shell">
+                        <input name="cover_image" value="{{ $project->cover_image }}" class="input-shell" placeholder="CDN cover image/video URL or local path">
                         <div>
                             <label class="admin-label">Upload New Cover Media</label>
                             <input type="file" name="cover_image_upload" accept="image/*,video/*" class="input-shell">
                             <p class="mt-2 text-xs text-muted-foreground">Accepts image or video up to 200MB. This cover is used on public listings, detail pages, portfolio, and portal.</p>
+                            <label class="mt-3 flex items-center gap-2 text-xs text-muted-foreground">
+                                <input type="checkbox" name="remove_cover_image" value="1" class="h-4 w-4 rounded border-border bg-transparent text-primary focus:ring-primary">
+                                Remove current cover media if no new link or upload is provided
+                            </label>
                         </div>
                         <input type="number" name="progress" value="{{ $project->progress }}" class="input-shell">
                         <input type="number" name="budget" value="{{ $project->budget }}" class="input-shell">
@@ -49,6 +53,11 @@
                             <div>
                                 <label class="admin-label">Add More Project Media</label>
                                 <input type="file" name="media_uploads[]" accept="image/*,video/*" multiple class="input-shell">
+                            </div>
+                            <div>
+                                <label class="admin-label">Add Media CDN Links</label>
+                                <textarea name="media_urls_text" rows="4" placeholder="Paste one direct image/video URL per line" class="input-shell"></textarea>
+                                <p class="mt-2 text-xs text-muted-foreground">Each link becomes a real project gallery asset in the selected section.</p>
                             </div>
                             <div>
                                 <label class="admin-label">Gallery Section</label>
@@ -80,27 +89,71 @@
 
                 <div class="luxury-card">
                     <div class="flex items-center justify-between gap-4">
-                        <h2 class="font-display text-3xl">Client Assignments</h2>
-                        <p class="text-xs uppercase tracking-[0.18em] text-muted-foreground">{{ $project->assignments->count() }} clients</p>
+                        <h2 class="font-display text-3xl">Client Units</h2>
+                        <p class="text-xs uppercase tracking-[0.18em] text-muted-foreground">{{ $project->units->count() }} units</p>
                     </div>
                     <div class="mt-5 space-y-4">
                         @forelse ($project->assignments as $assignment)
-                            <div class="rounded-sm border border-border bg-muted/20 p-4">
-                                <div class="flex items-center justify-between gap-4">
-                                    <div>
-                                        <p class="font-medium">{{ $assignment->user->name }}</p>
-                                        <p class="text-sm text-muted-foreground">{{ $assignment->unit_label }}</p>
+                            <form action="{{ route('admin.projects.assignments.update', [$project, $assignment]) }}" method="POST" class="rounded-sm border border-border bg-muted/20 p-4">
+                                @csrf
+                                @method('PUT')
+                                <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                                    <div class="min-w-0">
+                                        <p class="font-medium">{{ $assignment->reference }}</p>
+                                        <p class="text-sm text-muted-foreground">{{ $assignment->user?->name ?? 'Unassigned client' }} &middot; {{ $assignment->unit?->label ?? $assignment->unit_label }}</p>
                                     </div>
                                     <x-status-badge :value="$assignment->status" />
                                 </div>
-                                <div class="mt-4 grid gap-2 text-sm">
-                                    <div class="flex items-center justify-between"><span class="text-muted-foreground">Progress</span><span>{{ $assignment->progress_percentage }}%</span></div>
-                                    <div class="flex items-center justify-between"><span class="text-muted-foreground">Paid</span><span>NGN {{ number_format((float) $assignment->amount_paid) }}</span></div>
-                                    <div class="flex items-center justify-between"><span class="text-muted-foreground">Outstanding</span><span>NGN {{ number_format((float) $assignment->outstanding_balance) }}</span></div>
+                                <div class="mt-4 grid gap-3 md:grid-cols-2">
+                                    <select name="user_id" class="input-shell">
+                                        @foreach ($clients as $client)
+                                            <option value="{{ $client->id }}" @selected($assignment->user_id === $client->id)>{{ $client->name }}</option>
+                                        @endforeach
+                                    </select>
+                                    <input name="unit_label" value="{{ $assignment->unit?->label ?? $assignment->unit_label }}" class="input-shell">
+                                    <select name="status" class="input-shell">
+                                        @foreach (['active' => 'Active', 'completed' => 'Completed', 'upcoming' => 'Upcoming', 'inactive' => 'Inactive'] as $value => $label)
+                                            <option value="{{ $value }}" @selected($assignment->status === $value)>{{ $label }}</option>
+                                        @endforeach
+                                    </select>
+                                    <input type="number" name="progress_percentage" value="{{ $assignment->progress_percentage }}" min="0" max="100" class="input-shell">
+                                    <input type="number" name="contract_amount" value="{{ $assignment->contract_amount }}" class="input-shell">
+                                    <input type="number" name="amount_paid" value="{{ $assignment->amount_paid }}" class="input-shell">
+                                    <input type="number" name="next_payment_amount" value="{{ $assignment->next_payment_amount }}" placeholder="Next payment amount" class="input-shell">
+                                    <input type="date" name="next_payment_due_at" value="{{ optional($assignment->next_payment_due_at)->format('Y-m-d') }}" class="input-shell">
+                                    <textarea name="client_notes" rows="2" placeholder="Client-facing notes" class="input-shell md:col-span-2">{{ $assignment->client_notes }}</textarea>
+                                    <textarea name="internal_notes" rows="2" placeholder="Internal notes" class="input-shell md:col-span-2">{{ $assignment->internal_notes }}</textarea>
+                                </div>
+                                <div class="mt-4 flex items-center justify-between gap-3">
+                                    <p class="text-sm text-muted-foreground">Outstanding: NGN {{ number_format((float) $assignment->outstanding_balance) }}</p>
+                                    <button class="luxury-btn-outline text-xs">Update Ownership</button>
+                                </div>
+                            </form>
+                        @empty
+                            <p class="text-sm text-muted-foreground">No clients have been assigned to this project yet.</p>
+                        @endforelse
+                    </div>
+                </div>
+
+                <div class="luxury-card">
+                    <div class="flex items-center justify-between gap-4">
+                        <h2 class="font-display text-3xl">Unit Inventory</h2>
+                        <p class="text-xs uppercase tracking-[0.18em] text-muted-foreground">{{ $project->units->count() }} records</p>
+                    </div>
+                    <div class="mt-5 space-y-3">
+                        @forelse ($project->units->sortBy('label') as $unit)
+                            <div class="flex items-center justify-between gap-4 rounded-sm border border-border bg-muted/20 px-4 py-3">
+                                <div>
+                                    <p class="font-medium">{{ $unit->label }}</p>
+                                    <p class="text-sm text-muted-foreground">{{ $unit->client?->name ?? 'No client assigned' }}</p>
+                                </div>
+                                <div class="text-right">
+                                    <x-status-badge :value="$unit->status" />
+                                    <p class="mt-1 text-xs text-muted-foreground">{{ $unit->price ? 'NGN '.number_format((float) $unit->price) : 'No price set' }}</p>
                                 </div>
                             </div>
                         @empty
-                            <p class="text-sm text-muted-foreground">No clients have been assigned to this project yet.</p>
+                            <p class="text-sm text-muted-foreground">No units have been created for this project yet.</p>
                         @endforelse
                     </div>
                 </div>
@@ -158,7 +211,8 @@
                                 <option value="{{ $client->id }}">{{ $client->name }}</option>
                             @endforeach
                         </select>
-                        <input name="unit_label" required placeholder="Unit or allocation label" class="input-shell">
+                        <input name="unit_label" placeholder="Single unit or allocation label" class="input-shell">
+                        <textarea name="unit_labels" rows="3" placeholder="Or paste multiple unit labels, one per line" class="input-shell"></textarea>
                         <select name="status" class="input-shell"><option value="active">Active</option><option value="completed">Completed</option><option value="upcoming">Upcoming</option></select>
                         <input type="number" name="progress_percentage" value="0" min="0" max="100" class="input-shell">
                         <input type="number" name="contract_amount" required placeholder="Contract amount" class="input-shell">

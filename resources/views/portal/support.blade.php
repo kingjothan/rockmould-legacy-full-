@@ -75,7 +75,7 @@
                     <select name="project_assignment_id" class="input-shell">
                         <option value="">General Portal Support</option>
                         @foreach ($assignments as $assignment)
-                            <option value="{{ $assignment->id }}">{{ $assignment->project->title }} &middot; {{ $assignment->unit_label }}</option>
+                            <option value="{{ $assignment->id }}">{{ $assignment->project?->title ?? 'Project' }} &middot; {{ $assignment->unit?->label ?? $assignment->unit_label }}</option>
                         @endforeach
                     </select>
                 </div>

@@ -35,6 +35,11 @@ class Project extends Model
         return $this->hasMany(ProjectAssignment::class);
     }
 
+    public function units(): HasMany
+    {
+        return $this->hasMany(Unit::class);
+    }
+
     public function milestones(): HasMany
     {
         return $this->hasMany(ProjectMilestone::class)->orderBy('sort_order')->orderBy('milestone_date');

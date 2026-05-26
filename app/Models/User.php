@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -30,6 +31,21 @@ class User extends Authenticatable
     public function assignments(): HasMany
     {
         return $this->hasMany(ProjectAssignment::class);
+    }
+
+    public function units(): HasMany
+    {
+        return $this->hasMany(Unit::class, 'client_id');
+    }
+
+    public function projects(): HasManyThrough
+    {
+        return $this->hasManyThrough(Project::class, ProjectAssignment::class, 'user_id', 'id', 'id', 'project_id');
+    }
+
+    public function otps(): HasMany
+    {
+        return $this->hasMany(ClientOtp::class);
     }
 
     public function supportTickets(): HasMany

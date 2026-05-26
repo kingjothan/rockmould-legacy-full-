@@ -36,6 +36,11 @@ class ProjectAssignment extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function unit(): BelongsTo
+    {
+        return $this->belongsTo(Unit::class);
+    }
+
     public function payments(): HasMany
     {
         return $this->hasMany(Payment::class)->latest('paid_at');
