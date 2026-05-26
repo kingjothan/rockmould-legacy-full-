@@ -70,6 +70,26 @@ class ProjectController extends Controller
         return back()->with('success', 'Project updated.');
     }
 
+    public function destroy(Request $request, Project $project): RedirectResponse
+    {
+        $data = $request->validate([
+            'confirm_title' => ['required', 'string'],
+        ]);
+
+        if (trim($data['confirm_title']) !== $project->title) {
+            return back()->withErrors(['confirm_title' => 'Type the exact project title to delete this project.']);
+        }
+
+        Activity::log('project.deleted', 'Project deleted from admin.', $request->user(), $project, [
+            'project_title' => $project->title,
+            'project_id' => $project->id,
+        ]);
+
+        $project->delete();
+
+        return redirect()->route('admin.projects.index')->with('success', 'Project deleted successfully.');
+    }
+
     public function storeAssignment(Request $request, Project $project): RedirectResponse
     {
         $data = $request->validate([

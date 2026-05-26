@@ -22,6 +22,12 @@
                         <span class="rounded-full border border-border px-3 py-1 text-xs text-muted-foreground">{{ $project->units_count }} units</span>
                         <a href="{{ route('admin.media.index', ['project_id' => $project->id]) }}" class="luxury-btn-outline text-xs">Manage Gallery Media</a>
                         <a href="{{ route('admin.projects.show', $project) }}" class="luxury-btn-outline text-xs">Manage Units</a>
+                        <form action="{{ route('admin.projects.destroy', $project) }}" method="POST" onsubmit="return confirm('Delete {{ addslashes($project->title) }} permanently?');">
+                            @csrf
+                            @method('DELETE')
+                            <input type="hidden" name="confirm_title" value="{{ $project->title }}">
+                            <button class="luxury-btn-outline border-destructive/50 text-xs text-destructive hover:border-destructive">Delete</button>
+                        </form>
                     </div>
                 </div>
                 <form action="{{ route('admin.cms.projects.update', $project) }}" method="POST" enctype="multipart/form-data" class="mt-5 grid gap-4 md:grid-cols-2">

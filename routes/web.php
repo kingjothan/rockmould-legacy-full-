@@ -146,6 +146,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('/projects', [AdminProjectController::class, 'store'])->name('projects.store');
         Route::get('/projects/{project}', [AdminProjectController::class, 'show'])->name('projects.show');
         Route::match(['PUT', 'POST'], '/projects/{project}', [AdminProjectController::class, 'update'])->name('projects.update');
+        Route::delete('/projects/{project}', [AdminProjectController::class, 'destroy'])->name('projects.destroy');
         Route::post('/projects/{project}/assignments', [AdminProjectController::class, 'storeAssignment'])->name('projects.assignments.store');
         Route::put('/projects/{project}/assignments/{assignment}', [AdminProjectController::class, 'updateAssignment'])->name('projects.assignments.update');
 

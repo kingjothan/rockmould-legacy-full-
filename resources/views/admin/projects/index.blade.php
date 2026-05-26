@@ -72,7 +72,15 @@
                                     </td>
                                     <td>{{ $project->budget ? 'NGN '.number_format((float) $project->budget) : 'Pending' }}</td>
                                     <td>
-                                        <a href="{{ route('admin.projects.show', $project) }}" class="text-primary transition hover:text-primary/80">Open</a>
+                                        <div class="flex flex-wrap items-center gap-3">
+                                            <a href="{{ route('admin.projects.show', $project) }}" class="text-primary transition hover:text-primary/80">Open</a>
+                                            <form action="{{ route('admin.projects.destroy', $project) }}" method="POST" onsubmit="return confirm('Delete {{ addslashes($project->title) }} permanently?');">
+                                                @csrf
+                                                @method('DELETE')
+                                                <input type="hidden" name="confirm_title" value="{{ $project->title }}">
+                                                <button class="text-destructive transition hover:text-destructive/80">Delete</button>
+                                            </form>
+                                        </div>
                                     </td>
                                 </tr>
                             @empty

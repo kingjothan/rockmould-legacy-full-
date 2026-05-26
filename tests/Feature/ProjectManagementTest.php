@@ -178,4 +178,31 @@ class ProjectManagementTest extends TestCase
         $this->assertSame('0.00', $assignment->outstanding_balance);
         $this->assertSame($nextClient->id, $unit->client_id);
     }
+
+    public function test_admin_can_delete_project_and_related_units(): void
+    {
+        $admin = User::query()->where('email', 'admin@rockmould.com')->firstOrFail();
+        $client = User::query()->where('email', 'adebayo@example.com')->firstOrFail();
+        $project = Project::query()->where('slug', 'azure-towers')->firstOrFail();
+
+        $this->actingAs($admin)->post(route('admin.projects.assignments.store', $project), [
+            'user_id' => $client->id,
+            'unit_label' => 'Delete Test Unit',
+            'status' => 'active',
+            'progress_percentage' => 25,
+            'contract_amount' => 5000000,
+            'amount_paid' => 1000000,
+        ])->assertRedirect();
+
+        $this->assertDatabaseHas('project_assignments', ['project_id' => $project->id]);
+        $this->assertDatabaseHas('units', ['project_id' => $project->id]);
+
+        $this->actingAs($admin)->delete(route('admin.projects.destroy', $project), [
+            'confirm_title' => $project->title,
+        ])->assertRedirect(route('admin.projects.index'));
+
+        $this->assertDatabaseMissing('projects', ['id' => $project->id]);
+        $this->assertDatabaseMissing('project_assignments', ['project_id' => $project->id]);
+        $this->assertDatabaseMissing('units', ['project_id' => $project->id]);
+    }
 }

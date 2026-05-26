@@ -87,6 +87,22 @@
                     </form>
                 </div>
 
+                <div class="luxury-card border-destructive/30">
+                    <h2 class="font-display text-3xl text-destructive">Delete Project</h2>
+                    <p class="mt-2 text-sm text-muted-foreground">
+                        This permanently removes the project, client unit assignments, units, milestones, updates, project media, documents, and related payment records linked through assignments.
+                    </p>
+                    <form action="{{ route('admin.projects.destroy', $project) }}" method="POST" class="mt-5 space-y-4" onsubmit="return confirm('Delete this project permanently? This cannot be undone.');">
+                        @csrf
+                        @method('DELETE')
+                        <div>
+                            <label class="admin-label">Type "{{ $project->title }}" to confirm</label>
+                            <input name="confirm_title" class="input-shell" placeholder="{{ $project->title }}">
+                        </div>
+                        <button class="luxury-btn-outline border-destructive/50 text-destructive hover:border-destructive">Delete Project Permanently</button>
+                    </form>
+                </div>
+
                 <div class="luxury-card">
                     <div class="flex items-center justify-between gap-4">
                         <h2 class="font-display text-3xl">Client Units</h2>
