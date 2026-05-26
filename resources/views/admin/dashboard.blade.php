@@ -86,10 +86,12 @@
                         <x-portal-icon name="activity" class="h-4 w-4 text-primary" />
                         <h2 class="font-display text-base font-semibold">Recent Activity</h2>
                     </div>
-                    <a href="{{ route('admin.activity.index') }}" class="flex items-center gap-1 text-xs text-primary hover:underline">
-                        View All
-                        <x-portal-icon name="chevron-right" class="h-3 w-3" />
-                    </a>
+                    @if (\App\Support\SiteData::adminRouteAllowed(auth()->user()->role, 'admin.activity.index'))
+                        <a href="{{ route('admin.activity.index') }}" class="flex items-center gap-1 text-xs text-primary hover:underline">
+                            View All
+                            <x-portal-icon name="chevron-right" class="h-3 w-3" />
+                        </a>
+                    @endif
                 </div>
                 <div class="divide-y divide-border/60">
                     @forelse ($recentActivity as $log)
@@ -121,15 +123,19 @@
                     @php
                         $quickActions = [
                             ['route' => 'admin.consultations.index', 'icon' => 'calendar', 'label' => 'Review Consultations', 'color' => 'text-primary', 'bg' => 'bg-primary/10'],
-                            ['route' => 'admin.kyc.index', 'icon' => 'shield-check', 'label' => 'Review KYC Requests', 'color' => 'text-amber-400', 'bg' => 'bg-amber-500/10'],
                             ['route' => 'admin.clients.index', 'icon' => 'users', 'label' => 'Add New Client', 'color' => 'text-sky-400', 'bg' => 'bg-sky-500/10'],
                             ['route' => 'admin.projects.index', 'icon' => 'folder-kanban', 'label' => 'Create Project', 'color' => 'text-primary', 'bg' => 'bg-primary/10'],
                             ['route' => 'admin.documents.index', 'icon' => 'file-text', 'label' => 'Upload Documents', 'color' => 'text-violet-400', 'bg' => 'bg-violet-500/10'],
                             ['route' => 'admin.payments.index', 'icon' => 'credit-card', 'label' => 'Record Payment', 'color' => 'text-emerald-400', 'bg' => 'bg-emerald-500/10'],
                             ['route' => 'admin.media.index', 'icon' => 'image', 'label' => 'Upload Media', 'color' => 'text-rose-400', 'bg' => 'bg-rose-500/10'],
+                            ['route' => 'admin.cms.homepage', 'icon' => 'home', 'label' => 'Edit Website', 'color' => 'text-amber-400', 'bg' => 'bg-amber-500/10'],
                         ];
+                        $quickActions = array_filter(
+                            $quickActions,
+                            fn ($action) => \App\Support\SiteData::adminRouteAllowed(auth()->user()->role, $action['route'])
+                        );
                     @endphp
-                    @foreach ($quickActions as $action)
+                    @forelse ($quickActions as $action)
                         <a href="{{ route($action['route']) }}"
                            class="flex items-center gap-3 rounded-md p-3 transition-colors hover:bg-muted/40 group">
                             <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg {{ $action['bg'] }}">
@@ -138,7 +144,9 @@
                             <span class="flex-1 text-sm text-muted-foreground transition-colors group-hover:text-foreground">{{ $action['label'] }}</span>
                             <x-portal-icon name="chevron-right" class="h-3.5 w-3.5 text-muted-foreground/40 transition-colors group-hover:text-primary" />
                         </a>
-                    @endforeach
+                    @empty
+                        <div class="px-3 py-6 text-sm text-muted-foreground">No quick actions are available for your role.</div>
+                    @endforelse
                 </div>
             </div>
         </div>

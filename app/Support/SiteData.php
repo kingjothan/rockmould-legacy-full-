@@ -489,9 +489,9 @@ class SiteData
         ];
     }
 
-    public static function adminNavigation(): array
+    public static function adminNavigation($user = null): array
     {
-        return [
+        $navigation = [
             'Overview' => [
                 ['label' => 'Dashboard',       'route' => 'admin.dashboard',          'icon' => 'layout-dashboard'],
             ],
@@ -526,6 +526,72 @@ class SiteData
                 ['label' => 'Activity Log',    'route' => 'admin.activity.index',     'icon' => 'activity'],
             ],
         ];
+
+        return self::filterAdminNavigationForRole($navigation, $user?->role);
+    }
+
+    public static function adminRouteAllowed(?string $role, string $routeName): bool
+    {
+        if ($role === 'admin') {
+            return true;
+        }
+
+        $allowedPrefixes = [
+            'editor' => [
+                'admin.cms.',
+            ],
+            'project_manager' => [
+                'admin.consultations.',
+                'admin.projects.',
+                'admin.documents.',
+                'admin.media.',
+                'admin.updates.',
+            ],
+            'finance' => [
+                'admin.payments.',
+            ],
+            'content_manager' => [
+                'admin.cms.',
+                'admin.forms.',
+                'admin.notifications.',
+                'admin.media.',
+                'admin.updates.',
+            ],
+        ];
+
+        if ($routeName === 'admin.dashboard' || $routeName === 'admin.logout') {
+            return in_array($role, array_keys($allowedPrefixes), true);
+        }
+
+        foreach ($allowedPrefixes[$role] ?? [] as $prefix) {
+            if (str_starts_with($routeName, $prefix)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    protected static function filterAdminNavigationForRole(array $navigation, ?string $role): array
+    {
+        if ($role === 'admin') {
+            return $navigation;
+        }
+
+        $filtered = [];
+
+        foreach ($navigation as $group => $items) {
+            $allowedItems = array_values(array_filter(
+                $items,
+                fn (array $item): bool => self::adminRouteAllowed($role, $item['route'])
+            ));
+
+            if ($allowedItems !== []) {
+                $filtered[$group] = $allowedItems;
+            }
+        }
+
+        return $filtered;
     }
 
     public static function roleMatrix(): array

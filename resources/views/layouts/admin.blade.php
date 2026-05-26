@@ -1,4 +1,4 @@
-@php($navGroups = \App\Support\SiteData::adminNavigation())
+@php($navGroups = \App\Support\SiteData::adminNavigation(auth()->user()))
 
 <x-layouts.base :title="$title ?? 'Admin CMS | Rockmould Limited'">
     <div class="min-h-screen bg-background">

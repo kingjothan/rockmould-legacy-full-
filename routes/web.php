@@ -124,89 +124,110 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('/logout', [AdminAuthController::class, 'logout'])->name('logout');
         Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
 
-        Route::get('/clients', [AdminClientController::class, 'index'])->name('clients.index');
-        Route::post('/clients', [AdminClientController::class, 'store'])->name('clients.store');
-        Route::get('/clients/{user}', [AdminClientController::class, 'show'])->name('clients.show');
-        Route::put('/clients/{user}', [AdminClientController::class, 'update'])->name('clients.update');
+        Route::middleware('role:admin')->group(function () {
+            Route::get('/clients', [AdminClientController::class, 'index'])->name('clients.index');
+            Route::post('/clients', [AdminClientController::class, 'store'])->name('clients.store');
+            Route::get('/clients/{user}', [AdminClientController::class, 'show'])->name('clients.show');
+            Route::put('/clients/{user}', [AdminClientController::class, 'update'])->name('clients.update');
+            Route::delete('/clients/{user}', [AdminClientController::class, 'destroy'])->name('clients.destroy');
+        });
 
-        Route::get('/kyc', [AdminKycController::class, 'index'])->name('kyc.index');
-        Route::put('/kyc/{kycRequest}', [AdminKycController::class, 'update'])->name('kyc.update');
+        Route::middleware('role:admin')->group(function () {
+            Route::get('/kyc', [AdminKycController::class, 'index'])->name('kyc.index');
+            Route::put('/kyc/{kycRequest}', [AdminKycController::class, 'update'])->name('kyc.update');
+        });
 
-        Route::get('/consultations', [AdminConsultationController::class, 'index'])->name('consultations.index');
-        Route::post('/consultations/settings', [AdminConsultationController::class, 'updateSettings'])->name('consultations.settings.update');
-        Route::post('/consultations/availability', [AdminConsultationController::class, 'storeAvailability'])->name('consultations.availability.store');
-        Route::put('/consultations/availability/{consultationAvailability}', [AdminConsultationController::class, 'updateAvailability'])->name('consultations.availability.update');
-        Route::delete('/consultations/availability/{consultationAvailability}', [AdminConsultationController::class, 'destroyAvailability'])->name('consultations.availability.destroy');
-        Route::post('/consultations/blocked-dates', [AdminConsultationController::class, 'storeBlockedDate'])->name('consultations.blocked-dates.store');
-        Route::delete('/consultations/blocked-dates/{consultationBlockedDate}', [AdminConsultationController::class, 'destroyBlockedDate'])->name('consultations.blocked-dates.destroy');
-        Route::get('/consultations/{consultationBooking}', [AdminConsultationController::class, 'show'])->name('consultations.show');
-        Route::put('/consultations/{consultationBooking}', [AdminConsultationController::class, 'update'])->name('consultations.update');
+        Route::middleware('role:admin,project_manager')->group(function () {
+            Route::get('/consultations', [AdminConsultationController::class, 'index'])->name('consultations.index');
+            Route::post('/consultations/settings', [AdminConsultationController::class, 'updateSettings'])->name('consultations.settings.update');
+            Route::post('/consultations/availability', [AdminConsultationController::class, 'storeAvailability'])->name('consultations.availability.store');
+            Route::put('/consultations/availability/{consultationAvailability}', [AdminConsultationController::class, 'updateAvailability'])->name('consultations.availability.update');
+            Route::delete('/consultations/availability/{consultationAvailability}', [AdminConsultationController::class, 'destroyAvailability'])->name('consultations.availability.destroy');
+            Route::post('/consultations/blocked-dates', [AdminConsultationController::class, 'storeBlockedDate'])->name('consultations.blocked-dates.store');
+            Route::delete('/consultations/blocked-dates/{consultationBlockedDate}', [AdminConsultationController::class, 'destroyBlockedDate'])->name('consultations.blocked-dates.destroy');
+            Route::get('/consultations/{consultationBooking}', [AdminConsultationController::class, 'show'])->name('consultations.show');
+            Route::put('/consultations/{consultationBooking}', [AdminConsultationController::class, 'update'])->name('consultations.update');
 
-        Route::get('/projects', [AdminProjectController::class, 'index'])->name('projects.index');
-        Route::post('/projects', [AdminProjectController::class, 'store'])->name('projects.store');
-        Route::get('/projects/{project}', [AdminProjectController::class, 'show'])->name('projects.show');
-        Route::match(['PUT', 'POST'], '/projects/{project}', [AdminProjectController::class, 'update'])->name('projects.update');
-        Route::delete('/projects/{project}', [AdminProjectController::class, 'destroy'])->name('projects.destroy');
-        Route::post('/projects/{project}/assignments', [AdminProjectController::class, 'storeAssignment'])->name('projects.assignments.store');
-        Route::put('/projects/{project}/assignments/{assignment}', [AdminProjectController::class, 'updateAssignment'])->name('projects.assignments.update');
+            Route::get('/projects', [AdminProjectController::class, 'index'])->name('projects.index');
+            Route::post('/projects', [AdminProjectController::class, 'store'])->name('projects.store');
+            Route::get('/projects/{project}', [AdminProjectController::class, 'show'])->name('projects.show');
+            Route::match(['PUT', 'POST'], '/projects/{project}', [AdminProjectController::class, 'update'])->name('projects.update');
+            Route::delete('/projects/{project}', [AdminProjectController::class, 'destroy'])->name('projects.destroy');
+            Route::post('/projects/{project}/assignments', [AdminProjectController::class, 'storeAssignment'])->name('projects.assignments.store');
+            Route::put('/projects/{project}/assignments/{assignment}', [AdminProjectController::class, 'updateAssignment'])->name('projects.assignments.update');
+        });
 
-        Route::get('/payments', [AdminPaymentController::class, 'index'])->name('payments.index');
-        Route::post('/payments', [AdminPaymentController::class, 'store'])->name('payments.store');
+        Route::middleware('role:admin,finance')->group(function () {
+            Route::get('/payments', [AdminPaymentController::class, 'index'])->name('payments.index');
+            Route::post('/payments', [AdminPaymentController::class, 'store'])->name('payments.store');
+            Route::put('/payments/assignments/{assignment}', [AdminPaymentController::class, 'updateAssignmentFinancials'])->name('payments.assignments.update');
+        });
 
-        Route::get('/documents', [AdminDocumentController::class, 'index'])->name('documents.index');
-        Route::post('/documents', [AdminDocumentController::class, 'store'])->name('documents.store');
-        Route::put('/documents/{document}', [AdminDocumentController::class, 'update'])->name('documents.update');
-        Route::delete('/documents/{document}', [AdminDocumentController::class, 'destroy'])->name('documents.destroy');
+        Route::middleware('role:admin,project_manager')->group(function () {
+            Route::get('/documents', [AdminDocumentController::class, 'index'])->name('documents.index');
+            Route::post('/documents', [AdminDocumentController::class, 'store'])->name('documents.store');
+            Route::put('/documents/{document}', [AdminDocumentController::class, 'update'])->name('documents.update');
+            Route::delete('/documents/{document}', [AdminDocumentController::class, 'destroy'])->name('documents.destroy');
+        });
 
-        Route::get('/media', [AdminMediaController::class, 'index'])->name('media.index');
-        Route::post('/media', [AdminMediaController::class, 'store'])->name('media.store');
-        Route::match(['PUT', 'POST'], '/media/{mediaAsset}', [AdminMediaController::class, 'update'])->name('media.update');
-        Route::delete('/media/{mediaAsset}', [AdminMediaController::class, 'destroy'])->name('media.destroy');
+        Route::middleware('role:admin,project_manager,content_manager')->group(function () {
+            Route::get('/media', [AdminMediaController::class, 'index'])->name('media.index');
+            Route::post('/media', [AdminMediaController::class, 'store'])->name('media.store');
+            Route::match(['PUT', 'POST'], '/media/{mediaAsset}', [AdminMediaController::class, 'update'])->name('media.update');
+            Route::delete('/media/{mediaAsset}', [AdminMediaController::class, 'destroy'])->name('media.destroy');
 
-        Route::get('/updates', [AdminUpdateController::class, 'index'])->name('updates.index');
-        Route::post('/updates', [AdminUpdateController::class, 'store'])->name('updates.store');
+            Route::get('/updates', [AdminUpdateController::class, 'index'])->name('updates.index');
+            Route::post('/updates', [AdminUpdateController::class, 'store'])->name('updates.store');
+        });
 
-        Route::get('/cms/homepage', [AdminCmsController::class, 'homepage'])->name('cms.homepage');
-        Route::match(['PUT', 'POST'], '/cms/homepage', [AdminCmsController::class, 'updateHomepage'])->name('cms.homepage.update');
-        Route::get('/cms/pages', [AdminCmsController::class, 'pages'])->name('cms.pages');
-        Route::match(['PUT', 'POST'], '/cms/pages', [AdminCmsController::class, 'updatePages'])->name('cms.pages.update');
-        Route::get('/cms/portal', [AdminCmsController::class, 'portal'])->name('cms.portal');
-        Route::match(['PUT', 'POST'], '/cms/portal', [AdminCmsController::class, 'updatePortal'])->name('cms.portal.update');
-        Route::get('/cms/about', [AdminCmsController::class, 'about'])->name('cms.about');
-        Route::match(['PUT', 'POST'], '/cms/about', [AdminCmsController::class, 'updateAbout'])->name('cms.about.update');
-        Route::post('/cms/about/team', [AdminCmsController::class, 'storeTeamMember'])->name('cms.about.team.store');
-        Route::put('/cms/about/team/{teamMember}', [AdminCmsController::class, 'updateTeamMember'])->name('cms.about.team.update');
-        Route::delete('/cms/about/team/{teamMember}', [AdminCmsController::class, 'destroyTeamMember'])->name('cms.about.team.destroy');
-        Route::post('/cms/about/timeline', [AdminCmsController::class, 'storeTimelineEntry'])->name('cms.about.timeline.store');
-        Route::put('/cms/about/timeline/{timelineEntry}', [AdminCmsController::class, 'updateTimelineEntry'])->name('cms.about.timeline.update');
-        Route::delete('/cms/about/timeline/{timelineEntry}', [AdminCmsController::class, 'destroyTimelineEntry'])->name('cms.about.timeline.destroy');
-        Route::get('/cms/services', [AdminCmsController::class, 'services'])->name('cms.services');
-        Route::post('/cms/services', [AdminCmsController::class, 'storeService'])->name('cms.services.store');
-        Route::put('/cms/services/{service}', [AdminCmsController::class, 'updateService'])->name('cms.services.update');
-        Route::get('/cms/projects', [AdminCmsController::class, 'projectListings'])->name('cms.projects');
-        Route::put('/cms/projects/{project}', [AdminCmsController::class, 'updateProjectListing'])->name('cms.projects.update');
-        Route::get('/cms/portfolio', [AdminCmsController::class, 'portfolio'])->name('cms.portfolio');
-        Route::put('/cms/portfolio', [AdminCmsController::class, 'updatePortfolio'])->name('cms.portfolio.update');
-        Route::get('/cms/blog', [AdminCmsController::class, 'blog'])->name('cms.blog');
-        Route::post('/cms/blog', [AdminCmsController::class, 'storePost'])->name('cms.blog.store');
-        Route::put('/cms/blog/{post}', [AdminCmsController::class, 'updatePost'])->name('cms.blog.update');
-        Route::get('/cms/testimonials', [AdminCmsController::class, 'testimonials'])->name('cms.testimonials');
-        Route::post('/cms/testimonials', [AdminCmsController::class, 'storeTestimonial'])->name('cms.testimonials.store');
-        Route::put('/cms/testimonials/{testimonial}', [AdminCmsController::class, 'updateTestimonial'])->name('cms.testimonials.update');
-        Route::get('/cms/faq', [AdminCmsController::class, 'faq'])->name('cms.faq');
-        Route::post('/cms/faq', [AdminCmsController::class, 'storeFaq'])->name('cms.faq.store');
-        Route::put('/cms/faq/{faq}', [AdminCmsController::class, 'updateFaq'])->name('cms.faq.update');
-        Route::get('/cms/careers', [AdminCmsController::class, 'careers'])->name('cms.careers');
-        Route::post('/cms/careers', [AdminCmsController::class, 'storeCareer'])->name('cms.careers.store');
-        Route::put('/cms/careers/{careerOpening}', [AdminCmsController::class, 'updateCareer'])->name('cms.careers.update');
-        Route::delete('/cms/careers/{careerOpening}', [AdminCmsController::class, 'destroyCareer'])->name('cms.careers.destroy');
+        Route::middleware('role:admin,editor,content_manager')->group(function () {
+            Route::get('/cms/homepage', [AdminCmsController::class, 'homepage'])->name('cms.homepage');
+            Route::match(['PUT', 'POST'], '/cms/homepage', [AdminCmsController::class, 'updateHomepage'])->name('cms.homepage.update');
+            Route::get('/cms/pages', [AdminCmsController::class, 'pages'])->name('cms.pages');
+            Route::match(['PUT', 'POST'], '/cms/pages', [AdminCmsController::class, 'updatePages'])->name('cms.pages.update');
+            Route::get('/cms/portal', [AdminCmsController::class, 'portal'])->name('cms.portal');
+            Route::match(['PUT', 'POST'], '/cms/portal', [AdminCmsController::class, 'updatePortal'])->name('cms.portal.update');
+            Route::get('/cms/about', [AdminCmsController::class, 'about'])->name('cms.about');
+            Route::match(['PUT', 'POST'], '/cms/about', [AdminCmsController::class, 'updateAbout'])->name('cms.about.update');
+            Route::post('/cms/about/team', [AdminCmsController::class, 'storeTeamMember'])->name('cms.about.team.store');
+            Route::put('/cms/about/team/{teamMember}', [AdminCmsController::class, 'updateTeamMember'])->name('cms.about.team.update');
+            Route::delete('/cms/about/team/{teamMember}', [AdminCmsController::class, 'destroyTeamMember'])->name('cms.about.team.destroy');
+            Route::post('/cms/about/timeline', [AdminCmsController::class, 'storeTimelineEntry'])->name('cms.about.timeline.store');
+            Route::put('/cms/about/timeline/{timelineEntry}', [AdminCmsController::class, 'updateTimelineEntry'])->name('cms.about.timeline.update');
+            Route::delete('/cms/about/timeline/{timelineEntry}', [AdminCmsController::class, 'destroyTimelineEntry'])->name('cms.about.timeline.destroy');
+            Route::get('/cms/services', [AdminCmsController::class, 'services'])->name('cms.services');
+            Route::post('/cms/services', [AdminCmsController::class, 'storeService'])->name('cms.services.store');
+            Route::put('/cms/services/{service}', [AdminCmsController::class, 'updateService'])->name('cms.services.update');
+            Route::get('/cms/projects', [AdminCmsController::class, 'projectListings'])->name('cms.projects');
+            Route::put('/cms/projects/{project}', [AdminCmsController::class, 'updateProjectListing'])->name('cms.projects.update');
+            Route::get('/cms/portfolio', [AdminCmsController::class, 'portfolio'])->name('cms.portfolio');
+            Route::put('/cms/portfolio', [AdminCmsController::class, 'updatePortfolio'])->name('cms.portfolio.update');
+            Route::get('/cms/blog', [AdminCmsController::class, 'blog'])->name('cms.blog');
+            Route::post('/cms/blog', [AdminCmsController::class, 'storePost'])->name('cms.blog.store');
+            Route::put('/cms/blog/{post}', [AdminCmsController::class, 'updatePost'])->name('cms.blog.update');
+            Route::get('/cms/testimonials', [AdminCmsController::class, 'testimonials'])->name('cms.testimonials');
+            Route::post('/cms/testimonials', [AdminCmsController::class, 'storeTestimonial'])->name('cms.testimonials.store');
+            Route::put('/cms/testimonials/{testimonial}', [AdminCmsController::class, 'updateTestimonial'])->name('cms.testimonials.update');
+            Route::get('/cms/faq', [AdminCmsController::class, 'faq'])->name('cms.faq');
+            Route::post('/cms/faq', [AdminCmsController::class, 'storeFaq'])->name('cms.faq.store');
+            Route::put('/cms/faq/{faq}', [AdminCmsController::class, 'updateFaq'])->name('cms.faq.update');
+            Route::get('/cms/careers', [AdminCmsController::class, 'careers'])->name('cms.careers');
+            Route::post('/cms/careers', [AdminCmsController::class, 'storeCareer'])->name('cms.careers.store');
+            Route::put('/cms/careers/{careerOpening}', [AdminCmsController::class, 'updateCareer'])->name('cms.careers.update');
+            Route::delete('/cms/careers/{careerOpening}', [AdminCmsController::class, 'destroyCareer'])->name('cms.careers.destroy');
+        });
 
-        Route::get('/forms', [AdminFormController::class, 'index'])->name('forms.index');
-        Route::get('/notifications', [AdminNotificationController::class, 'index'])->name('notifications.index');
-        Route::get('/settings', [AdminSettingController::class, 'edit'])->name('settings.edit');
-        Route::put('/settings', [AdminSettingController::class, 'update'])->name('settings.update');
-        Route::get('/roles', [AdminRoleController::class, 'index'])->name('roles.index');
-        Route::put('/roles/{user}', [AdminRoleController::class, 'update'])->name('roles.update');
-        Route::get('/activity', [AdminActivityController::class, 'index'])->name('activity.index');
+        Route::middleware('role:admin,editor,content_manager')->group(function () {
+            Route::get('/forms', [AdminFormController::class, 'index'])->name('forms.index');
+            Route::get('/notifications', [AdminNotificationController::class, 'index'])->name('notifications.index');
+        });
+
+        Route::middleware('role:admin')->group(function () {
+            Route::get('/settings', [AdminSettingController::class, 'edit'])->name('settings.edit');
+            Route::put('/settings', [AdminSettingController::class, 'update'])->name('settings.update');
+            Route::get('/roles', [AdminRoleController::class, 'index'])->name('roles.index');
+            Route::put('/roles/{user}', [AdminRoleController::class, 'update'])->name('roles.update');
+            Route::get('/activity', [AdminActivityController::class, 'index'])->name('activity.index');
+        });
     });
 });

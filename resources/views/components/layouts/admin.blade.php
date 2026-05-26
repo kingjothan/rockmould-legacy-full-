@@ -4,7 +4,7 @@
 ])
 
 @php
-    $navGroups = \App\Support\SiteData::adminNavigation();
+    $navGroups = \App\Support\SiteData::adminNavigation(auth()->user());
     $fullName = trim((string) auth()->user()->name);
     $nameParts = preg_split('/\s+/', $fullName, -1, PREG_SPLIT_NO_EMPTY) ?: [$fullName];
     $firstName = $nameParts[0] ?? $fullName;

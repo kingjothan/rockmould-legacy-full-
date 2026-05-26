@@ -118,5 +118,49 @@
                 </form>
             </div>
         </div>
+
+        <div class="luxury-card overflow-hidden p-0">
+            <div class="border-b border-border p-5">
+                <h2 class="font-display text-2xl">Client Financials</h2>
+                <p class="mt-2 text-sm text-muted-foreground">Update contract totals, paid amounts, outstanding balances, and next payment dates only.</p>
+            </div>
+
+            <div class="divide-y divide-border/60">
+                @forelse ($assignments as $assignment)
+                    <form action="{{ route('admin.payments.assignments.update', $assignment) }}" method="POST" class="grid gap-4 p-5 xl:grid-cols-[1.2fr_repeat(5,minmax(0,1fr))_120px] xl:items-end">
+                        @csrf
+                        @method('PUT')
+                        <div>
+                            <p class="font-medium">{{ $assignment->user?->name ?? 'Client' }}</p>
+                            <p class="mt-1 text-xs text-muted-foreground">{{ $assignment->project?->title ?? 'Project' }} &middot; {{ $assignment->unit?->label ?? $assignment->unit_label }}</p>
+                        </div>
+                        <div>
+                            <label class="admin-label">Contract</label>
+                            <input type="number" step="0.01" name="contract_amount" value="{{ old('contract_amount', $assignment->contract_amount) }}" class="input-shell">
+                        </div>
+                        <div>
+                            <label class="admin-label">Paid</label>
+                            <input type="number" step="0.01" name="amount_paid" value="{{ old('amount_paid', $assignment->amount_paid) }}" class="input-shell">
+                        </div>
+                        <div>
+                            <label class="admin-label">Outstanding</label>
+                            <input type="number" step="0.01" name="outstanding_balance" value="{{ old('outstanding_balance', $assignment->outstanding_balance) }}" class="input-shell">
+                        </div>
+                        <div>
+                            <label class="admin-label">Next Amount</label>
+                            <input type="number" step="0.01" name="next_payment_amount" value="{{ old('next_payment_amount', $assignment->next_payment_amount) }}" class="input-shell">
+                        </div>
+                        <div>
+                            <label class="admin-label">Next Due</label>
+                            <input type="date" name="next_payment_due_at" value="{{ old('next_payment_due_at', optional($assignment->next_payment_due_at)->format('Y-m-d')) }}" class="input-shell">
+                            <input type="hidden" name="status" value="{{ $assignment->status }}">
+                        </div>
+                        <button class="luxury-btn-outline">Update</button>
+                    </form>
+                @empty
+                    <div class="px-6 py-12 text-center text-sm text-muted-foreground">No client assignments are available for financial updates.</div>
+                @endforelse
+            </div>
+        </div>
     </div>
 </x-layouts.admin>

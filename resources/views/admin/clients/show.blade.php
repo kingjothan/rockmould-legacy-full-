@@ -129,6 +129,28 @@
                         @endforelse
                     </div>
                 </div>
+
+                <div class="luxury-card-flat border-destructive/30 p-6">
+                    <h2 class="font-display text-lg font-semibold text-destructive">Remove Client</h2>
+                    <p class="mt-2 text-sm text-muted-foreground">
+                        This clears the client account and removes their project assignments. Assigned units will be released back to available.
+                    </p>
+
+                    <form action="{{ route('admin.clients.destroy', $client) }}" method="POST" class="mt-5 space-y-4" onsubmit="return confirm('Delete this client permanently?');">
+                        @csrf
+                        @method('DELETE')
+                        <div>
+                            <label class="admin-label">Type client email to confirm</label>
+                            <input type="email" name="confirm_email" placeholder="{{ $client->email }}" class="input-shell">
+                            @error('confirm_email')
+                                <p class="mt-2 text-xs text-destructive">{{ $message }}</p>
+                            @enderror
+                        </div>
+                        <button class="rounded-sm border border-destructive/50 px-4 py-2 text-sm font-semibold text-destructive transition hover:bg-destructive hover:text-destructive-foreground">
+                            Delete Client
+                        </button>
+                    </form>
+                </div>
             </div>
 
             <div class="luxury-card-flat overflow-hidden p-0">

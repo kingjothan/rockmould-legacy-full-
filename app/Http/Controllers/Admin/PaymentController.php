@@ -51,4 +51,24 @@ class PaymentController extends Controller
 
         return back()->with('success', 'Payment recorded successfully.');
     }
+
+    public function updateAssignmentFinancials(Request $request, ProjectAssignment $assignment): RedirectResponse
+    {
+        $data = $request->validate([
+            'contract_amount' => ['required', 'numeric', 'min:0'],
+            'amount_paid' => ['required', 'numeric', 'min:0'],
+            'outstanding_balance' => ['nullable', 'numeric', 'min:0'],
+            'next_payment_amount' => ['nullable', 'numeric', 'min:0'],
+            'next_payment_due_at' => ['nullable', 'date'],
+            'status' => ['required', 'string', 'max:50'],
+        ]);
+
+        $data['outstanding_balance'] = $data['outstanding_balance'] ?? max(0, (float) $data['contract_amount'] - (float) $data['amount_paid']);
+
+        $assignment->update($data);
+
+        Activity::log('assignment.financials.updated', 'Client assignment financials updated.', $request->user(), $assignment);
+
+        return back()->with('success', 'Client financial details updated.');
+    }
 }

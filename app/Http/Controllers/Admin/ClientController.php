@@ -76,4 +76,27 @@ class ClientController extends Controller
 
         return back()->with('success', 'Client record updated.');
     }
+
+    public function destroy(Request $request, User $user): RedirectResponse
+    {
+        abort_unless($user->role === 'client', 404);
+
+        $data = $request->validate([
+            'confirm_email' => ['required', 'email'],
+        ]);
+
+        if (strtolower($data['confirm_email']) !== strtolower((string) $user->email)) {
+            return back()->withErrors([
+                'confirm_email' => 'Type the client email exactly to delete this client.',
+            ]);
+        }
+
+        $user->units()->update(['client_id' => null, 'status' => 'available']);
+
+        Activity::log('client.deleted', 'Client record deleted from admin.', $request->user(), $user);
+
+        $user->delete();
+
+        return redirect()->route('admin.clients.index')->with('success', 'Client removed successfully.');
+    }
 }

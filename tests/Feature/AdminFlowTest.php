@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\ConsultationBooking;
 use App\Models\Project;
+use App\Models\ProjectAssignment;
 use App\Models\Setting;
 use App\Models\User;
 use Database\Seeders\RockmouldSeeder;
@@ -57,6 +58,141 @@ class AdminFlowTest extends TestCase
 
         $this->actingAs($client)
             ->get('/admin')
+            ->assertForbidden();
+    }
+
+    public function test_admin_can_delete_client_records(): void
+    {
+        $admin = User::query()->where('email', 'admin@rockmould.com')->firstOrFail();
+        $client = User::query()->where('email', 'adebayo@example.com')->firstOrFail();
+
+        $this->actingAs($admin)
+            ->delete(route('admin.clients.destroy', $client), [
+                'confirm_email' => $client->email,
+            ])
+            ->assertRedirect(route('admin.clients.index'))
+            ->assertSessionHasNoErrors();
+
+        $this->assertDatabaseMissing('users', ['id' => $client->id]);
+        $this->assertDatabaseMissing('project_assignments', ['user_id' => $client->id]);
+    }
+
+    public function test_finance_user_can_only_access_financial_admin_area(): void
+    {
+        $finance = User::query()->where('email', 'finance@rockmould.com')->firstOrFail();
+        $assignment = ProjectAssignment::query()->firstOrFail();
+
+        $this->actingAs($finance)
+            ->get('/admin/payments')
+            ->assertOk();
+
+        $this->actingAs($finance)
+            ->put(route('admin.payments.assignments.update', $assignment), [
+                'contract_amount' => 20000000,
+                'amount_paid' => 7500000,
+                'outstanding_balance' => 12500000,
+                'next_payment_amount' => 2500000,
+                'next_payment_due_at' => '2026-06-15',
+                'status' => $assignment->status,
+            ])
+            ->assertRedirect()
+            ->assertSessionHasNoErrors();
+
+        $assignment->refresh();
+
+        $this->assertSame('20000000.00', $assignment->contract_amount);
+        $this->assertSame('7500000.00', $assignment->amount_paid);
+        $this->assertSame('12500000.00', $assignment->outstanding_balance);
+        $this->assertSame('2500000.00', $assignment->next_payment_amount);
+
+        $this->actingAs($finance)
+            ->get('/admin/clients')
+            ->assertForbidden();
+
+        $this->actingAs($finance)
+            ->get('/admin/documents')
+            ->assertForbidden();
+    }
+
+    public function test_editor_user_is_limited_to_website_cms(): void
+    {
+        $editor = User::query()->where('email', 'editor@rockmould.com')->firstOrFail();
+
+        $this->actingAs($editor)
+            ->get('/admin/cms/homepage')
+            ->assertOk();
+
+        $this->actingAs($editor)
+            ->get('/admin/projects')
+            ->assertForbidden();
+
+        $this->actingAs($editor)
+            ->get('/admin/payments')
+            ->assertForbidden();
+
+        $this->actingAs($editor)
+            ->get('/admin/clients')
+            ->assertForbidden();
+    }
+
+    public function test_project_manager_user_is_limited_to_project_operations(): void
+    {
+        $projectManager = User::query()->where('email', 'projects@rockmould.com')->firstOrFail();
+
+        $this->actingAs($projectManager)
+            ->get('/admin/projects')
+            ->assertOk();
+
+        $this->actingAs($projectManager)
+            ->get('/admin/documents')
+            ->assertOk();
+
+        $this->actingAs($projectManager)
+            ->get('/admin/consultations')
+            ->assertOk();
+
+        $this->actingAs($projectManager)
+            ->get('/admin/cms/homepage')
+            ->assertForbidden();
+
+        $this->actingAs($projectManager)
+            ->get('/admin/payments')
+            ->assertForbidden();
+
+        $this->actingAs($projectManager)
+            ->get('/admin/clients')
+            ->assertForbidden();
+    }
+
+    public function test_content_manager_user_is_limited_to_content_tools(): void
+    {
+        $contentManager = User::factory()->create([
+            'role' => 'content_manager',
+            'status' => 'active',
+        ]);
+
+        $this->actingAs($contentManager)
+            ->get('/admin/cms/homepage')
+            ->assertOk();
+
+        $this->actingAs($contentManager)
+            ->get('/admin/media')
+            ->assertOk();
+
+        $this->actingAs($contentManager)
+            ->get('/admin/forms')
+            ->assertOk();
+
+        $this->actingAs($contentManager)
+            ->get('/admin/projects')
+            ->assertForbidden();
+
+        $this->actingAs($contentManager)
+            ->get('/admin/payments')
+            ->assertForbidden();
+
+        $this->actingAs($contentManager)
+            ->get('/admin/clients')
             ->assertForbidden();
     }
 
