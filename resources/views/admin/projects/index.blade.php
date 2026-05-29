@@ -118,6 +118,16 @@
                     <input type="number" name="progress" value="0" min="0" max="100" class="input-shell">
                     <input type="number" name="budget" placeholder="Budget" class="input-shell">
                     <input type="number" name="price_from" placeholder="Price from" class="input-shell">
+                    <div class="grid gap-3 sm:grid-cols-2">
+                        <div>
+                            <label class="admin-label">Start Date</label>
+                            <input type="date" name="launch_date" class="input-shell">
+                        </div>
+                        <div>
+                            <label class="admin-label">Completion Date</label>
+                            <input type="date" name="completion_date" class="input-shell">
+                        </div>
+                    </div>
                     <textarea name="features_text" rows="4" placeholder="Features, one per line" class="input-shell"></textarea>
                     <textarea name="gallery_text" rows="4" placeholder="Gallery paths, one per line" class="input-shell"></textarea>
                     <textarea name="highlights_json" rows="4" placeholder='Highlights JSON, e.g. [{"label":"Units","value":"120"}]' class="input-shell"></textarea>

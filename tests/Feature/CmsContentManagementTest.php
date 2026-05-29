@@ -403,6 +403,52 @@ class CmsContentManagementTest extends TestCase
             ->assertSee($project->title);
     }
 
+    public function test_admin_can_update_project_highlight_cards_from_cms(): void
+    {
+        $admin = User::query()->where('email', 'admin@rockmould.com')->firstOrFail();
+        $project = Project::query()->where('slug', 'azure-towers')->firstOrFail();
+
+        $this->actingAs($admin)
+            ->put(route('admin.cms.projects.update', $project), [
+                'title' => $project->title,
+                'slug' => $project->slug,
+                'location' => $project->location,
+                'category' => $project->category,
+                'status' => $project->status,
+                'overview' => $project->overview,
+                'description' => $project->description,
+                'cover_image' => $project->cover_image,
+                'launch_date' => optional($project->launch_date)->format('Y-m-d'),
+                'completion_date' => optional($project->completion_date)->format('Y-m-d'),
+                'total_units_highlight' => '140',
+                'available_units_highlight' => '26',
+                'highlight_values' => ['24', 'Q4 2026', 'Apartments'],
+                'highlight_labels' => ['Floors', 'Completion', 'Type'],
+                'is_featured' => $project->is_featured ? '1' : '0',
+                'is_published' => '1',
+                'is_portfolio' => $project->is_portfolio ? '1' : '0',
+            ])
+            ->assertRedirect()
+            ->assertSessionHasNoErrors();
+
+        $project->refresh();
+
+        $this->assertSame('140', $project->highlights[0]['value']);
+        $this->assertSame('Total Units', $project->highlights[0]['label']);
+        $this->assertSame('26', $project->highlights[1]['value']);
+        $this->assertSame('Available Units', $project->highlights[1]['label']);
+        $this->assertSame('Q4 2026', $project->highlights[3]['value']);
+
+        $this->get(route('projects.show', $project))
+            ->assertOk()
+            ->assertSee('140')
+            ->assertSee('Total Units')
+            ->assertSee('26')
+            ->assertSee('Available Units')
+            ->assertSee('Q4 2026')
+            ->assertSee('Completion');
+    }
+
     public function test_admin_can_update_public_pages_and_portal_content(): void
     {
         Storage::persistentFake('public');

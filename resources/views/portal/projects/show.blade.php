@@ -1,4 +1,8 @@
 <x-layouts.portal :company="$company" :page-heading="$assignment->project?->title ?? 'Project'">
+    @php
+        $projectTimeline = $assignment->project->timelineMilestones();
+    @endphp
+
     <div class="space-y-8">
         <section class="relative overflow-hidden rounded-sm border border-border bg-card">
             <x-media :path="$assignment->project?->cover_image" fallback="images/project-1.jpg" alt="{{ $assignment->project?->title ?? 'Project' }}" class="aspect-[16/8] w-full object-cover" />
@@ -46,16 +50,16 @@
                 <div class="luxury-card">
                     <div class="flex items-center justify-between gap-4">
                         <h2 class="font-display text-3xl">Milestones</h2>
-                        <p class="text-xs uppercase tracking-[0.18em] text-muted-foreground">{{ $assignment->project->milestones->count() }} stages</p>
+                        <p class="text-xs uppercase tracking-[0.18em] text-muted-foreground">{{ $projectTimeline->count() }} stages</p>
                     </div>
                     <div class="mt-6 space-y-4">
-                        @forelse ($assignment->project->milestones as $milestone)
+                        @forelse ($projectTimeline as $milestone)
                             <div class="rounded-sm border border-border bg-muted/20 p-4">
                                 <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                                     <div>
                                         <h3 class="font-medium">{{ $milestone->title }}</h3>
-                                        @if ($milestone->due_date)
-                                            <p class="mt-1 text-xs text-muted-foreground">{{ optional($milestone->due_date)->format('F j, Y') }}</p>
+                                        @if ($milestone->milestone_date)
+                                            <p class="mt-1 text-xs text-muted-foreground">{{ optional($milestone->milestone_date)->format('F j, Y') }}</p>
                                         @endif
                                     </div>
                                     <x-status-badge :value="$milestone->is_completed ? 'completed' : 'pending'" />

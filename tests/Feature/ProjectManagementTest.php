@@ -38,6 +38,8 @@ class ProjectManagementTest extends TestCase
             'progress' => 12,
             'budget' => 4500000000,
             'price_from' => 180000000,
+            'launch_date' => '2026-01-15',
+            'completion_date' => '2027-12-20',
             'features_text' => "Sky lounge\nWellness floor\nPrivate concierge",
             'gallery_text' => '',
             'highlights_json' => json_encode([
@@ -70,6 +72,8 @@ class ProjectManagementTest extends TestCase
         $this->assertStringStartsWith('projects/covers/', (string) $project->cover_image);
         $this->assertStringEndsWith('.mp4', (string) $project->cover_image);
         $this->assertTrue(Storage::disk('public')->exists($project->cover_image));
+        $this->assertSame('2026-01-15', $project->launch_date?->format('Y-m-d'));
+        $this->assertSame('2027-12-20', $project->completion_date?->format('Y-m-d'));
 
         $media = MediaAsset::query()->where('project_id', $project->id)->orderBy('id')->get();
         $documents = Document::query()->where('project_id', $project->id)->orderBy('id')->get();
@@ -130,6 +134,51 @@ class ProjectManagementTest extends TestCase
         $this->assertSame('https://cdn.rockmould.test/projects/harbour-walkthrough.mp4', $media[1]->file_path);
     }
 
+    public function test_admin_can_update_project_start_date_from_cms(): void
+    {
+        $admin = User::query()->where('email', 'admin@rockmould.com')->firstOrFail();
+        $project = Project::query()->where('slug', 'azure-towers')->firstOrFail();
+
+        $this->actingAs($admin)->put(route('admin.cms.projects.update', $project), [
+            'title' => $project->title,
+            'slug' => $project->slug,
+            'location' => $project->location,
+            'category' => $project->category,
+            'status' => $project->status,
+            'overview' => $project->overview,
+            'description' => $project->description,
+            'cover_image' => $project->cover_image,
+            'launch_date' => '2026-02-10',
+            'completion_date' => '2028-11-30',
+            'is_featured' => '1',
+            'is_portfolio' => '1',
+            'is_published' => '1',
+        ])->assertRedirect();
+
+        $project->refresh();
+
+        $this->assertSame('2026-02-10', $project->launch_date?->format('Y-m-d'));
+        $this->assertSame('2028-11-30', $project->completion_date?->format('Y-m-d'));
+    }
+
+    public function test_project_timeline_uses_start_and_completion_dates(): void
+    {
+        $project = Project::query()->where('slug', 'azure-towers')->firstOrFail();
+        $project->update([
+            'launch_date' => '2026-02-10',
+            'completion_date' => '2028-11-30',
+        ]);
+
+        $this->get(route('projects.show', $project))
+            ->assertOk()
+            ->assertSee('Project Start')
+            ->assertSee('Feb 10, 2026')
+            ->assertSee('Project Completed')
+            ->assertSee('Nov 30, 2028')
+            ->assertDontSee('Foundation Complete')
+            ->assertDontSee('Structure Complete');
+    }
+
     public function test_admin_can_assign_multiple_units_and_update_ownership(): void
     {
         $admin = User::query()->where('email', 'admin@rockmould.com')->firstOrFail();
@@ -177,6 +226,36 @@ class ProjectManagementTest extends TestCase
         $this->assertSame($unit->id, $assignment->unit_id);
         $this->assertSame('0.00', $assignment->outstanding_balance);
         $this->assertSame($nextClient->id, $unit->client_id);
+    }
+
+    public function test_a_unit_cannot_be_assigned_to_multiple_clients(): void
+    {
+        $admin = User::query()->where('email', 'admin@rockmould.com')->firstOrFail();
+        $client = User::query()->where('email', 'adebayo@example.com')->firstOrFail();
+        $nextClient = User::query()->where('email', 'chioma@example.com')->firstOrFail();
+        $project = Project::query()->where('slug', 'azure-towers')->firstOrFail();
+
+        $this->actingAs($admin)->post(route('admin.projects.assignments.store', $project), [
+            'user_id' => $client->id,
+            'unit_label' => 'Single Owner Unit',
+            'status' => 'active',
+            'progress_percentage' => 50,
+            'contract_amount' => 30000000,
+            'amount_paid' => 10000000,
+        ])->assertRedirect();
+
+        $this->actingAs($admin)->from(route('admin.projects.show', $project))->post(route('admin.projects.assignments.store', $project), [
+            'user_id' => $nextClient->id,
+            'unit_label' => 'Single Owner Unit',
+            'status' => 'active',
+            'progress_percentage' => 25,
+            'contract_amount' => 30000000,
+            'amount_paid' => 5000000,
+        ])
+            ->assertRedirect(route('admin.projects.show', $project))
+            ->assertSessionHasErrors('unit_labels');
+
+        $this->assertSame(1, ProjectAssignment::query()->where('project_id', $project->id)->where('unit_label', 'Single Owner Unit')->count());
     }
 
     public function test_admin_can_delete_project_and_related_units(): void

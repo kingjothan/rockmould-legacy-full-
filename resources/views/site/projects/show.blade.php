@@ -5,6 +5,7 @@
             'interior' => 'Lobbies, living spaces, amenities, and fit-out details from within the project.',
             'general' => 'Complete media gallery for this project, including mixed updates and supporting visuals.',
         ];
+        $projectTimeline = $project->timelineMilestones();
     @endphp
 
     <section class="relative flex min-h-[60vh] items-end overflow-hidden pt-20">
@@ -73,11 +74,11 @@
                             </div>
                         </div>
                         <div class="space-y-0">
-                            @foreach ($project->milestones as $milestone)
+                            @forelse ($projectTimeline as $milestone)
                                 <div class="flex gap-4 pb-6">
                                     <div class="flex flex-col items-center">
                                         <div class="h-3 w-3 rounded-full border-2 {{ $milestone->is_completed ? 'border-primary bg-primary' : 'border-border bg-background' }}"></div>
-                                        @if (!$loop->last)
+                                        @if (! $loop->last)
                                             <div class="w-px flex-1 bg-border"></div>
                                         @endif
                                     </div>
@@ -86,7 +87,9 @@
                                         <span class="text-xs text-muted-foreground">{{ optional($milestone->milestone_date)->format('M d, Y') }}</span>
                                     </div>
                                 </div>
-                            @endforeach
+                            @empty
+                                <p class="text-sm text-muted-foreground">Project timeline dates have not been published yet.</p>
+                            @endforelse
                         </div>
                     </div>
 

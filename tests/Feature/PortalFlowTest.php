@@ -2,11 +2,11 @@
 
 namespace Tests\Feature;
 
-use App\Models\ProjectAssignment;
+use App\Mail\ClientPortalOtpMail;
 use App\Models\ClientOtp;
 use App\Models\Project;
+use App\Models\ProjectAssignment;
 use App\Models\User;
-use App\Mail\ClientPortalOtpMail;
 use Database\Seeders\RockmouldSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
@@ -126,12 +126,23 @@ class PortalFlowTest extends TestCase
     {
         $client = User::query()->where('email', 'adebayo@example.com')->firstOrFail();
         $ownedAssignment = $client->assignments()->firstOrFail();
+        $ownedAssignment->project->update([
+            'launch_date' => '2026-02-10',
+            'completion_date' => '2028-11-30',
+        ]);
 
         $this->actingAs($client);
 
         $this->get('/portal/dashboard')->assertOk();
         $this->get('/portal/projects')->assertOk();
-        $this->get(route('portal.projects.show', $ownedAssignment))->assertOk();
+        $this->get(route('portal.projects.show', $ownedAssignment))
+            ->assertOk()
+            ->assertSee('Project Start')
+            ->assertSee('February 10, 2026')
+            ->assertSee('Project Completed')
+            ->assertSee('November 30, 2028')
+            ->assertDontSee('Foundation Complete')
+            ->assertDontSee('Structure Complete');
         $this->get('/portal/documents')->assertOk();
         $this->get('/portal/media')->assertOk();
         $this->get('/portal/balance')->assertOk();

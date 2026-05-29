@@ -111,6 +111,14 @@ class ProjectController extends Controller
             ->unique()
             ->values();
 
+        $conflict = $this->unitOwnershipConflict($project, $unitLabels->all());
+
+        if ($conflict) {
+            return back()->withErrors([
+                'unit_labels' => 'Unit '.$conflict.' is already assigned to a client. Update the existing ownership instead of creating a duplicate assignment.',
+            ])->withInput();
+        }
+
         $created = 0;
 
         DB::transaction(function () use ($unitLabels, $project, $data, $request, &$created): void {
@@ -133,7 +141,7 @@ class ProjectController extends Controller
         $data = $request->validate([
             'user_id' => ['required', 'integer', Rule::exists('users', 'id')->where(fn ($query) => $query->where('role', 'client'))],
             'unit_label' => ['required', 'string', 'max:255'],
-            'status' => ['required', 'string', 'max:50'],
+            'status' => ['required', Rule::in(['ongoing', 'completed', 'upcoming'])],
             'progress_percentage' => ['required', 'integer', 'min:0', 'max:100'],
             'contract_amount' => ['required', 'numeric', 'min:0'],
             'amount_paid' => ['required', 'numeric', 'min:0'],
@@ -143,7 +151,17 @@ class ProjectController extends Controller
             'internal_notes' => ['nullable', 'string'],
         ]);
 
-        DB::transaction(function () use ($project, $assignment, $data): void {
+        $conflict = $this->unitOwnershipConflict($project, [$data['unit_label']], $assignment->id);
+
+        if ($conflict) {
+            return back()->withErrors([
+                'unit_label' => 'Unit '.$conflict.' is already assigned to another client.',
+            ])->withInput();
+        }
+
+        $previousUnitId = $assignment->unit_id;
+
+        DB::transaction(function () use ($project, $assignment, $data, $previousUnitId): void {
             $unit = $this->syncUnit($project, $data['unit_label'], $data);
 
             $assignment->update([
@@ -160,6 +178,20 @@ class ProjectController extends Controller
                 'client_notes' => $data['client_notes'] ?? null,
                 'internal_notes' => $data['internal_notes'] ?? null,
             ]);
+
+            if ($previousUnitId && $previousUnitId !== $unit->id) {
+                $previousUnitStillAssigned = ProjectAssignment::query()
+                    ->where('unit_id', $previousUnitId)
+                    ->whereKeyNot($assignment->id)
+                    ->exists();
+
+                if (! $previousUnitStillAssigned) {
+                    Unit::query()->whereKey($previousUnitId)->update([
+                        'client_id' => null,
+                        'status' => 'available',
+                    ]);
+                }
+            }
         });
 
         Activity::log('assignment.updated', 'Client project ownership updated.', $request->user(), $assignment);
@@ -177,6 +209,36 @@ class ProjectController extends Controller
                 'price' => $data['contract_amount'],
             ],
         );
+    }
+
+    private function unitOwnershipConflict(Project $project, array $unitLabels, ?int $ignoreAssignmentId = null): ?string
+    {
+        foreach ($unitLabels as $unitLabel) {
+            $unit = Unit::query()
+                ->where('project_id', $project->id)
+                ->where('label', $unitLabel)
+                ->first();
+
+            $assignedQuery = ProjectAssignment::query()
+                ->where('project_id', $project->id)
+                ->where(function ($query) use ($unit, $unitLabel): void {
+                    $query->where('unit_label', $unitLabel);
+
+                    if ($unit) {
+                        $query->orWhere('unit_id', $unit->id);
+                    }
+                });
+
+            if ($ignoreAssignmentId) {
+                $assignedQuery->whereKeyNot($ignoreAssignmentId);
+            }
+
+            if ($assignedQuery->exists() || ($unit?->client_id && ! $ignoreAssignmentId)) {
+                return $unitLabel;
+            }
+        }
+
+        return null;
     }
 
     private function assignmentPayload(Project $project, Unit $unit, string $unitLabel, array $data, Request $request): array

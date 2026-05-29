@@ -33,6 +33,19 @@
                 <form action="{{ route('admin.cms.projects.update', $project) }}" method="POST" enctype="multipart/form-data" class="mt-5 grid gap-4 md:grid-cols-2">
                     @csrf
                     @method('PUT')
+                    @php
+                        $highlightCollection = collect($project->highlights ?? []);
+                        $highlightValue = fn (array $labels) => optional($highlightCollection->first(
+                            fn ($highlight) => in_array(strtolower((string) ($highlight['label'] ?? '')), $labels, true)
+                        ))['value'] ?? '';
+                        $totalUnits = $highlightValue(['total units', 'units']);
+                        $availableUnits = $highlightValue(['available units', 'available unit']);
+                        $projectHighlights = $highlightCollection
+                            ->reject(fn ($highlight) => in_array(strtolower((string) ($highlight['label'] ?? '')), ['total units', 'units', 'available units', 'available unit'], true))
+                            ->pad(4, ['label' => '', 'value' => ''])
+                            ->take(4)
+                            ->values();
+                    @endphp
                     <input name="title" value="{{ $project->title }}" class="input-shell">
                     <input name="slug" value="{{ $project->slug }}" class="input-shell">
                     <input name="location" value="{{ $project->location }}" class="input-shell">
@@ -48,10 +61,42 @@
                             Remove current project cover if no new link or upload is provided
                         </label>
                     </div>
-                    <input name="status" value="{{ $project->status }}" class="input-shell">
+                    <select name="status" class="input-shell">
+                        <option value="ongoing" @selected($project->status === 'ongoing')>Ongoing</option>
+                        <option value="completed" @selected($project->status === 'completed')>Completed</option>
+                        <option value="upcoming" @selected($project->status === 'upcoming')>Upcoming</option>
+                    </select>
+                    <div>
+                        <label class="admin-label">Start Date</label>
+                        <input type="date" name="launch_date" value="{{ optional($project->launch_date)->format('Y-m-d') }}" class="input-shell">
+                    </div>
                     <div>
                         <label class="admin-label">Completion Date</label>
                         <input type="date" name="completion_date" value="{{ optional($project->completion_date)->format('Y-m-d') }}" class="input-shell">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="admin-label">Unit Highlight Cards</label>
+                        <div class="mt-2 grid gap-3 md:grid-cols-2">
+                            <div>
+                                <input name="total_units_highlight" value="{{ $totalUnits }}" placeholder="Total units e.g. 120" class="input-shell">
+                                <p class="mt-1 text-xs text-muted-foreground">Shows as Total Units on the project page.</p>
+                            </div>
+                            <div>
+                                <input name="available_units_highlight" value="{{ $availableUnits }}" placeholder="Available units e.g. 18" class="input-shell">
+                                <p class="mt-1 text-xs text-muted-foreground">Shows as Available Units on the project page.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="admin-label">Other Project Highlight Cards</label>
+                        <div class="mt-2 grid gap-3 md:grid-cols-2">
+                            @foreach ($projectHighlights as $highlight)
+                                <div class="grid gap-3 rounded-sm border border-border bg-muted/20 p-3 sm:grid-cols-2">
+                                    <input name="highlight_values[]" value="{{ $highlight['value'] ?? '' }}" placeholder="Value e.g. 120" class="input-shell">
+                                    <input name="highlight_labels[]" value="{{ $highlight['label'] ?? '' }}" placeholder="Label e.g. Units" class="input-shell">
+                                </div>
+                            @endforeach
+                        </div>
                     </div>
                     <label class="flex items-center gap-3 text-sm text-muted-foreground"><input type="checkbox" name="is_featured" value="1" @checked($project->is_featured)> Featured</label>
                     <label class="flex items-center gap-3 text-sm text-muted-foreground"><input type="checkbox" name="is_portfolio" value="1" @checked($project->is_portfolio)> Show in Portfolio</label>

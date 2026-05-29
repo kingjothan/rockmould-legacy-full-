@@ -18,6 +18,7 @@ use App\Support\SiteData;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
 class CmsController extends Controller
@@ -537,15 +538,22 @@ class CmsController extends Controller
             'slug' => ['nullable', 'string', 'max:255'],
             'location' => ['required', 'string', 'max:255'],
             'category' => ['required', 'string', 'max:255'],
-            'status' => ['required', 'string', 'max:50'],
+            'status' => ['required', Rule::in(['ongoing', 'completed', 'upcoming'])],
             'overview' => ['required', 'string'],
             'description' => ['nullable', 'string'],
             'cover_image' => ['nullable', 'string', 'max:2048'],
             'cover_image_upload' => ['nullable', 'file', 'max:204800', 'mimes:jpg,jpeg,png,webp,gif,mp4,webm,mov,ogg'],
+            'launch_date' => ['nullable', 'date'],
             'completion_date' => ['nullable', 'date'],
+            'total_units_highlight' => ['nullable', 'string', 'max:255'],
+            'available_units_highlight' => ['nullable', 'string', 'max:255'],
+            'highlight_labels' => ['nullable', 'array'],
+            'highlight_labels.*' => ['nullable', 'string', 'max:255'],
+            'highlight_values' => ['nullable', 'array'],
+            'highlight_values.*' => ['nullable', 'string', 'max:255'],
         ]);
 
-        $project->update([
+        $payload = [
             'title' => $data['title'],
             'slug' => ($data['slug'] ?? null) ?: Str::slug($data['title']),
             'location' => $data['location'],
@@ -554,15 +562,64 @@ class CmsController extends Controller
             'description' => $data['description'] ?? null,
             'cover_image' => $this->syncMediaInput($request, 'cover_image', 'cover_image_upload', 'cms/projects', $project->cover_image, 'remove_cover_image'),
             'status' => strtolower($data['status']),
+            'launch_date' => $data['launch_date'] ?? null,
             'completion_date' => $data['completion_date'] ?? null,
             'is_featured' => $request->boolean('is_featured'),
             'is_portfolio' => $request->boolean('is_portfolio'),
             'is_published' => $request->boolean('is_published'),
-        ]);
+        ];
+
+        if ($request->has('total_units_highlight') || $request->has('available_units_highlight') || $request->has('highlight_labels') || $request->has('highlight_values')) {
+            $payload['highlights'] = $this->projectHighlights(
+                $data['highlight_labels'] ?? [],
+                $data['highlight_values'] ?? [],
+                $data['total_units_highlight'] ?? null,
+                $data['available_units_highlight'] ?? null,
+            );
+        }
+
+        $project->update($payload);
 
         Activity::log('cms.project.updated', 'Public project listing updated.', $request->user(), $project);
 
         return back()->with('success', 'Project listing updated.');
+    }
+
+    private function projectHighlights(array $labels, array $values, ?string $totalUnits = null, ?string $availableUnits = null): array
+    {
+        $highlights = [];
+
+        if (filled($totalUnits)) {
+            $highlights[] = [
+                'label' => 'Total Units',
+                'value' => trim($totalUnits),
+            ];
+        }
+
+        if (filled($availableUnits)) {
+            $highlights[] = [
+                'label' => 'Available Units',
+                'value' => trim($availableUnits),
+            ];
+        }
+
+        $rows = max(count($labels), count($values));
+
+        for ($index = 0; $index < $rows; $index++) {
+            $label = trim((string) ($labels[$index] ?? ''));
+            $value = trim((string) ($values[$index] ?? ''));
+
+            if ($label === '' && $value === '') {
+                continue;
+            }
+
+            $highlights[] = [
+                'label' => $label,
+                'value' => $value,
+            ];
+        }
+
+        return $highlights;
     }
 
     public function updatePortfolio(Request $request): RedirectResponse

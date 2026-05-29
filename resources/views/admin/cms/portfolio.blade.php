@@ -87,6 +87,9 @@
                             <input type="hidden" name="overview" value="{{ $project->overview }}">
                             <input type="hidden" name="description" value="{{ $project->description }}">
                             <input type="hidden" name="cover_image" value="{{ $project->cover_image }}">
+                            @if ($project->launch_date)
+                                <input type="hidden" name="launch_date" value="{{ optional($project->launch_date)->format('Y-m-d') }}">
+                            @endif
                             @if ($project->completion_date)
                                 <input type="hidden" name="completion_date" value="{{ optional($project->completion_date)->format('Y-m-d') }}">
                             @endif

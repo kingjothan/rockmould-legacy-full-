@@ -30,7 +30,11 @@
                         <input name="slug" value="{{ $project->slug }}" class="input-shell">
                         <input name="location" value="{{ $project->location }}" class="input-shell">
                         <input name="category" value="{{ $project->category }}" class="input-shell">
-                        <input name="status" value="{{ $project->status }}" class="input-shell">
+                        <select name="status" class="input-shell">
+                            <option value="ongoing" @selected($project->status === 'ongoing')>Ongoing</option>
+                            <option value="completed" @selected($project->status === 'completed')>Completed</option>
+                            <option value="upcoming" @selected($project->status === 'upcoming')>Upcoming</option>
+                        </select>
                         <textarea name="overview" rows="3" class="input-shell">{{ $project->overview }}</textarea>
                         <textarea name="description" rows="4" class="input-shell">{{ $project->description }}</textarea>
                         <input name="cover_image" value="{{ $project->cover_image }}" class="input-shell" placeholder="CDN cover image/video URL or local path">
@@ -46,6 +50,16 @@
                         <input type="number" name="progress" value="{{ $project->progress }}" class="input-shell">
                         <input type="number" name="budget" value="{{ $project->budget }}" class="input-shell">
                         <input type="number" name="price_from" value="{{ $project->price_from }}" class="input-shell">
+                        <div class="grid gap-3 sm:grid-cols-2">
+                            <div>
+                                <label class="admin-label">Start Date</label>
+                                <input type="date" name="launch_date" value="{{ optional($project->launch_date)->format('Y-m-d') }}" class="input-shell">
+                            </div>
+                            <div>
+                                <label class="admin-label">Completion Date</label>
+                                <input type="date" name="completion_date" value="{{ optional($project->completion_date)->format('Y-m-d') }}" class="input-shell">
+                            </div>
+                        </div>
                         <textarea name="features_text" rows="4" class="input-shell">{{ implode("\n", $project->features ?? []) }}</textarea>
                         <textarea name="gallery_text" rows="4" class="input-shell">{{ implode("\n", $project->gallery ?? []) }}</textarea>
                         <textarea name="highlights_json" rows="5" class="input-shell">{{ json_encode($project->highlights ?? [], JSON_PRETTY_PRINT) }}</textarea>

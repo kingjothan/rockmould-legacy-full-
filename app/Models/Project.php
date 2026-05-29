@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Collection;
 
 class Project extends Model
 {
@@ -43,6 +44,38 @@ class Project extends Model
     public function milestones(): HasMany
     {
         return $this->hasMany(ProjectMilestone::class)->orderBy('sort_order')->orderBy('milestone_date');
+    }
+
+    public function timelineMilestones(): Collection
+    {
+        $timeline = collect();
+
+        if ($this->launch_date) {
+            $timeline->push((object) [
+                'title' => 'Project Start',
+                'description' => 'Official project start date set by the admin team.',
+                'milestone_date' => $this->launch_date,
+                'is_completed' => $this->launch_date->isPast() || $this->launch_date->isToday(),
+                'sort_order' => -1,
+            ]);
+        }
+
+        if ($this->completion_date) {
+            $timeline->push((object) [
+                'title' => 'Project Completed',
+                'description' => 'Completion date set by the admin team.',
+                'milestone_date' => $this->completion_date,
+                'is_completed' => $this->status === 'completed',
+                'sort_order' => 1,
+            ]);
+        }
+
+        return $timeline
+            ->sortBy([
+                ['sort_order', 'asc'],
+                ['milestone_date', 'asc'],
+            ])
+            ->values();
     }
 
     public function updates(): HasMany
