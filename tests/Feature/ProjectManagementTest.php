@@ -209,7 +209,7 @@ class ProjectManagementTest extends TestCase
 
         $assignment = ProjectAssignment::query()->where('unit_label', 'Unit 21A')->firstOrFail();
 
-        $this->actingAs($admin)->put(route('admin.projects.assignments.update', [$project, $assignment]), [
+        $this->actingAs($admin)->post(route('admin.projects.assignments.update', [$project, $assignment]), [
             'user_id' => $nextClient->id,
             'unit_label' => 'Unit 21A-R',
             'status' => 'completed',

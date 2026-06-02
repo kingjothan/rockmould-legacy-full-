@@ -126,7 +126,6 @@
                         @forelse ($project->assignments as $assignment)
                             <form action="{{ route('admin.projects.assignments.update', [$project, $assignment]) }}" method="POST" class="rounded-sm border border-border bg-muted/20 p-4">
                                 @csrf
-                                @method('PUT')
                                 <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                                     <div class="min-w-0">
                                         <p class="font-medium">{{ $assignment->reference }}</p>
