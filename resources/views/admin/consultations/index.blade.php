@@ -46,7 +46,7 @@
         </div>
 
         <div class="grid gap-8 xl:grid-cols-[1.24fr_0.76fr]">
-            <div class="space-y-8">
+            <div class="min-w-0 space-y-8">
                 <div class="luxury-card overflow-hidden p-0">
                     <div class="border-b border-border px-6 py-5">
                         <div class="flex flex-col gap-4 lg:flex-row">
@@ -58,7 +58,7 @@
                                         <option value="{{ $value }}" @selected(request('status') === $value)>{{ $label }}</option>
                                     @endforeach
                                 </select>
-                                <button class="luxury-btn-outline">Filter</button>
+                                <button class="luxury-btn-outline min-w-max">Filter</button>
                             </form>
                         </div>
                     </div>
@@ -111,7 +111,7 @@
                 </div>
             </div>
 
-            <div class="space-y-6">
+            <div class="min-w-0 space-y-6">
                 <div class="luxury-card">
                     <div class="flex items-center gap-2">
                         <x-portal-icon name="settings" class="h-4 w-4 text-primary" />
@@ -188,7 +188,7 @@
                                 @method('PUT')
                                 <input type="hidden" name="sort_order" value="{{ $window->sort_order }}">
                                 <input type="hidden" name="is_active" value="1">
-                                <div class="grid gap-3 md:grid-cols-[130px_1fr_120px_120px_auto] md:items-end">
+                                <div class="grid grid-cols-2 gap-3">
                                     <div>
                                         <label class="admin-label">Day</label>
                                         <select name="day_of_week" class="input-shell text-sm">
@@ -209,9 +209,9 @@
                                         <label class="admin-label">End</label>
                                         <input type="time" name="end_time" value="{{ substr($window->end_time, 0, 5) }}" class="input-shell text-sm">
                                     </div>
-                                    <div class="flex gap-2">
-                                        <button class="luxury-btn-outline px-4 py-3 text-xs">Save</button>
-                                        <button form="availability-delete-{{ $window->id }}" class="rounded-full border border-destructive/30 px-4 py-3 text-xs uppercase tracking-[0.18em] text-destructive transition hover:bg-destructive/10">Delete</button>
+                                    <div class="col-span-2 flex gap-2">
+                                        <button class="luxury-btn-outline min-w-max flex-1 px-4 py-3 text-xs">Save</button>
+                                        <button form="availability-delete-{{ $window->id }}" class="flex-1 rounded-full border border-destructive/30 px-4 py-3 text-xs uppercase tracking-[0.18em] text-destructive transition hover:bg-destructive/10">Delete</button>
                                     </div>
                                 </div>
                             </form>

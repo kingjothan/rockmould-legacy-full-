@@ -18,7 +18,7 @@
                         Edit every public About page section here. Leadership media supports images or videos up to 200MB, and timeline entries can be reordered, hidden, edited, added, or deleted.
                     </p>
                 </div>
-                <a href="{{ route('about') }}" target="_blank" class="luxury-btn-outline text-xs">Preview About Page</a>
+                <a href="{{ route('about') }}" target="_blank" class="luxury-btn-outline shrink-0 text-xs">Preview About Page</a>
             </div>
         </div>
 

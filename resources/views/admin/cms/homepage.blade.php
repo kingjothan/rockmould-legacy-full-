@@ -23,7 +23,7 @@
         @method('PUT')
 
         <div class="grid gap-8 xl:grid-cols-[1.08fr_0.92fr]">
-            <div class="space-y-8">
+            <div class="min-w-0 space-y-8">
                 <div class="luxury-card space-y-6">
                     <div>
                         <p class="section-label">Hero Control</p>
@@ -32,7 +32,7 @@
                     </div>
 
                     <div class="grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
-                        <div class="space-y-4">
+                        <div class="min-w-0 space-y-4">
                             <div>
                                 <label class="admin-label">Hero Label</label>
                                 <input name="hero_label" value="{{ old('hero_label', $homepage['hero_label']) }}" class="input-shell">
@@ -64,7 +64,7 @@
                             </div>
                         </div>
 
-                        <div class="space-y-4">
+                        <div class="min-w-0 space-y-4">
                             <div class="overflow-hidden rounded-lg border border-border bg-card">
                                 <div class="aspect-[16/9] bg-muted">
                                     @if ($heroMediaPath)
@@ -273,7 +273,7 @@
                 </div>
             </div>
 
-            <div class="space-y-8">
+            <div class="min-w-0 space-y-8">
                 <div class="luxury-card space-y-6">
                     <div>
                         <p class="section-label">Live Summary</p>

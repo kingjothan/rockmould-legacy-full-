@@ -48,7 +48,7 @@
                     </div>
 
                     <div class="grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
-                        <div class="space-y-4">
+                        <div class="min-w-0 space-y-4">
                             <div>
                                 <label class="admin-label">Hero Subtitle</label>
                                 <input name="{{ $key }}_hero_subtitle" value="{{ old($key.'_hero_subtitle', data_get($pages, $key.'.hero_subtitle')) }}" class="input-shell">
@@ -129,7 +129,7 @@
                             @endif
                         </div>
 
-                        <div class="space-y-4">
+                        <div class="min-w-0 space-y-4">
                             <div class="overflow-hidden rounded-lg border border-border bg-card">
                                 <div class="aspect-[16/10] bg-muted">
                                     @if ($pageHeroPreview[$key]['url'])

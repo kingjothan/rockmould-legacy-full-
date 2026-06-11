@@ -23,7 +23,7 @@
                 </div>
 
                 <div class="grid gap-6 lg:grid-cols-[1.02fr_0.98fr]">
-                    <div class="space-y-4">
+                    <div class="min-w-0 space-y-4">
                         <div>
                             <label class="admin-label">Marketing Title</label>
                             <input name="login_marketing_title" value="{{ old('login_marketing_title', data_get($portal, 'login.marketing_title')) }}" class="input-shell">
@@ -71,7 +71,7 @@
                         </div>
                     </div>
 
-                    <div class="space-y-4">
+                    <div class="min-w-0 space-y-4">
                         <div class="overflow-hidden rounded-lg border border-border bg-card">
                             <div class="aspect-[16/10] bg-muted">
                                 @if ($loginMediaUrl)

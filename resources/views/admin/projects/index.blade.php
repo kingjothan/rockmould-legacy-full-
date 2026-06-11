@@ -158,7 +158,7 @@
                             <input type="file" name="document_uploads[]" multiple class="input-shell">
                         </div>
                         <div class="grid gap-3 sm:grid-cols-2">
-                            <input name="document_category" placeholder="Document category e.g. Brochure" class="input-shell">
+                            <input name="document_category" placeholder="Category (Brochure...)" class="input-shell">
                             <input name="document_version" value="v1" placeholder="Version" class="input-shell">
                         </div>
                         <label class="flex items-center gap-3 text-sm text-muted-foreground"><input type="checkbox" name="uploaded_documents_visible_to_client" value="1" checked> Make uploaded documents visible to clients</label>

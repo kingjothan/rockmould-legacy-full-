@@ -14,7 +14,7 @@
         </div>
 
         <button type="button"
-                class="mobile-menu-trigger site-menu-trigger"
+                class="mobile-menu-trigger site-menu-trigger lg:hidden"
                 aria-label="Open navigation"
                 aria-expanded="false"
                 data-mobile-open

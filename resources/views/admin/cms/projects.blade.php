@@ -7,7 +7,7 @@
                     <h2 class="mt-2 font-display text-3xl">Create projects and upload galleries from Project Management</h2>
                     <p class="mt-2 max-w-3xl text-sm text-muted-foreground">This CMS screen controls the public listing content. For new project creation, shared gallery images, videos, and client-facing documents, use the full Project Management module so the website and portal stay in sync.</p>
                 </div>
-                <a href="{{ route('admin.projects.index') }}" class="luxury-btn-primary">
+                <a href="{{ route('admin.projects.index') }}" class="luxury-btn-primary shrink-0">
                     Open Project Management
                 </a>
             </div>

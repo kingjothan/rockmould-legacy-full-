@@ -17,7 +17,7 @@
         <div class="container-luxury w-full relative z-10 py-32">
             <div class="max-w-4xl">
                 <span class="section-label reveal">{{ $homepage['hero_label'] }}</span>
-                <h1 class="public-hero-title reveal font-display text-5xl font-bold leading-[1.05] md:text-6xl lg:text-8xl">
+                <h1 class="public-hero-title reveal font-display text-4xl font-bold leading-[1.1] md:text-5xl lg:text-6xl xl:text-7xl">
                     {{ $homepage['hero_title'] }}
                 </h1>
                 <p class="reveal mt-8 max-w-2xl text-lg leading-relaxed text-muted-foreground">{{ $homepage['hero_description'] }}</p>

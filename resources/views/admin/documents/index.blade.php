@@ -36,19 +36,21 @@
                         @php
                             $size = $document->size ? number_format($document->size / 1024, 0).' KB' : 'Pending size';
                         @endphp
-                        <div class="flex flex-col gap-4 rounded-sm border border-border/60 p-4 transition hover:bg-muted/20 md:flex-row md:items-center">
-                            <div class="flex h-11 w-11 items-center justify-center rounded-sm bg-muted text-sm font-semibold text-muted-foreground">DOC</div>
+                        <div class="flex flex-col gap-4 rounded-sm border border-border/60 p-4 transition hover:bg-muted/20 2xl:flex-row 2xl:items-center">
+                            <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-sm bg-muted text-sm font-semibold text-muted-foreground">DOC</div>
                             <div class="min-w-0 flex-1">
                                 <p class="truncate text-sm font-medium">{{ $document->title }}</p>
-                                <p class="mt-1 text-xs text-muted-foreground">
-                                    {{ $document->assignment?->user?->name ?: 'No client' }}
+                                <p class="mt-1 flex flex-wrap items-center gap-x-1.5 text-xs text-muted-foreground">
+                                    <span class="whitespace-nowrap">{{ $document->assignment?->user?->name ?: 'No client' }}</span>
                                     @if ($document->project?->title)
-                                        &middot; {{ $document->project->title }}
+                                        <span aria-hidden="true">&middot;</span>
+                                        <span class="whitespace-nowrap">{{ $document->project->title }}</span>
                                     @endif
-                                    &middot; {{ $size }}
+                                    <span aria-hidden="true">&middot;</span>
+                                    <span class="whitespace-nowrap">{{ $size }}</span>
                                 </p>
                             </div>
-                            <div class="flex flex-wrap items-center gap-2 md:justify-end">
+                            <div class="flex flex-wrap items-center gap-2 2xl:justify-end">
                                 <span class="rounded-sm bg-primary/10 px-2 py-1 text-[10px] uppercase tracking-[0.18em] text-primary">{{ $document->category }}</span>
                                 <span class="rounded-sm border border-border px-2 py-1 text-[10px] uppercase tracking-[0.18em] text-muted-foreground">{{ $document->version ?: 'v1' }}</span>
                                 <span class="rounded-sm border border-border px-2 py-1 text-[10px] uppercase tracking-[0.18em] {{ $document->visible_to_client ? 'text-primary border-primary/30 bg-primary/10' : 'text-muted-foreground' }}">{{ $document->visible_to_client ? 'Client Visible' : 'Internal Only' }}</span>

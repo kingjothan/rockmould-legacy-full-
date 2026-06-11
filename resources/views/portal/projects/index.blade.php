@@ -16,7 +16,7 @@
                         <option value="{{ $value }}" @selected(request('status') === $value)>{{ $label }}</option>
                     @endforeach
                 </select>
-                <button class="luxury-btn-outline">{{ $content['filter_button'] ?? 'Filter Projects' }}</button>
+                <button class="luxury-btn-outline min-w-max">{{ $content['filter_button'] ?? 'Filter Projects' }}</button>
             </form>
         </div>
 

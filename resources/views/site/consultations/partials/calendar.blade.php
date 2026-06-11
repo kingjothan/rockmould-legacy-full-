@@ -24,13 +24,13 @@
         </button>
     </div>
 
-    <div class="grid grid-cols-7 gap-2 text-center text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
+    <div class="grid grid-cols-7 gap-1 text-center text-[8px] uppercase tracking-[0.1em] text-muted-foreground sm:gap-2 sm:text-[10px] sm:tracking-[0.22em]">
         @foreach (['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'] as $weekday)
             <div class="py-2">{{ $weekday }}</div>
         @endforeach
     </div>
 
-    <div class="grid grid-cols-7 gap-2">
+    <div class="grid grid-cols-7 gap-1 sm:gap-2">
         @foreach ($calendar['days'] as $day)
             @php
                 $classes = 'consultation-calendar-day';

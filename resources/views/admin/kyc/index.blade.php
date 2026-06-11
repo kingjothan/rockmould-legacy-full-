@@ -22,7 +22,7 @@
                         <option value="{{ $value }}" @selected(request('status') === $value)>{{ $label }}</option>
                     @endforeach
                 </select>
-                <button class="luxury-btn-outline">Filter Requests</button>
+                <button class="luxury-btn-outline min-w-max">Filter Requests</button>
             </form>
         </div>
 

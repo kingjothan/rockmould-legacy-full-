@@ -79,7 +79,7 @@
         </div>
 
         <div class="grid gap-8 xl:grid-cols-[1.15fr_0.85fr]">
-            <div class="space-y-6">
+            <div class="min-w-0 space-y-6">
                 <div class="luxury-card-flat overflow-hidden p-0">
                     <div class="border-b border-border p-5">
                         <form method="GET" class="grid gap-4 md:grid-cols-[1fr_170px_200px_200px_120px]">
@@ -309,7 +309,7 @@
                 </div>
             </div>
 
-            <div class="luxury-card">
+            <div class="luxury-card min-w-0">
                 <div class="flex items-center gap-2">
                     <x-portal-icon name="plus" class="h-4 w-4 text-primary" />
                     <h2 class="font-display text-3xl">Upload or Link Media</h2>

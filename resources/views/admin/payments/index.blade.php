@@ -127,7 +127,7 @@
 
             <div class="divide-y divide-border/60">
                 @forelse ($assignments as $assignment)
-                    <form action="{{ route('admin.payments.assignments.update', $assignment) }}" method="POST" class="grid gap-4 p-5 xl:grid-cols-[1.2fr_repeat(5,minmax(0,1fr))_120px] xl:items-end">
+                    <form action="{{ route('admin.payments.assignments.update', $assignment) }}" method="POST" class="grid gap-4 p-5 xl:grid-cols-[1.2fr_repeat(4,minmax(0,1fr))_minmax(140px,1fr)_120px] xl:items-end">
                         @csrf
                         @method('PUT')
                         <div>

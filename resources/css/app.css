@@ -388,31 +388,31 @@
       transform 1s cubic-bezier(0.22, 1, 0.36, 1);
   }
 
-  .public-main h1.font-display {
+  :where(.public-main h1.font-display) {
     font-size: clamp(2.8rem, 5vw, calc(4.75rem * var(--public-heading-scale)));
     font-weight: 700;
     line-height: 1.06;
   }
 
-  .public-main .public-hero-title {
+  :where(.public-main .public-hero-title) {
     font-size: clamp(3.4rem, 8vw, calc(6.5rem * var(--public-heading-scale)));
     font-weight: 700;
     line-height: 1.02;
   }
 
-  .public-main h2.font-display {
+  :where(.public-main h2.font-display) {
     font-size: clamp(2rem, 3.5vw, calc(3.25rem * var(--public-heading-scale)));
     font-weight: 700;
     line-height: 1.1;
   }
 
-  .public-main h3.font-display {
+  :where(.public-main h3.font-display) {
     font-size: clamp(1.35rem, 2.25vw, calc(2rem * var(--public-heading-scale)));
     font-weight: 700;
     line-height: 1.18;
   }
 
-  .public-main h4.font-display {
+  :where(.public-main h4.font-display) {
     font-size: calc(1.15rem * var(--public-heading-scale));
     font-weight: 700;
     line-height: 1.22;
@@ -450,22 +450,19 @@
     line-height: 1.75;
   }
 
-  .admin-shell main h1.font-display,
-  .portal-shell main h1.font-display {
+  :where(.admin-shell main h1.font-display, .portal-shell main h1.font-display) {
     font-size: clamp(2rem, 4vw, calc(3rem * var(--shell-heading-scale)));
     font-weight: 700;
     line-height: 1.08;
   }
 
-  .admin-shell main h2.font-display,
-  .portal-shell main h2.font-display {
+  :where(.admin-shell main h2.font-display, .portal-shell main h2.font-display) {
     font-size: clamp(1.5rem, 3vw, calc(2.25rem * var(--shell-heading-scale)));
     font-weight: 700;
     line-height: 1.12;
   }
 
-  .admin-shell main h3.font-display,
-  .portal-shell main h3.font-display {
+  :where(.admin-shell main h3.font-display, .portal-shell main h3.font-display) {
     font-size: clamp(1.2rem, 2vw, calc(1.5rem * var(--shell-heading-scale)));
     font-weight: 700;
     line-height: 1.18;
@@ -508,7 +505,7 @@
 
   /* ── Cards ──────────────────────────────────────────── */
   .luxury-card {
-    @apply rounded-lg border border-border bg-card p-6 backdrop-blur-sm transition-all duration-500;
+    @apply rounded-lg border border-border bg-card p-4 backdrop-blur-sm transition-all duration-500 sm:p-6;
     box-shadow: var(--shadow-card);
   }
 
@@ -616,27 +613,39 @@
 
   /* ── Status badges ──────────────────────────────────── */
   .status-badge {
-    @apply inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[10px] font-medium uppercase tracking-[0.2em];
+    @apply inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[10px] font-medium uppercase tracking-[0.2em] backdrop-blur-sm;
   }
 
   .status-active {
-    @apply status-badge bg-emerald-500/10 text-emerald-400;
-    border: 1px solid hsl(142 71% 45% / 0.2);
+    @apply status-badge bg-emerald-500/20 text-emerald-400;
+    border: 1px solid hsl(142 71% 45% / 0.3);
   }
 
   .status-pending {
-    @apply status-badge bg-amber-500/10 text-amber-400;
-    border: 1px solid hsl(38 92% 50% / 0.2);
+    @apply status-badge bg-amber-500/20 text-amber-400;
+    border: 1px solid hsl(38 92% 50% / 0.3);
   }
 
   .status-completed {
-    @apply status-badge bg-primary/10 text-primary;
-    border: 1px solid hsl(var(--primary) / 0.2);
+    @apply status-badge bg-primary/20 text-primary;
+    border: 1px solid hsl(var(--primary) / 0.3);
   }
 
   .status-inactive {
     @apply status-badge bg-muted text-muted-foreground;
     border: 1px solid hsl(var(--border));
+  }
+
+  :root[data-theme='light'] .status-active {
+    color: hsl(142 71% 28%);
+  }
+
+  :root[data-theme='light'] .status-pending {
+    color: hsl(32 92% 32%);
+  }
+
+  :root[data-theme='light'] .status-completed {
+    color: hsl(46 65% 32%);
   }
 
   /* ── Hero ───────────────────────────────────────────── */
@@ -676,23 +685,77 @@
   :root[data-theme='light'] .hero-shell h1,
   :root[data-theme='light'] .hero-shell h2 {
     color: #000000;
-    text-shadow: none;
+    text-shadow: 0 1px 14px rgba(255, 255, 255, 0.55), 0 1px 3px rgba(255, 255, 255, 0.7);
   }
 
   :root[data-theme='light'] .hero-shell p,
   :root[data-theme='light'] .hero-shell .text-muted-foreground {
     color: #111111;
-    text-shadow: none;
+    text-shadow: 0 1px 14px rgba(255, 255, 255, 0.55), 0 1px 3px rgba(255, 255, 255, 0.7);
   }
 
   :root[data-theme='light'] .hero-shell .section-label {
     color: #000000;
-    text-shadow: none;
+    text-shadow: 0 1px 14px rgba(255, 255, 255, 0.55), 0 1px 3px rgba(255, 255, 255, 0.7);
   }
 
   :root[data-theme='light'] .hero-shell a,
   :root[data-theme='light'] .hero-shell button {
     filter: drop-shadow(0 2px 6px rgba(255,255,255,0.5));
+  }
+
+  :root[data-theme='light'] .hero-shell .luxury-btn-outline {
+    border-color: rgba(0, 0, 0, 0.25);
+    color: #000000;
+    background: rgba(255, 255, 255, 0.65);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    filter: none;
+  }
+
+  :root[data-theme='light'] .hero-shell .luxury-btn-outline:hover {
+    border-color: rgba(0, 0, 0, 0.4);
+    background: rgba(255, 255, 255, 0.85);
+  }
+
+  :root[data-theme='light'] .hero-shell .luxury-btn-ghost {
+    color: #000000;
+    background: rgba(255, 255, 255, 0.55);
+    border-radius: 999px;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    filter: none;
+  }
+
+  :root[data-theme='light'] .hero-shell .luxury-btn-ghost:hover {
+    background: rgba(255, 255, 255, 0.75);
+    color: #000000;
+  }
+
+  :root[data-theme='light'] .hero-shell .status-badge {
+    background: rgba(255, 255, 255, 0.65);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+
+  :root[data-theme='light'] .hero-shell .status-active {
+    color: hsl(142 71% 30%);
+    border-color: hsl(142 71% 45% / 0.35);
+  }
+
+  :root[data-theme='light'] .hero-shell .status-pending {
+    color: hsl(32 92% 35%);
+    border-color: hsl(38 92% 50% / 0.35);
+  }
+
+  :root[data-theme='light'] .hero-shell .status-completed {
+    color: hsl(46 65% 32%);
+    border-color: hsl(var(--primary) / 0.35);
+  }
+
+  :root[data-theme='light'] .hero-shell .status-inactive {
+    color: #1a1a1a;
+    border-color: rgba(0, 0, 0, 0.2);
   }
 
   :root[data-theme='light'] .site-header {
@@ -702,6 +765,19 @@
   :root[data-theme='light'] .site-nav-link,
   :root[data-theme='light'] .site-header-actions a {
     text-shadow: none;
+  }
+
+  :root[data-theme='light'] .site-header:not(.is-scrolled) .luxury-btn-outline {
+    border-color: rgba(0, 0, 0, 0.25);
+    color: #000000;
+    background: rgba(255, 255, 255, 0.65);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+
+  :root[data-theme='light'] .site-header:not(.is-scrolled) .luxury-btn-outline:hover {
+    border-color: rgba(0, 0, 0, 0.4);
+    background: rgba(255, 255, 255, 0.85);
   }
 
   .hero-center {
@@ -753,11 +829,22 @@
   /* ── Forms ──────────────────────────────────────────── */
   .input-shell {
     @apply w-full rounded-md border border-border bg-muted px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground transition-all duration-200;
+    min-width: 0;
   }
 
   .input-shell:focus {
     @apply border-primary/50 bg-muted/80;
     box-shadow: 0 0 0 3px hsl(var(--primary) / 0.1);
+  }
+
+  .input-shell[type="number"] {
+    -moz-appearance: textfield;
+  }
+
+  .input-shell[type="number"]::-webkit-outer-spin-button,
+  .input-shell[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
   }
 
   .label-shell {
@@ -1531,7 +1618,7 @@
     @apply mt-3 text-sm leading-relaxed text-muted-foreground;
   }
   .consultation-calendar-day {
-    @apply flex min-h-[108px] flex-col rounded-2xl border border-border bg-card/70 px-3 py-3 text-left transition-all duration-200;
+    @apply flex min-h-[60px] flex-col rounded-lg border border-border bg-card/70 px-1 py-1.5 text-left transition-all duration-200 sm:min-h-[108px] sm:rounded-2xl sm:px-3 sm:py-3;
   }
   .consultation-calendar-day.is-available {
     @apply hover:border-primary/35 hover:bg-primary/5;
@@ -1546,13 +1633,13 @@
     @apply cursor-not-allowed;
   }
   .consultation-calendar-day-name {
-    @apply text-[10px] uppercase tracking-[0.18em] text-muted-foreground;
+    @apply text-[8px] uppercase tracking-[0.08em] text-muted-foreground sm:text-[10px] sm:tracking-[0.18em];
   }
   .consultation-calendar-day-number {
-    @apply mt-3 font-display text-2xl text-foreground;
+    @apply mt-1 font-display text-sm text-foreground sm:mt-3 sm:text-2xl;
   }
   .consultation-calendar-day-state {
-    @apply mt-auto pt-4 text-[10px] uppercase tracking-[0.18em] text-primary/75;
+    @apply mt-auto hidden pt-4 text-[10px] uppercase tracking-[0.18em] text-primary/75 sm:block;
   }
   .consultation-slot {
     @apply flex flex-col rounded-2xl border border-border bg-card/70 px-4 py-4 text-left transition-all duration-200 hover:border-primary/35 hover:bg-primary/5;

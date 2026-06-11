@@ -59,7 +59,7 @@
                     <h2 class="font-display text-3xl">Portfolio Project Selection</h2>
                     <p class="mt-2 text-sm text-muted-foreground">Choose which published projects should appear on the public portfolio page.</p>
                 </div>
-                <a href="{{ route('admin.cms.projects') }}" class="luxury-btn-outline">Open Projects CMS</a>
+                <a href="{{ route('admin.cms.projects') }}" class="luxury-btn-outline shrink-0">Open Projects CMS</a>
             </div>
 
             <div class="mt-6 space-y-3">
