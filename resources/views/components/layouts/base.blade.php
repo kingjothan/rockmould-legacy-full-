@@ -47,7 +47,7 @@
     </script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="{{ $bodyClass ?? '' }}">
+<body class="{{ $attributes->get('body-class', '') }}">
     @if (session('success'))
         <div data-auto-hide class="fixed inset-x-0 top-5 z-[70] mx-auto w-full max-w-xl px-4 transition-opacity duration-300">
             <div class="luxury-card border-primary/30 bg-card/95 text-center text-sm text-foreground">

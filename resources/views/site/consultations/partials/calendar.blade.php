@@ -55,7 +55,6 @@
                 data-date="{{ $day['date'] }}"
                 @disabled(! $day['is_available'] || ! $day['is_current_month'])
             >
-                <span class="consultation-calendar-day-name">{{ $day['day_name'] }}</span>
                 <span class="consultation-calendar-day-number">{{ $day['day_number'] }}</span>
                 <span class="consultation-calendar-day-state">
                     {{ $day['is_available'] ? 'Open' : ($day['is_past'] ? 'Past' : 'Closed') }}

@@ -19,7 +19,7 @@
     $adminHeadingScale = $formatScale($company['admin_heading_scale'] ?? '1');
 @endphp
 
-<x-layouts.base :title="$title ?? 'Admin CMS | Rockmould Limited'">
+<x-layouts.base :title="$title ?? 'Admin CMS | Rockmould Limited'" body-class="admin-shell">
     <div class="admin-shell" data-admin-shell data-collapsed="false" style="--shell-copy-scale: {{ $adminCopyScale }}; --shell-heading-scale: {{ $adminHeadingScale }};">
         <aside class="admin-sidebar">
             <div class="sticky top-0 z-10 border-b border-border bg-card p-4">

@@ -34,7 +34,7 @@
     $portalHeadingScale = $formatScale($company['portal_heading_scale'] ?? '1');
 @endphp
 
-<x-layouts.base :title="$title ?? 'Client Portal | Rockmould Limited'">
+<x-layouts.base :title="$title ?? 'Client Portal | Rockmould Limited'" body-class="portal-shell">
     <div class="portal-shell" data-portal-shell data-collapsed="false" style="--shell-copy-scale: {{ $portalCopyScale }}; --shell-heading-scale: {{ $portalHeadingScale }};">
         <aside class="portal-sidebar" data-portal-sidebar>
             <div class="sticky top-0 z-10 flex items-center justify-between border-b border-border bg-card p-4">
