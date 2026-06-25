@@ -6,6 +6,8 @@
     'height' => 'large',
     'align' => 'center',
     'overlay' => true,
+    'titleSize' => null,
+    'descriptionSize' => null,
 ])
 
 @php
@@ -40,9 +42,9 @@
             @if ($subtitle)
                 <p class="section-label mb-6">{{ $subtitle }}</p>
             @endif
-            <h1 class="public-hero-title font-display text-4xl font-bold leading-[1.1] md:text-5xl lg:text-7xl">{{ $title }}</h1>
+            <h1 class="public-hero-title font-display font-bold leading-[1.1] {{ $titleSize ?? 'text-4xl md:text-5xl lg:text-7xl' }}">{{ $title }}</h1>
             @if ($description)
-                <p class="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground md:text-xl {{ $align === 'left' ? 'mx-0' : '' }}">{{ $description }}</p>
+                <p class="mx-auto mt-6 max-w-2xl leading-relaxed text-muted-foreground {{ $descriptionSize ?? 'text-lg md:text-xl' }} {{ $align === 'left' ? 'mx-0' : '' }}">{{ $description }}</p>
             @endif
             @if (trim($slot))
                 <div class="mt-10 flex flex-wrap gap-4 {{ $align === 'left' ? 'justify-start' : 'justify-center' }}">

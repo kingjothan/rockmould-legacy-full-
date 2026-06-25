@@ -261,6 +261,8 @@ class CmsController extends Controller
             'gallery_hero_media_upload' => ['nullable', 'file', 'max:204800'],
             'gallery_empty_title' => ['required', 'string', 'max:255'],
             'gallery_empty_description' => ['required', 'string'],
+            'font_sizes' => ['nullable', 'array'],
+            'font_sizes.*' => ['string', 'max:20'],
         ]);
 
         $current = SiteData::publicPages();
@@ -357,7 +359,18 @@ class CmsController extends Controller
             ],
         ]);
 
+        $submittedFontSizes = $data['font_sizes'] ?? [];
         foreach (['services', 'projects', 'blog', 'faq', 'careers', 'contact', 'partnerships', 'testimonials', 'gallery'] as $pageKey) {
+            $pageFontSizes = [];
+            foreach ($submittedFontSizes as $sizeKey => $sizeVal) {
+                if (str_starts_with($sizeKey, $pageKey.'_')) {
+                    $pageFontSizes[substr($sizeKey, strlen($pageKey) + 1)] = $sizeVal;
+                }
+            }
+            if ($pageFontSizes) {
+                $updated[$pageKey]['font_sizes'] = array_merge($updated[$pageKey]['font_sizes'] ?? [], $pageFontSizes);
+            }
+
             $updated[$pageKey]['hero_media_path'] = $this->syncMediaInput(
                 $request,
                 $pageKey.'_hero_media_path',
@@ -403,9 +416,12 @@ class CmsController extends Controller
             'story_image_path' => ['nullable', 'string', 'max:2048'],
             'hero_media' => ['nullable', 'file', 'max:204800'],
             'story_image' => ['nullable', 'file', 'max:204800', 'mimes:jpg,jpeg,png,webp,gif,mp4,webm,mov,ogg'],
+            'font_sizes' => ['nullable', 'array'],
+            'font_sizes.*' => ['string', 'max:20'],
         ]);
 
         $current = SiteData::about();
+        $current['font_sizes'] = array_merge($current['font_sizes'] ?? [], $data['font_sizes'] ?? []);
         $current['hero_subtitle'] = $data['hero_subtitle'];
         $current['hero_title'] = $data['hero_title'];
         $current['hero_description'] = $data['hero_description'];
@@ -638,6 +654,8 @@ class CmsController extends Controller
             'metrics_text' => ['nullable', 'string'],
             'client_success_label' => ['required', 'string', 'max:255'],
             'client_success_title' => ['required', 'string', 'max:255'],
+            'font_sizes' => ['nullable', 'array'],
+            'font_sizes.*' => ['string', 'max:20'],
         ]);
 
         $current = SiteData::portfolio();
@@ -648,6 +666,7 @@ class CmsController extends Controller
             'metrics' => $this->statPairs($data['metrics_text'] ?? ''),
             'client_success_label' => $data['client_success_label'],
             'client_success_title' => $data['client_success_title'],
+            'font_sizes' => array_merge($current['font_sizes'] ?? [], $data['font_sizes'] ?? []),
         ]);
 
         $this->saveSetting('portfolio', $updated);

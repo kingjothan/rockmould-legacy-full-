@@ -1,5 +1,5 @@
 <x-layouts.public :company="$company" title="Portfolio | Rockmould Limited">
-    <x-hero :title="$portfolio['hero_title']" :subtitle="$portfolio['hero_subtitle']" :description="$portfolio['hero_description']" image="images/project-4.jpg" height="medium" />
+    <x-hero :title="$portfolio['hero_title']" :subtitle="$portfolio['hero_subtitle']" :description="$portfolio['hero_description']" image="images/project-4.jpg" height="medium" :title-size="$portfolio['font_sizes']['hero_title'] ?? null" :description-size="$portfolio['font_sizes']['hero_description'] ?? null" />
 
     <section class="section-padding">
         <div class="container-luxury space-y-16">
@@ -61,7 +61,7 @@
 
     <section class="section-padding bg-card">
         <div class="container-luxury">
-            <x-section-heading :label="$portfolio['client_success_label']" :title="$portfolio['client_success_title']" />
+            <x-section-heading :label="$portfolio['client_success_label']" :title="$portfolio['client_success_title']" :title-size="$portfolio['font_sizes']['client_success_title'] ?? null" />
             <div class="grid gap-8 md:grid-cols-3">
                 @foreach ($testimonials as $testimonial)
                     <div class="luxury-card reveal">

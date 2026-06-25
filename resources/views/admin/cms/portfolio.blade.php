@@ -3,6 +3,9 @@
         $portfolioMetricsText = collect($portfolio['metrics'] ?? [])
             ->map(fn ($metric) => ($metric['label'] ?? '').'|'.($metric['value'] ?? ''))
             ->implode(PHP_EOL);
+
+        $sizeOptions = ['text-xs' => 'XS', 'text-sm' => 'SM', 'text-base' => 'BASE', 'text-lg' => 'LG', 'text-xl' => 'XL', 'text-2xl' => '2XL', 'text-3xl' => '3XL', 'text-4xl' => '4XL', 'text-5xl' => '5XL'];
+        $fontSizes = $portfolio['font_sizes'] ?? [];
     @endphp
 
     <div class="grid gap-8 lg:grid-cols-[0.95fr_1.05fr]">
@@ -16,20 +19,33 @@
                 @csrf
                 @method('PUT')
 
-                <div class="grid gap-4 md:grid-cols-2">
-                    <div>
-                        <label class="admin-label">Hero Subtitle</label>
-                        <input name="hero_subtitle" value="{{ $portfolio['hero_subtitle'] ?? '' }}" class="input-shell">
-                    </div>
-                    <div>
-                        <label class="admin-label">Hero Title</label>
-                        <input name="hero_title" value="{{ $portfolio['hero_title'] ?? '' }}" class="input-shell">
+                <div>
+                    <label class="admin-label">Hero Subtitle</label>
+                    <input name="hero_subtitle" value="{{ $portfolio['hero_subtitle'] ?? '' }}" class="input-shell">
+                </div>
+
+                <div>
+                    <label class="admin-label">Hero Title</label>
+                    <div class="flex gap-2">
+                        <input name="hero_title" value="{{ $portfolio['hero_title'] ?? '' }}" class="input-shell flex-1">
+                        <select name="font_sizes[hero_title]" class="input-shell w-24" title="Font size">
+                            @foreach ($sizeOptions as $val => $label)
+                                <option value="{{ $val }}" @selected(($fontSizes['hero_title'] ?? 'text-3xl') === $val)>{{ $label }}</option>
+                            @endforeach
+                        </select>
                     </div>
                 </div>
 
                 <div>
                     <label class="admin-label">Hero Description</label>
-                    <textarea name="hero_description" rows="4" class="input-shell">{{ $portfolio['hero_description'] ?? '' }}</textarea>
+                    <div class="flex gap-2">
+                        <textarea name="hero_description" rows="4" class="input-shell flex-1">{{ $portfolio['hero_description'] ?? '' }}</textarea>
+                        <select name="font_sizes[hero_description]" class="input-shell w-24 self-start" title="Font size">
+                            @foreach ($sizeOptions as $val => $label)
+                                <option value="{{ $val }}" @selected(($fontSizes['hero_description'] ?? 'text-base') === $val)>{{ $label }}</option>
+                            @endforeach
+                        </select>
+                    </div>
                 </div>
 
                 <div>
@@ -38,14 +54,19 @@
                     <p class="mt-2 text-xs text-muted-foreground">Use <code>Label|Value</code> per line. Example: <code>Portfolio Value|NGN 50B</code></p>
                 </div>
 
-                <div class="grid gap-4 md:grid-cols-2">
-                    <div>
-                        <label class="admin-label">Client Success Label</label>
-                        <input name="client_success_label" value="{{ $portfolio['client_success_label'] ?? '' }}" class="input-shell">
-                    </div>
-                    <div>
-                        <label class="admin-label">Client Success Title</label>
-                        <input name="client_success_title" value="{{ $portfolio['client_success_title'] ?? '' }}" class="input-shell">
+                <div>
+                    <label class="admin-label">Client Success Label</label>
+                    <input name="client_success_label" value="{{ $portfolio['client_success_label'] ?? '' }}" class="input-shell">
+                </div>
+                <div>
+                    <label class="admin-label">Client Success Title</label>
+                    <div class="flex gap-2">
+                        <input name="client_success_title" value="{{ $portfolio['client_success_title'] ?? '' }}" class="input-shell flex-1">
+                        <select name="font_sizes[client_success_title]" class="input-shell w-24" title="Font size">
+                            @foreach ($sizeOptions as $val => $label)
+                                <option value="{{ $val }}" @selected(($fontSizes['client_success_title'] ?? 'text-3xl') === $val)>{{ $label }}</option>
+                            @endforeach
+                        </select>
                     </div>
                 </div>
 

@@ -6,6 +6,9 @@
         $aboutMetricsText = collect($about['metrics'] ?? [])
             ->map(fn ($metric) => ($metric['label'] ?? '').'|'.($metric['value'] ?? ''))
             ->implode(PHP_EOL);
+
+        $sizeOptions = ['text-xs' => 'XS', 'text-sm' => 'SM', 'text-base' => 'BASE', 'text-lg' => 'LG', 'text-xl' => 'XL', 'text-2xl' => '2XL', 'text-3xl' => '3XL', 'text-4xl' => '4XL', 'text-5xl' => '5XL'];
+        $fontSizes = $about['font_sizes'] ?? [];
     @endphp
 
     <div class="space-y-8">
@@ -33,19 +36,31 @@
                             <p class="section-label">Hero and Story</p>
                             <h2 class="font-display text-3xl">Opening Narrative</h2>
                         </div>
-                        <div class="grid gap-4 md:grid-cols-2">
-                            <div>
-                                <label class="admin-label">Hero Subtitle</label>
-                                <input name="hero_subtitle" value="{{ old('hero_subtitle', $about['hero_subtitle'] ?? '') }}" class="input-shell">
-                            </div>
-                            <div>
-                                <label class="admin-label">Hero Title</label>
-                                <input name="hero_title" value="{{ old('hero_title', $about['hero_title'] ?? '') }}" class="input-shell">
+                        <div>
+                            <label class="admin-label">Hero Subtitle</label>
+                            <input name="hero_subtitle" value="{{ old('hero_subtitle', $about['hero_subtitle'] ?? '') }}" class="input-shell">
+                        </div>
+                        <div>
+                            <label class="admin-label">Hero Title</label>
+                            <div class="flex gap-2">
+                                <input name="hero_title" value="{{ old('hero_title', $about['hero_title'] ?? '') }}" class="input-shell flex-1">
+                                <select name="font_sizes[hero_title]" class="input-shell w-24" title="Font size">
+                                    @foreach ($sizeOptions as $val => $label)
+                                        <option value="{{ $val }}" @selected(($fontSizes['hero_title'] ?? 'text-3xl') === $val)>{{ $label }}</option>
+                                    @endforeach
+                                </select>
                             </div>
                         </div>
                         <div>
                             <label class="admin-label">Hero Description</label>
-                            <textarea name="hero_description" rows="4" class="input-shell">{{ old('hero_description', $about['hero_description'] ?? '') }}</textarea>
+                            <div class="flex gap-2">
+                                <textarea name="hero_description" rows="4" class="input-shell flex-1">{{ old('hero_description', $about['hero_description'] ?? '') }}</textarea>
+                                <select name="font_sizes[hero_description]" class="input-shell w-24 self-start" title="Font size">
+                                    @foreach ($sizeOptions as $val => $label)
+                                        <option value="{{ $val }}" @selected(($fontSizes['hero_description'] ?? 'text-base') === $val)>{{ $label }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
                         </div>
                         <div class="grid gap-4 md:grid-cols-2">
                             <div>
@@ -84,7 +99,14 @@
                             </div>
                             <div>
                                 <label class="admin-label">Story Title</label>
-                                <input name="story_title" value="{{ old('story_title', $about['story_title'] ?? '') }}" class="input-shell">
+                                <div class="flex gap-2">
+                                    <input name="story_title" value="{{ old('story_title', $about['story_title'] ?? '') }}" class="input-shell flex-1">
+                                    <select name="font_sizes[story_title]" class="input-shell w-24" title="Font size">
+                                        @foreach ($sizeOptions as $val => $label)
+                                            <option value="{{ $val }}" @selected(($fontSizes['story_title'] ?? 'text-3xl') === $val)>{{ $label }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
                             </div>
                         </div>
                         <div>
@@ -124,7 +146,14 @@
                             </div>
                             <div>
                                 <label class="admin-label">Values Title</label>
-                                <input name="values_title" value="{{ old('values_title', $about['values_title'] ?? 'The Pillars of Our Identity') }}" class="input-shell">
+                                <div class="flex gap-2">
+                                    <input name="values_title" value="{{ old('values_title', $about['values_title'] ?? 'The Pillars of Our Identity') }}" class="input-shell flex-1">
+                                    <select name="font_sizes[values_title]" class="input-shell w-24" title="Font size">
+                                        @foreach ($sizeOptions as $val => $label)
+                                            <option value="{{ $val }}" @selected(($fontSizes['values_title'] ?? 'text-3xl') === $val)>{{ $label }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
                             </div>
                         </div>
                         <div>
@@ -147,7 +176,14 @@
                         </div>
                         <div>
                             <label class="admin-label">Leadership Title</label>
-                            <input name="team_title" value="{{ old('team_title', $about['team_title'] ?? 'The Team Behind the Vision') }}" class="input-shell">
+                            <div class="flex gap-2">
+                                <input name="team_title" value="{{ old('team_title', $about['team_title'] ?? 'The Team Behind the Vision') }}" class="input-shell flex-1">
+                                <select name="font_sizes[team_title]" class="input-shell w-24" title="Font size">
+                                    @foreach ($sizeOptions as $val => $label)
+                                        <option value="{{ $val }}" @selected(($fontSizes['team_title'] ?? 'text-3xl') === $val)>{{ $label }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
                         </div>
                         <div>
                             <label class="admin-label">Timeline Label</label>
@@ -155,7 +191,14 @@
                         </div>
                         <div>
                             <label class="admin-label">Timeline Title</label>
-                            <input name="timeline_title" value="{{ old('timeline_title', $about['timeline_title'] ?? 'Milestones of Excellence') }}" class="input-shell">
+                            <div class="flex gap-2">
+                                <input name="timeline_title" value="{{ old('timeline_title', $about['timeline_title'] ?? 'Milestones of Excellence') }}" class="input-shell flex-1">
+                                <select name="font_sizes[timeline_title]" class="input-shell w-24" title="Font size">
+                                    @foreach ($sizeOptions as $val => $label)
+                                        <option value="{{ $val }}" @selected(($fontSizes['timeline_title'] ?? 'text-3xl') === $val)>{{ $label }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
                         </div>
                         <div>
                             <label class="admin-label">About Metrics</label>

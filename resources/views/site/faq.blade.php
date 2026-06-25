@@ -4,6 +4,8 @@
         :subtitle="$page['hero_subtitle'] ?? 'Support and Clarity'"
         :description="$page['hero_description'] ?? 'Answers to common questions about our projects, services, portal access, and delivery model.'"
         :image="$page['hero_media_path'] ?? 'images/project-2.jpg'"
+        :title-size="$page['font_sizes']['hero_title'] ?? null"
+        :description-size="$page['font_sizes']['hero_description'] ?? null"
     />
 
     <section class="section-padding">

@@ -4,6 +4,8 @@
         :subtitle="$page['hero_subtitle'] ?? 'Gallery'"
         :description="$page['hero_description'] ?? 'Construction photography, project visuals, and client-facing media updates from across the Rockmould portfolio.'"
         :image="$page['hero_media_path'] ?? 'images/project-3.jpg'"
+        :title-size="$page['font_sizes']['hero_title'] ?? null"
+        :description-size="$page['font_sizes']['hero_description'] ?? null"
     />
 
     <section class="section-padding">

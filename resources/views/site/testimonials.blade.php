@@ -4,6 +4,8 @@
         :subtitle="$page['hero_subtitle'] ?? 'Testimonials'"
         :description="$page['hero_description'] ?? 'Selected stories from clients who value clarity, quality, and disciplined project execution.'"
         :image="$page['hero_media_path'] ?? 'images/project-2.jpg'"
+        :title-size="$page['font_sizes']['hero_title'] ?? null"
+        :description-size="$page['font_sizes']['hero_description'] ?? null"
     />
 
     <section class="section-padding">

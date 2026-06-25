@@ -5,6 +5,8 @@
         :description="$page['hero_description'] ?? 'Explore our portfolio of exceptional real estate developments across prime locations.'"
         :image="$page['hero_media_path'] ?? 'images/project-2.jpg'"
         height="medium"
+        :title-size="$page['font_sizes']['hero_title'] ?? null"
+        :description-size="$page['font_sizes']['hero_description'] ?? null"
     />
 
     <section class="section-padding">

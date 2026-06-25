@@ -17,6 +17,8 @@
         :description="$page['hero_description'] ?? 'Expert perspectives on real estate, construction, and investment from the Rockmould team.'"
         :image="$page['hero_media_path'] ?? 'images/project-3.jpg'"
         height="medium"
+        :title-size="$page['font_sizes']['hero_title'] ?? null"
+        :description-size="$page['font_sizes']['hero_description'] ?? null"
     />
 
     <section class="section-padding">

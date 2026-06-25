@@ -4,6 +4,8 @@
         :subtitle="$page['hero_subtitle'] ?? 'Contact Us'"
         :description="$page['hero_description'] ?? \"Whether you're interested in projects, services, investment opportunities, or partnerships, we'd love to hear from you.\""
         :image="$page['hero_media_path'] ?? 'images/project-1.jpg'"
+        :title-size="$page['font_sizes']['hero_title'] ?? null"
+        :description-size="$page['font_sizes']['hero_description'] ?? null"
     />
 
     <section class="section-padding">

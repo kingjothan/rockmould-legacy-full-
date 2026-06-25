@@ -32,6 +32,8 @@
         $partnershipMetricsText = collect(data_get($pages, 'partnerships.metrics', []))
             ->map(fn ($metric) => ($metric['label'] ?? '').'|'.($metric['value'] ?? ''))
             ->implode(PHP_EOL);
+
+        $sizeOptions = ['text-xs' => 'XS', 'text-sm' => 'SM', 'text-base' => 'BASE', 'text-lg' => 'LG', 'text-xl' => 'XL', 'text-2xl' => '2XL', 'text-3xl' => '3XL', 'text-4xl' => '4XL', 'text-5xl' => '5XL'];
     @endphp
 
     <form action="{{ route('admin.cms.pages.update') }}" method="POST" enctype="multipart/form-data" class="space-y-8">
@@ -55,11 +57,25 @@
                             </div>
                             <div>
                                 <label class="admin-label">Hero Title</label>
-                                <input name="{{ $key }}_hero_title" value="{{ old($key.'_hero_title', data_get($pages, $key.'.hero_title')) }}" class="input-shell">
+                                <div class="flex gap-2">
+                                    <input name="{{ $key }}_hero_title" value="{{ old($key.'_hero_title', data_get($pages, $key.'.hero_title')) }}" class="input-shell flex-1">
+                                    <select name="font_sizes[{{ $key }}_hero_title]" class="input-shell w-24" title="Font size">
+                                        @foreach ($sizeOptions as $val => $label)
+                                            <option value="{{ $val }}" @selected((data_get($pages, $key.'.font_sizes.hero_title') ?? 'text-3xl') === $val)>{{ $label }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
                             </div>
                             <div>
                                 <label class="admin-label">Hero Description</label>
-                                <textarea name="{{ $key }}_hero_description" rows="4" class="input-shell">{{ old($key.'_hero_description', data_get($pages, $key.'.hero_description')) }}</textarea>
+                                <div class="flex gap-2">
+                                    <textarea name="{{ $key }}_hero_description" rows="4" class="input-shell flex-1">{{ old($key.'_hero_description', data_get($pages, $key.'.hero_description')) }}</textarea>
+                                    <select name="font_sizes[{{ $key }}_hero_description]" class="input-shell w-24 self-start" title="Font size">
+                                        @foreach ($sizeOptions as $val => $label)
+                                            <option value="{{ $val }}" @selected((data_get($pages, $key.'.font_sizes.hero_description') ?? 'text-base') === $val)>{{ $label }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
                             </div>
 
                             @if ($key === 'services')

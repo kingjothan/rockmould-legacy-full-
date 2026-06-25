@@ -4,6 +4,8 @@
         :subtitle="$page['hero_subtitle'] ?? 'Strategic Capital and Project Relationships'"
         :description="$page['hero_description'] ?? 'Rockmould works with investors, landowners, and project partners who value clarity, governance, and premium execution.'"
         :image="$page['hero_media_path'] ?? 'images/project-4.jpg'"
+        :title-size="$page['font_sizes']['hero_title'] ?? null"
+        :description-size="$page['font_sizes']['hero_description'] ?? null"
     />
 
     <section class="section-padding">
@@ -80,7 +82,7 @@
 
     <section class="section-padding bg-card">
         <div class="container-luxury">
-            <x-section-heading :label="$page['opportunities_label'] ?? 'Current Opportunities'" :title="$page['opportunities_title'] ?? 'Selected Projects'" />
+            <x-section-heading :label="$page['opportunities_label'] ?? 'Current Opportunities'" :title="$page['opportunities_title'] ?? 'Selected Projects'" :title-size="$page['font_sizes']['hero_title'] ?? null" />
             <div class="grid gap-8 md:grid-cols-3">
                 @foreach ($projects as $project)
                     <div class="reveal">

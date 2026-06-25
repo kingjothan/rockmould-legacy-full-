@@ -5,6 +5,8 @@
         :description="$page['hero_description'] ?? 'Join a team of professionals dedicated to delivering excellence in real estate and construction.'"
         :image="$page['hero_media_path'] ?? 'images/project-4.jpg'"
         height="medium"
+        :title-size="$page['font_sizes']['hero_title'] ?? null"
+        :description-size="$page['font_sizes']['hero_description'] ?? null"
     />
 
     <section class="section-padding">

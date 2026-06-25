@@ -5,12 +5,14 @@
         :description="$about['hero_description']"
         :image="$about['hero_media_path']"
         height="large"
+        :title-size="$about['font_sizes']['hero_title'] ?? null"
+        :description-size="$about['font_sizes']['hero_description'] ?? null"
     />
 
     <section class="section-padding">
         <div class="container-luxury grid grid-cols-1 gap-16 lg:grid-cols-2 lg:items-center">
             <div class="reveal-left">
-                <x-section-heading :label="$about['story_label'] ?? 'Our Story'" :title="$about['story_title']" align="left" />
+                <x-section-heading :label="$about['story_label'] ?? 'Our Story'" :title="$about['story_title']" align="left" :title-size="$about['font_sizes']['story_title'] ?? null" />
                 <div class="space-y-4 leading-relaxed text-muted-foreground">
                     @foreach ($about['story'] as $paragraph)
                         <p>{{ $paragraph }}</p>
@@ -44,7 +46,7 @@
 
     <section class="section-padding">
         <div class="container-luxury">
-            <x-section-heading :label="$about['values_label'] ?? 'Core Values'" :title="$about['values_title'] ?? 'The Pillars of Our Identity'" />
+            <x-section-heading :label="$about['values_label'] ?? 'Core Values'" :title="$about['values_title'] ?? 'The Pillars of Our Identity'" :title-size="$about['font_sizes']['values_title'] ?? null" />
             <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
                 @foreach ($about['values'] as $value)
                     <div class="luxury-card text-center reveal">
@@ -61,7 +63,7 @@
 
     <section class="section-padding bg-card">
         <div class="container-luxury">
-            <x-section-heading :label="$about['team_label'] ?? 'Leadership'" :title="$about['team_title'] ?? 'The Team Behind the Vision'" />
+            <x-section-heading :label="$about['team_label'] ?? 'Leadership'" :title="$about['team_title'] ?? 'The Team Behind the Vision'" :title-size="$about['font_sizes']['team_title'] ?? null" />
             <div class="grid grid-cols-1 gap-8 md:grid-cols-3">
                 @foreach ($team as $member)
                     <div class="luxury-card text-center reveal">
@@ -85,7 +87,7 @@
 
     <section class="section-padding">
         <div class="container-luxury">
-            <x-section-heading :label="$about['timeline_label'] ?? 'Our Journey'" :title="$about['timeline_title'] ?? 'Milestones of Excellence'" />
+            <x-section-heading :label="$about['timeline_label'] ?? 'Our Journey'" :title="$about['timeline_title'] ?? 'Milestones of Excellence'" :title-size="$about['font_sizes']['timeline_title'] ?? null" />
             <div class="mx-auto max-w-3xl">
                 @foreach ($timeline as $entry)
                     <div class="timeline-entry reveal">
