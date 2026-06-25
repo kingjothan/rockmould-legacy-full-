@@ -417,13 +417,13 @@ class SiteData
             [
                 'label' => 'Services',
                 'route' => 'services',
-                'children' => [
-                    ['label' => 'Real Estate Development', 'href' => route('services').'#real-estate-development'],
-                    ['label' => 'Construction & Execution', 'href' => route('services').'#construction-project-execution'],
-                    ['label' => 'Property Advisory', 'href' => route('services').'#property-advisory'],
-                    ['label' => 'Investment Support', 'href' => route('services').'#investment-support'],
-                    ['label' => 'Luxury Property Delivery', 'href' => route('services').'#luxury-property-delivery'],
-                ],
+                'children' => \App\Models\Service::query()
+                    ->where('is_published', true)
+                    ->orderBy('sort_order')
+                    ->orderBy('title')
+                    ->get()
+                    ->map(fn ($s) => ['label' => $s->title, 'href' => route('services').'#'.($s->slug ?: \Illuminate\Support\Str::slug($s->title))])
+                    ->all(),
             ],
             ['label' => 'Projects', 'route' => 'projects.index'],
             ['label' => 'Portfolio', 'route' => 'portfolio'],
