@@ -2,53 +2,134 @@
     <div class="grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
         <div class="space-y-5">
             @foreach ($services as $service)
-                <div class="luxury-card">
-                    <h2 class="font-display text-3xl">{{ $service->title }}</h2>
-                    <form action="{{ route('admin.cms.services.update', $service) }}" method="POST" enctype="multipart/form-data" class="mt-5 space-y-4">
+                <details class="luxury-card group">
+                    <summary class="cursor-pointer list-none">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h2 class="font-display text-xl font-semibold">{{ $service->title }}</h2>
+                                <p class="mt-1 text-xs text-muted-foreground">
+                                    {{ $service->tagline }}
+                                    @if ($service->is_published) <span class="text-green-500">Published</span> @else <span class="text-yellow-500">Draft</span> @endif
+                                    @if ($service->is_featured) · <span class="text-primary">Featured</span> @endif
+                                </p>
+                            </div>
+                            <x-portal-icon name="chevron-down" class="h-4 w-4 transition-transform group-open:rotate-180" />
+                        </div>
+                    </summary>
+                    <form action="{{ route('admin.cms.services.update', $service) }}" method="POST" enctype="multipart/form-data" class="mt-6 space-y-4">
                         @csrf
                         @method('PUT')
-                        <input name="title" value="{{ $service->title }}" class="input-shell">
-                        <input name="slug" value="{{ $service->slug }}" class="input-shell">
-                        <input name="tagline" value="{{ $service->tagline }}" class="input-shell">
-                        <textarea name="summary" rows="3" class="input-shell">{{ $service->summary }}</textarea>
-                        <textarea name="description" rows="4" class="input-shell">{{ $service->description }}</textarea>
-                        <input name="image_path" value="{{ $service->image_path }}" class="input-shell" placeholder="CDN image/video URL or local path">
-                        <input type="file" name="image_upload" accept="image/*,video/*" data-preview-target="#service-image-preview-{{ $service->id }}" class="input-shell">
-                        <p id="service-image-preview-{{ $service->id }}" class="text-xs text-muted-foreground">{{ $service->image_path ?: 'No new file selected' }}</p>
-                        <label class="flex items-center gap-2 text-xs text-muted-foreground">
-                            <input type="checkbox" name="remove_image_path" value="1" class="h-4 w-4 rounded border-border bg-transparent text-primary focus:ring-primary">
-                            Remove current service media if no new link or upload is provided
-                        </label>
-                        <textarea name="benefits_text" rows="4" class="input-shell">{{ implode("\n", $service->benefits ?? []) }}</textarea>
-                        <textarea name="process_steps_text" rows="4" class="input-shell">{{ implode("\n", $service->process_steps ?? []) }}</textarea>
-                        <textarea name="related_projects_text" rows="3" class="input-shell">{{ implode("\n", $service->related_projects ?? []) }}</textarea>
-                        <input type="number" name="sort_order" value="{{ $service->sort_order }}" class="input-shell">
-                        <label class="flex items-center gap-3 text-sm text-muted-foreground"><input type="checkbox" name="is_featured" value="1" @checked($service->is_featured)> Featured</label>
-                        <label class="flex items-center gap-3 text-sm text-muted-foreground"><input type="checkbox" name="is_published" value="1" @checked($service->is_published)> Published</label>
+                        <div class="grid gap-4 sm:grid-cols-2">
+                            <div>
+                                <label class="admin-label">Title</label>
+                                <input name="title" value="{{ $service->title }}" class="input-shell w-full" required>
+                            </div>
+                            <div>
+                                <label class="admin-label">Slug</label>
+                                <input name="slug" value="{{ $service->slug }}" class="input-shell w-full">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="admin-label">Tagline</label>
+                            <input name="tagline" value="{{ $service->tagline }}" class="input-shell w-full">
+                        </div>
+                        <div>
+                            <label class="admin-label">Summary</label>
+                            <textarea name="summary" rows="3" class="input-shell w-full">{{ $service->summary }}</textarea>
+                        </div>
+                        <div>
+                            <label class="admin-label">Full Description</label>
+                            <textarea name="description" rows="4" class="input-shell w-full">{{ $service->description }}</textarea>
+                        </div>
+                        <div>
+                            <label class="admin-label">Image</label>
+                            <input name="image_path" value="{{ $service->image_path }}" class="input-shell w-full" placeholder="Paste URL or use upload below">
+                            <input type="file" name="image_upload" accept="image/*,video/*" class="input-shell mt-2 w-full">
+                            <label class="mt-2 flex items-center gap-2 text-xs text-muted-foreground">
+                                <input type="checkbox" name="remove_image_path" value="1" class="h-4 w-4 rounded border-border bg-transparent text-primary">
+                                Remove current image
+                            </label>
+                        </div>
+                        <div>
+                            <label class="admin-label">Benefits (one per line)</label>
+                            <textarea name="benefits_text" rows="4" class="input-shell w-full">{{ implode("\n", $service->benefits ?? []) }}</textarea>
+                        </div>
+                        <div>
+                            <label class="admin-label">Process Steps (one per line)</label>
+                            <textarea name="process_steps_text" rows="4" class="input-shell w-full">{{ implode("\n", $service->process_steps ?? []) }}</textarea>
+                        </div>
+                        <div>
+                            <label class="admin-label">Related Project Slugs (one per line)</label>
+                            <textarea name="related_projects_text" rows="3" class="input-shell w-full">{{ implode("\n", $service->related_projects ?? []) }}</textarea>
+                        </div>
+                        <div class="grid gap-4 sm:grid-cols-3">
+                            <div>
+                                <label class="admin-label">Sort Order</label>
+                                <input type="number" name="sort_order" value="{{ $service->sort_order }}" class="input-shell w-full">
+                            </div>
+                            <label class="flex items-end gap-2 pb-2 text-sm text-muted-foreground"><input type="checkbox" name="is_featured" value="1" @checked($service->is_featured) class="h-4 w-4 rounded border-border bg-transparent text-primary"> Featured</label>
+                            <label class="flex items-end gap-2 pb-2 text-sm text-muted-foreground"><input type="checkbox" name="is_published" value="1" @checked($service->is_published) class="h-4 w-4 rounded border-border bg-transparent text-primary"> Published</label>
+                        </div>
                         <button class="luxury-btn-primary">Update Service</button>
                     </form>
-                </div>
+                    <form action="{{ route('admin.cms.services.destroy', $service) }}" method="POST" class="mt-3" onsubmit="return confirm('Delete &quot;{{ $service->title }}&quot;? This cannot be undone.')">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="text-xs text-destructive hover:underline">Delete this service</button>
+                    </form>
+                </details>
             @endforeach
         </div>
-        <div class="luxury-card">
-            <h2 class="font-display text-3xl">Create Service</h2>
-            <form action="{{ route('admin.cms.services.store') }}" method="POST" enctype="multipart/form-data" class="mt-6 space-y-4">
-                @csrf
-                <input name="title" required placeholder="Service title" class="input-shell">
-                <input name="tagline" placeholder="Tagline" class="input-shell">
-                <textarea name="summary" rows="3" required placeholder="Summary" class="input-shell"></textarea>
-                <textarea name="description" rows="4" placeholder="Description" class="input-shell"></textarea>
-                <input name="image_path" placeholder="CDN image/video URL or local path" class="input-shell">
-                <input type="file" name="image_upload" accept="image/*,video/*" data-preview-target="#create-service-image-preview" class="input-shell">
-                <p id="create-service-image-preview" class="text-xs text-muted-foreground">No new file selected</p>
-                <textarea name="benefits_text" rows="4" placeholder="Benefits, one per line" class="input-shell"></textarea>
-                <textarea name="process_steps_text" rows="4" placeholder="Process steps, one per line" class="input-shell"></textarea>
-                <textarea name="related_projects_text" rows="3" placeholder="Related project slugs, one per line" class="input-shell"></textarea>
-                <input type="number" name="sort_order" value="0" placeholder="Sort order" class="input-shell">
-                <label class="flex items-center gap-3 text-sm text-muted-foreground"><input type="checkbox" name="is_featured" value="1"> Featured</label>
-                <label class="flex items-center gap-3 text-sm text-muted-foreground"><input type="checkbox" name="is_published" value="1" checked> Published</label>
-                <button class="luxury-btn-primary w-full">Create Service</button>
-            </form>
+
+        <div>
+            <div class="luxury-card sticky top-20">
+                <h2 class="font-display text-xl font-semibold">Create New Service</h2>
+                <form action="{{ route('admin.cms.services.store') }}" method="POST" enctype="multipart/form-data" class="mt-6 space-y-4">
+                    @csrf
+                    <div>
+                        <label class="admin-label">Title</label>
+                        <input name="title" required placeholder="Service title" class="input-shell w-full">
+                    </div>
+                    <div>
+                        <label class="admin-label">Tagline</label>
+                        <input name="tagline" placeholder="Short tagline" class="input-shell w-full">
+                    </div>
+                    <div>
+                        <label class="admin-label">Summary</label>
+                        <textarea name="summary" rows="3" required placeholder="Brief summary" class="input-shell w-full"></textarea>
+                    </div>
+                    <div>
+                        <label class="admin-label">Full Description</label>
+                        <textarea name="description" rows="4" placeholder="Detailed description" class="input-shell w-full"></textarea>
+                    </div>
+                    <div>
+                        <label class="admin-label">Image</label>
+                        <input name="image_path" placeholder="Paste URL or use upload below" class="input-shell w-full">
+                        <input type="file" name="image_upload" accept="image/*,video/*" class="input-shell mt-2 w-full">
+                    </div>
+                    <div>
+                        <label class="admin-label">Benefits (one per line)</label>
+                        <textarea name="benefits_text" rows="4" placeholder="Each benefit on its own line" class="input-shell w-full"></textarea>
+                    </div>
+                    <div>
+                        <label class="admin-label">Process Steps (one per line)</label>
+                        <textarea name="process_steps_text" rows="4" placeholder="Each step on its own line" class="input-shell w-full"></textarea>
+                    </div>
+                    <div>
+                        <label class="admin-label">Related Project Slugs (one per line)</label>
+                        <textarea name="related_projects_text" rows="3" placeholder="Project slugs, one per line" class="input-shell w-full"></textarea>
+                    </div>
+                    <div>
+                        <label class="admin-label">Sort Order</label>
+                        <input type="number" name="sort_order" value="0" class="input-shell w-full">
+                    </div>
+                    <div class="flex gap-6">
+                        <label class="flex items-center gap-2 text-sm text-muted-foreground"><input type="checkbox" name="is_featured" value="1" class="h-4 w-4 rounded border-border bg-transparent text-primary"> Featured</label>
+                        <label class="flex items-center gap-2 text-sm text-muted-foreground"><input type="checkbox" name="is_published" value="1" checked class="h-4 w-4 rounded border-border bg-transparent text-primary"> Published</label>
+                    </div>
+                    <button class="luxury-btn-primary w-full justify-center">Create Service</button>
+                </form>
+            </div>
         </div>
     </div>
 </x-layouts.admin>

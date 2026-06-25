@@ -200,6 +200,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::get('/cms/services', [AdminCmsController::class, 'services'])->name('cms.services');
             Route::post('/cms/services', [AdminCmsController::class, 'storeService'])->name('cms.services.store');
             Route::put('/cms/services/{service}', [AdminCmsController::class, 'updateService'])->name('cms.services.update');
+            Route::delete('/cms/services/{service}', [AdminCmsController::class, 'destroyService'])->name('cms.services.destroy');
             Route::get('/cms/projects', [AdminCmsController::class, 'projectListings'])->name('cms.projects');
             Route::put('/cms/projects/{project}', [AdminCmsController::class, 'updateProjectListing'])->name('cms.projects.update');
             Route::get('/cms/portfolio', [AdminCmsController::class, 'portfolio'])->name('cms.portfolio');

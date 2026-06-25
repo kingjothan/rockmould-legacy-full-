@@ -537,6 +537,15 @@ class CmsController extends Controller
         return back()->with('success', 'Service updated.');
     }
 
+    public function destroyService(Request $request, Service $service): RedirectResponse
+    {
+        Activity::log('cms.service.deleted', "Service \"{$service->title}\" deleted.", $request->user(), null);
+        $this->deleteStoredAsset($service->image_path);
+        $service->delete();
+
+        return redirect()->route('admin.cms.services')->with('success', 'Service deleted.');
+    }
+
     public function projectListings(): View
     {
         return view('admin.cms.projects', [
