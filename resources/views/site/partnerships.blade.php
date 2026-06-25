@@ -22,11 +22,6 @@
                         @endforeach
                     </div>
                 </div>
-                <div class="grid gap-6 md:grid-cols-3">
-                    @foreach ($metrics as $metric)
-                        <x-metric-card :value="$metric['value']" :label="$metric['label']" />
-                    @endforeach
-                </div>
             </div>
 
             <div class="luxury-card reveal-right">
