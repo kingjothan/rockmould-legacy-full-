@@ -1,4 +1,10 @@
-@php($footerGroups = \App\Support\SiteData::footerGroups())
+@php
+    $footerData = \App\Support\SiteData::footer();
+    $footerGroups = \App\Support\SiteData::footerGroups();
+    $footerTagline = $footerData['tagline'] ?? 'Building legacies in real estate and construction. Premium developments, enduring quality, and unwavering commitment to excellence.';
+    $newsletterTitle = $footerData['newsletter_title'] ?? 'Stay Informed';
+    $newsletterDescription = $footerData['newsletter_description'] ?? 'Subscribe for project updates and market insights.';
+@endphp
 
 <footer class="border-t border-border bg-card">
     <div class="container-luxury section-padding">
@@ -8,7 +14,7 @@
                     <x-brand-mark class="h-10 w-auto" />
                 </a>
                 <p class="mb-8 max-w-sm text-sm leading-relaxed text-muted-foreground">
-                    Building legacies in real estate and construction. Premium developments, enduring quality, and unwavering commitment to excellence.
+                    {{ $footerTagline }}
                 </p>
                 <div class="space-y-3">
                     <a href="tel:{{ preg_replace('/\s+/', '', $company['phone']) }}" class="flex items-center gap-3 text-sm text-muted-foreground transition-colors hover:text-primary">
@@ -41,8 +47,8 @@
         <div class="luxury-divider my-12"></div>
         <div class="flex flex-col items-start justify-between gap-6 md:flex-row md:items-center">
             <div>
-                <h4 class="font-display text-lg">Stay Informed</h4>
-                <p class="text-sm text-muted-foreground">Subscribe for project updates and market insights.</p>
+                <h4 class="font-display text-lg">{{ $newsletterTitle }}</h4>
+                <p class="text-sm text-muted-foreground">{{ $newsletterDescription }}</p>
             </div>
             <form action="{{ route('forms.newsletter') }}" method="POST" class="flex w-full gap-2 md:w-auto">
                 @csrf

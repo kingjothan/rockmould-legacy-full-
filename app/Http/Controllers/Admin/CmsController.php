@@ -684,6 +684,37 @@ class CmsController extends Controller
         return back()->with('success', 'Portfolio settings updated.');
     }
 
+    public function footer(): View
+    {
+        return view('admin.cms.footer', [
+            'company' => SiteData::company(),
+            'footer' => SiteData::footer(),
+        ]);
+    }
+
+    public function updateFooter(Request $request): RedirectResponse
+    {
+        $data = $request->validate([
+            'tagline' => ['nullable', 'string'],
+            'newsletter_title' => ['nullable', 'string', 'max:255'],
+            'newsletter_description' => ['nullable', 'string'],
+            'groups_json' => ['nullable', 'json'],
+        ]);
+
+        $current = SiteData::footer();
+        $updated = [
+            'tagline' => $data['tagline'] ?? ($current['tagline'] ?? ''),
+            'newsletter_title' => $data['newsletter_title'] ?? ($current['newsletter_title'] ?? ''),
+            'newsletter_description' => $data['newsletter_description'] ?? ($current['newsletter_description'] ?? ''),
+            'groups' => !empty($data['groups_json']) ? json_decode($data['groups_json'], true) : ($current['groups'] ?? []),
+        ];
+
+        $this->saveSetting('footer', $updated);
+        Activity::log('cms.footer.updated', 'Footer content updated.', $request->user());
+
+        return back()->with('success', 'Footer updated.');
+    }
+
     public function blog(): View
     {
         return view('admin.cms.blog', ['company' => SiteData::company(), 'posts' => Post::query()->latest('published_at')->get()]);

@@ -1092,6 +1092,71 @@ document.addEventListener('DOMContentLoaded', () => {
         // Reserved for future dropdown interactions.
     });
 
+    // Footer groups builder
+    const footerForm = document.querySelector('[data-footer-form]');
+    if (footerForm) {
+        const container = footerForm.querySelector('[data-footer-groups]');
+        const output = footerForm.querySelector('[data-groups-output]');
+        const addGroupBtn = footerForm.querySelector('[data-add-group]');
+
+        const serialize = () => {
+            const groups = [];
+            container.querySelectorAll('[data-group]').forEach((groupEl) => {
+                const title = groupEl.querySelector('[data-group-title]').value.trim();
+                const links = [];
+                groupEl.querySelectorAll('[data-link]').forEach((linkEl) => {
+                    const label = linkEl.querySelector('[data-link-label]').value.trim();
+                    const url = linkEl.querySelector('[data-link-url]').value.trim();
+                    if (label && url) links.push({ label, url });
+                });
+                if (title) groups.push({ title, links });
+            });
+            output.value = JSON.stringify(groups);
+        };
+
+        const addLink = (groupEl, data = {}) => {
+            const linkList = groupEl.querySelector('[data-link-list]');
+            const div = document.createElement('div');
+            div.setAttribute('data-link', '');
+            div.className = 'flex gap-2 items-center';
+            div.innerHTML = `
+                <input data-link-label placeholder="Label" value="${(data.label || '').replace(/"/g, '&quot;')}" class="input-shell flex-1">
+                <input data-link-url placeholder="URL (e.g. /about)" value="${(data.url || '').replace(/"/g, '&quot;')}" class="input-shell flex-1">
+                <button type="button" data-remove-link class="text-xs text-destructive hover:underline">✕</button>
+            `;
+            div.querySelector('[data-remove-link]').addEventListener('click', () => { div.remove(); serialize(); });
+            div.querySelectorAll('input').forEach((el) => el.addEventListener('input', serialize));
+            linkList.appendChild(div);
+        };
+
+        const addGroup = (data = {}) => {
+            const div = document.createElement('div');
+            div.setAttribute('data-group', '');
+            div.className = 'rounded-lg border border-border bg-background/50 p-4 space-y-3';
+            div.innerHTML = `
+                <div class="flex items-center justify-between">
+                    <input data-group-title placeholder="Group title (e.g. Company)" value="${(data.title || '').replace(/"/g, '&quot;')}" class="input-shell flex-1 mr-2">
+                    <button type="button" data-remove-group class="text-xs text-destructive hover:underline">Remove Group</button>
+                </div>
+                <div data-link-list class="space-y-2"></div>
+                <button type="button" data-add-link class="text-xs text-primary hover:underline">+ Add Link</button>
+            `;
+            div.querySelector('[data-remove-group]').addEventListener('click', () => { div.remove(); serialize(); });
+            div.querySelector('[data-group-title]').addEventListener('input', serialize);
+            div.querySelector('[data-add-link]').addEventListener('click', () => { addLink(div); serialize(); });
+            container.appendChild(div);
+            (data.links || []).forEach((l) => addLink(div, l));
+        };
+
+        let groups = [];
+        try { groups = JSON.parse(container.dataset.initial || '[]'); } catch(e) {}
+        groups.forEach((g) => addGroup(g));
+        if (!groups.length) addGroup({ title: '', links: [{ label: '', url: '' }] });
+        addGroupBtn.addEventListener('click', () => { addGroup({ title: '', links: [{ label: '', url: '' }] }); serialize(); });
+        serialize();
+        footerForm.addEventListener('submit', () => serialize());
+    }
+
     // Hero title lines builder
     const heroContainer = document.querySelector('[data-hero-lines]');
     if (heroContainer) {

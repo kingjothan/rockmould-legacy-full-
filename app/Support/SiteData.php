@@ -433,8 +433,18 @@ class SiteData
         ];
     }
 
+    public static function footer(): array
+    {
+        return Setting::query()->where('key', 'footer')->value('value') ?? [];
+    }
+
     public static function footerGroups(): array
     {
+        $footer = self::footer();
+        if (!empty($footer['groups'])) {
+            return $footer['groups'];
+        }
+
         return [
             [
                 'title' => 'Company',
@@ -450,10 +460,6 @@ class SiteData
                 'title' => 'Projects',
                 'links' => [
                     ['label' => 'All Projects', 'url' => route('projects.index')],
-                    ['label' => 'Residential', 'url' => route('projects.index', ['type' => 'residential'])],
-                    ['label' => 'Commercial', 'url' => route('projects.index', ['type' => 'commercial'])],
-                    ['label' => 'Ongoing', 'url' => route('projects.index', ['status' => 'ongoing'])],
-                    ['label' => 'Completed', 'url' => route('projects.index', ['status' => 'completed'])],
                 ],
             ],
             [
@@ -517,6 +523,7 @@ class SiteData
                 ['label' => 'Testimonials',    'route' => 'admin.cms.testimonials',   'icon' => 'star'],
                 ['label' => 'FAQ',             'route' => 'admin.cms.faq',            'icon' => 'help-circle'],
                 ['label' => 'Careers',         'route' => 'admin.cms.careers',        'icon' => 'briefcase'],
+                ['label' => 'Footer',          'route' => 'admin.cms.footer',         'icon' => 'align-justify'],
             ],
             'System' => [
                 ['label' => 'Form Submissions', 'route' => 'admin.forms.index',        'icon' => 'inbox'],
