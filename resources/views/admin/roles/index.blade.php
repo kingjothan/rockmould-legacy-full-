@@ -1,5 +1,5 @@
 <x-layouts.admin :company="$company" page-heading="Roles and Permissions">
-    <div class="grid gap-8 xl:grid-cols-[1.2fr_0.8fr]">
+    <div class="grid gap-8 lg:grid-cols-[1.2fr_0.8fr]">
         <div class="luxury-card-flat overflow-hidden p-0">
             <div class="border-b border-border px-6 py-4">
                 <h2 class="font-display text-base font-semibold">Staff Accounts</h2>

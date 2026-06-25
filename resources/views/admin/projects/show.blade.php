@@ -19,7 +19,7 @@
             </div>
         </div>
 
-        <div class="grid gap-8 xl:grid-cols-[0.95fr_1.05fr]">
+        <div class="grid gap-8 lg:grid-cols-[0.95fr_1.05fr]">
             <div class="space-y-8">
                 <div class="luxury-card">
                     <h2 class="font-display text-3xl">Edit Project</h2>
@@ -208,7 +208,7 @@
                         @endforeach
                     </div>
 
-                    <div class="mt-5 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+                    <div class="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                         @forelse ($project->mediaAssets->sortBy([['gallery_section', 'asc'], ['sort_order', 'asc']])->take(6) as $asset)
                             <a href="{{ route('admin.media.index', ['project_id' => $project->id, 'q' => $asset->title]) }}" class="group overflow-hidden rounded-sm border border-border/60 bg-card transition hover:border-primary/30">
                                 <div class="relative aspect-[5/4] bg-muted">

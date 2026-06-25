@@ -25,7 +25,7 @@
             </div>
         </div>
 
-        <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <div class="stat-card">
                 <div class="mb-4 flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
                     <x-portal-icon name="inbox" class="h-5 w-5 text-primary" />
@@ -56,7 +56,7 @@
             </div>
         </div>
 
-        <div class="grid gap-8 xl:grid-cols-[1.15fr_0.85fr]">
+        <div class="grid gap-8 lg:grid-cols-[1.15fr_0.85fr]">
             <div class="luxury-card-flat overflow-hidden p-0">
                 <div class="border-b border-border px-6 py-4">
                     <div class="flex items-center gap-2">
@@ -156,10 +156,10 @@
                 <div class="luxury-card">
                     <div class="flex items-center gap-2">
                         <x-portal-icon name="help-circle" class="h-4 w-4 text-primary" />
-                        <h2 class="font-display text-xl font-semibold">Support and Subscribers</h2>
+                        <h2 class="font-display text-xl font-semibold">Support Tickets</h2>
                     </div>
                     <div class="mt-5 space-y-3">
-                        @foreach ($supportTickets->take(2) as $ticket)
+                        @forelse ($supportTickets->take(4) as $ticket)
                             <div class="rounded-md border border-border bg-muted/20 p-4">
                                 <div class="flex items-center justify-between gap-3">
                                     <p class="font-medium">{{ $ticket->subject }}</p>
@@ -167,17 +167,29 @@
                                 </div>
                                 <p class="mt-3 text-sm text-muted-foreground">{{ $ticket->message }}</p>
                             </div>
-                        @endforeach
+                        @empty
+                            <p class="text-sm text-muted-foreground">No support tickets yet.</p>
+                        @endforelse
+                    </div>
+                </div>
 
-                        @foreach ($newsletters->take(3) as $item)
-                            <div class="rounded-md border border-border bg-muted/20 px-4 py-3 text-sm text-muted-foreground">
-                                {{ $item->email }}
+                <div class="luxury-card">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <x-portal-icon name="bell" class="h-4 w-4 text-primary" />
+                            <h2 class="font-display text-xl font-semibold">Newsletter Subscribers</h2>
+                        </div>
+                        <span class="rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary">{{ $newsletters->count() }}</span>
+                    </div>
+                    <div class="mt-5 space-y-2">
+                        @forelse ($newsletters as $item)
+                            <div class="flex items-center justify-between rounded-md border border-border bg-muted/20 px-4 py-3">
+                                <span class="text-sm">{{ $item->email }}</span>
+                                <span class="text-xs text-muted-foreground">{{ ($item->subscribed_at ?? $item->created_at)?->format('M j, Y') }}</span>
                             </div>
-                        @endforeach
-
-                        @if ($supportTickets->isEmpty() && $newsletters->isEmpty())
-                            <p class="text-sm text-muted-foreground">No support tickets or newsletter leads yet.</p>
-                        @endif
+                        @empty
+                            <p class="text-sm text-muted-foreground">No newsletter subscribers yet.</p>
+                        @endforelse
                     </div>
                 </div>
             </div>

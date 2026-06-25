@@ -14,7 +14,7 @@
                     <label class="admin-label">Project Type</label>
                     <div class="flex flex-wrap gap-2">
                         @php($activeType = $filters['type'] ?? 'all')
-                        @foreach (['all' => 'All', 'residential' => 'Residential', 'commercial' => 'Commercial', 'mixed-use' => 'Mixed-Use', 'luxury-residential' => 'Luxury'] as $value => $label)
+                        @foreach (['all' => 'All', 'attas-residence' => 'Attas Residence', 'regent-residence' => 'Regent Residence', 'meridian-residence' => 'Meridian Residence', 'grove-residence' => 'Grove Residence'] as $value => $label)
                             <button
                                 type="submit"
                                 name="type"

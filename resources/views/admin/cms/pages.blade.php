@@ -38,7 +38,7 @@
         @csrf
         @method('PUT')
 
-        <div class="grid gap-8 xl:grid-cols-2">
+        <div class="grid gap-8 lg:grid-cols-2">
             @foreach ($pageKeys as $key)
                 <div class="luxury-card space-y-6">
                     <div>

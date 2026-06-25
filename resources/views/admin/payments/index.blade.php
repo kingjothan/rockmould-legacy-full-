@@ -10,7 +10,7 @@
             </div>
         </div>
 
-        <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <div class="luxury-card">
                 <p class="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">Total Received</p>
                 <p class="mt-2 font-display text-3xl">NGN {{ number_format((float) $payments->where('status', 'paid')->sum('amount')) }}</p>
@@ -29,7 +29,7 @@
             </div>
         </div>
 
-        <div class="grid gap-8 xl:grid-cols-[1.2fr_0.8fr]">
+        <div class="grid gap-8 lg:grid-cols-[1.2fr_0.8fr]">
             <div class="luxury-card overflow-hidden p-0">
                 <div class="overflow-x-auto">
                     <table class="table-shell">
@@ -127,7 +127,7 @@
 
             <div class="divide-y divide-border/60">
                 @forelse ($assignments as $assignment)
-                    <form action="{{ route('admin.payments.assignments.update', $assignment) }}" method="POST" class="grid gap-4 p-5 xl:grid-cols-[1.2fr_repeat(4,minmax(0,1fr))_minmax(140px,1fr)_120px] xl:items-end">
+                    <form action="{{ route('admin.payments.assignments.update', $assignment) }}" method="POST" class="grid gap-4 p-5 lg:grid-cols-[1.2fr_repeat(4,minmax(0,1fr))_minmax(140px,1fr)_120px] xl:items-end">
                         @csrf
                         @method('PUT')
                         <div>

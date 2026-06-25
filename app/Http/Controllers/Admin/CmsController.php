@@ -32,7 +32,8 @@ class CmsController extends Controller
     {
         $data = $request->validate([
             'hero_label' => ['required', 'string', 'max:255'],
-            'hero_title' => ['required', 'string', 'max:255'],
+            'hero_title' => ['nullable', 'string', 'max:255'],
+            'hero_lines_json' => ['nullable', 'json'],
             'hero_description' => ['required', 'string'],
             'hero_media_path' => ['nullable', 'string', 'max:2048'],
             'feature_image_path' => ['nullable', 'string', 'max:2048'],
@@ -69,13 +70,19 @@ class CmsController extends Controller
             'process_text' => ['nullable', 'string'],
             'hero_media' => ['nullable', 'file', 'max:204800'],
             'feature_image' => ['nullable', 'file', 'max:204800', 'mimes:jpg,jpeg,png,webp,gif,mp4,webm,mov,ogg'],
+            'hero_description_size' => ['nullable', 'string', 'max:20'],
+            'font_sizes' => ['nullable', 'array'],
+            'font_sizes.*' => ['string', 'max:20'],
         ]);
 
         $current = SiteData::homepage();
         $updated = array_replace_recursive($current, [
             'hero_label' => $data['hero_label'],
-            'hero_title' => $data['hero_title'],
+            'hero_title' => $data['hero_title'] ?? $current['hero_title'] ?? '',
+            'hero_lines' => !empty($data['hero_lines_json']) ? json_decode($data['hero_lines_json'], true) : ($current['hero_lines'] ?? []),
             'hero_description' => $data['hero_description'],
+            'hero_description_size' => $data['hero_description_size'] ?? ($current['hero_description_size'] ?? 'text-lg'),
+            'font_sizes' => array_merge($current['font_sizes'] ?? [], $data['font_sizes'] ?? []),
             'hero_primary_cta' => $data['hero_primary_cta'],
             'hero_secondary_cta' => $data['hero_secondary_cta'],
             'hero_portal_cta' => $data['hero_portal_cta'],
@@ -668,6 +675,14 @@ class CmsController extends Controller
         Activity::log('cms.post.updated', 'Blog post updated.', $request->user(), $post);
 
         return back()->with('success', 'Blog post updated.');
+    }
+
+    public function destroyPost(Request $request, Post $post): RedirectResponse
+    {
+        Activity::log('cms.post.deleted', "Blog post \"{$post->title}\" deleted.", $request->user(), null);
+        $post->delete();
+
+        return redirect()->route('admin.cms.blog')->with('success', 'Blog post deleted.');
     }
 
     public function testimonials(): View

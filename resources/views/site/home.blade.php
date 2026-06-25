@@ -9,6 +9,7 @@
         $insightsSection = $homepage['insights_section'] ?? [];
         $portalSection = $homepage['portal_section'] ?? [];
         $finalCta = $homepage['final_cta'] ?? [];
+        $fontSizes = $homepage['font_sizes'] ?? [];
     @endphp
     <section class="hero-shell relative flex min-h-screen items-center overflow-hidden">
         <x-media :path="$heroMediaPath" fallback="images/project-1.jpg" alt="Rockmould luxury development" class="hero-media" :background="true" :lightbox="false" />
@@ -17,10 +18,16 @@
         <div class="container-luxury w-full relative z-10 py-32">
             <div class="max-w-4xl">
                 <span class="section-label reveal">{{ $homepage['hero_label'] }}</span>
-                <h1 class="public-hero-title reveal font-display text-4xl font-bold leading-[1.1] md:text-5xl lg:text-6xl xl:text-7xl">
-                    {{ $homepage['hero_title'] }}
+                <h1 class="public-hero-title reveal font-display font-bold leading-[1.1]">
+                    @if (!empty($homepage['hero_lines']))
+                        @foreach ($homepage['hero_lines'] as $line)
+                            <span class="block {{ $line['size'] ?? 'text-5xl' }}">{{ $line['text'] }}</span>
+                        @endforeach
+                    @else
+                        <span class="block text-4xl md:text-5xl lg:text-6xl xl:text-7xl">{{ $homepage['hero_title'] }}</span>
+                    @endif
                 </h1>
-                <p class="reveal mt-8 max-w-2xl text-lg leading-relaxed text-muted-foreground">{{ $homepage['hero_description'] }}</p>
+                <p class="reveal mt-8 max-w-2xl {{ $homepage['hero_description_size'] ?? 'text-lg' }} leading-relaxed text-muted-foreground">{{ $homepage['hero_description'] }}</p>
                 <div class="reveal mt-10 flex flex-wrap gap-4">
                     <a href="{{ route('projects.index') }}" class="luxury-btn-primary">
                         {{ $homepage['hero_primary_cta'] }}
@@ -39,6 +46,8 @@
                 :label="$featuredSection['label'] ?? 'Featured Developments'"
                 :title="$featuredSection['title'] ?? 'Exceptional Projects, Extraordinary Standards'"
                 :description="$featuredSection['description'] ?? 'From premium residences to landmark commercial spaces, every Rockmould project embodies craftsmanship and vision.'"
+                :title-size="$fontSizes['featured_title'] ?? null"
+                :description-size="$fontSizes['featured_description'] ?? null"
             />
             <div class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
                 @foreach ($featuredProjects as $project)
@@ -62,6 +71,8 @@
                 :label="$servicesSection['label'] ?? 'Our Services'"
                 :title="$servicesSection['title'] ?? 'Comprehensive Real Estate & Construction Solutions'"
                 :description="$servicesSection['description'] ?? 'End-to-end expertise across every facet of property development.'"
+                :title-size="$fontSizes['services_title'] ?? null"
+                :description-size="$fontSizes['services_description'] ?? null"
             />
             <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
                 @foreach ($services as $service)
@@ -82,6 +93,7 @@
                     :label="$whySection['label'] ?? 'Why Rockmould'"
                     :title="$whySection['title'] ?? 'A Legacy of Excellence in Every Foundation'"
                     align="left"
+                    :title-size="$fontSizes['why_title'] ?? null"
                 />
                 <div class="space-y-4">
                     @foreach ($homepage['why_choose'] as $point)
@@ -118,6 +130,8 @@
                 :label="$processSection['label'] ?? 'Our Process'"
                 :title="$processSection['title'] ?? 'From Vision to Reality'"
                 :description="$processSection['description'] ?? 'A refined process that ensures every project is delivered with precision and excellence.'"
+                :title-size="$fontSizes['process_title'] ?? null"
+                :description-size="$fontSizes['process_description'] ?? null"
             />
             <div class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
                 @foreach ($homepage['process'] as $step)
@@ -136,6 +150,7 @@
             <x-section-heading
                 :label="$testimonialsSection['label'] ?? 'Client Stories'"
                 :title="$testimonialsSection['title'] ?? 'Trusted by Visionary Clients'"
+                :title-size="$fontSizes['testimonials_title'] ?? null"
             />
             <div class="mx-auto grid max-w-4xl grid-cols-1 gap-8 md:grid-cols-2">
                 @foreach ($testimonials as $testimonial)
@@ -176,6 +191,8 @@
                 :label="$insightsSection['label'] ?? 'Insights'"
                 :title="$insightsSection['title'] ?? 'Latest from Rockmould'"
                 :description="$insightsSection['description'] ?? 'Market insights, project updates, and thought leadership from our team.'"
+                :title-size="$fontSizes['insights_title'] ?? null"
+                :description-size="$fontSizes['insights_description'] ?? null"
             />
             <div class="grid grid-cols-1 gap-8 md:grid-cols-3">
                 @foreach ($posts as $post)

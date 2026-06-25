@@ -1,5 +1,5 @@
 <x-layouts.admin :company="$company" page-heading="Testimonials CMS">
-    <div class="grid gap-8 xl:grid-cols-[1.1fr_0.9fr]">
+    <div class="grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
         <div class="space-y-5">
             @foreach ($testimonials as $testimonial)
                 <div class="luxury-card">

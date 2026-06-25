@@ -1,5 +1,5 @@
 <x-layouts.admin :company="$company" page-heading="Timeline and Updates">
-    <div class="grid gap-8 xl:grid-cols-[1.2fr_0.8fr]">
+    <div class="grid gap-8 lg:grid-cols-[1.2fr_0.8fr]">
         <div class="space-y-5">
             @foreach ($updates as $update)
                 <div class="luxury-card">

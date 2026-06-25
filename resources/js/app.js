@@ -1091,4 +1091,114 @@ document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('click', () => {
         // Reserved for future dropdown interactions.
     });
+
+    // Hero title lines builder
+    const heroContainer = document.querySelector('[data-hero-lines]');
+    if (heroContainer) {
+        const output = document.querySelector('[data-hero-lines-output]');
+        const addBtn = document.querySelector('[data-hero-add-line]');
+        const sizes = ['text-sm', 'text-base', 'text-lg', 'text-xl', 'text-2xl', 'text-3xl', 'text-4xl', 'text-5xl', 'text-6xl', 'text-7xl', 'text-8xl', 'text-9xl'];
+
+        const serialize = () => {
+            const lines = [];
+            heroContainer.querySelectorAll('[data-hero-line]').forEach((row) => {
+                const text = row.querySelector('[data-line-text]').value.trim();
+                const size = row.querySelector('[data-line-size]').value;
+                if (text) lines.push({ text, size });
+            });
+            output.value = JSON.stringify(lines);
+        };
+
+        const addLine = (data = {}) => {
+            const row = document.createElement('div');
+            row.setAttribute('data-hero-line', '');
+            row.className = 'flex gap-2 items-center';
+            row.innerHTML = `
+                <input data-line-text placeholder="Line text" value="${(data.text || '').replace(/"/g, '&quot;')}" class="input-shell flex-1">
+                <select data-line-size class="input-shell w-32">
+                    ${sizes.map(s => `<option value="${s}" ${s === (data.size || 'text-5xl') ? 'selected' : ''}>${s.replace('text-', '').toUpperCase()}</option>`).join('')}
+                </select>
+                <button type="button" data-remove-line class="text-xs text-destructive hover:underline">✕</button>
+            `;
+            row.querySelector('[data-remove-line]').addEventListener('click', () => { row.remove(); serialize(); });
+            row.querySelectorAll('input, select').forEach((el) => el.addEventListener('input', serialize));
+            heroContainer.appendChild(row);
+        };
+
+        let initial = [];
+        try { initial = JSON.parse(heroContainer.dataset.initial || '[]'); } catch (e) {}
+        initial.forEach((l) => addLine(l));
+        if (!initial.length) addLine({ text: '', size: 'text-5xl' });
+        addBtn.addEventListener('click', () => { addLine(); serialize(); });
+        serialize();
+    }
+
+    // Blog content builder
+    document.querySelectorAll('[data-blog-form]').forEach((form) => {
+        const builder = form.querySelector('[data-content-builder]');
+        const output = form.querySelector('[data-content-output]');
+        const addBtn = form.querySelector('[data-add-section]');
+        if (!builder || !output || !addBtn) return;
+
+        const createSection = (data = {}) => {
+            const div = document.createElement('div');
+            div.className = 'rounded-lg border border-border bg-background/50 p-4 space-y-3';
+            div.innerHTML = `
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-medium uppercase tracking-wider text-muted-foreground">Section</span>
+                    <button type="button" data-remove-section class="text-xs text-destructive hover:underline">Remove</button>
+                </div>
+                <input data-s-heading placeholder="Section heading" value="${(data.heading || '').replace(/"/g, '&quot;')}" class="input-shell w-full">
+                <textarea data-s-paragraphs rows="5" placeholder="Write your paragraphs here. Press Enter twice for a new paragraph." class="input-shell w-full">${(data.paragraphs || []).join('\n\n')}</textarea>
+                <div>
+                    <label class="text-xs text-muted-foreground">Image or Video URL (optional)</label>
+                    <input data-s-media placeholder="Paste image/video URL" value="${(data.media || '').replace(/"/g, '&quot;')}" class="input-shell w-full mt-1">
+                </div>
+                <input data-s-media-caption placeholder="Caption (optional)" value="${(data.media_caption || '').replace(/"/g, '&quot;')}" class="input-shell w-full">
+            `;
+            div.querySelector('[data-remove-section]').addEventListener('click', () => { div.remove(); serialize(); });
+            builder.appendChild(div);
+            div.querySelectorAll('input, textarea').forEach((el) => el.addEventListener('input', serialize));
+        };
+
+        const serialize = () => {
+            const sections = [];
+            builder.querySelectorAll(':scope > div').forEach((div) => {
+                const heading = div.querySelector('[data-s-heading]').value.trim();
+                const rawText = div.querySelector('[data-s-paragraphs]').value.trim();
+                const media = div.querySelector('[data-s-media]').value.trim();
+                const mediaCaption = div.querySelector('[data-s-media-caption]').value.trim();
+                const paragraphs = rawText ? rawText.split(/\n\s*\n/).map(p => p.trim()).filter(Boolean) : [];
+                if (!heading && !paragraphs.length && !media) return;
+                const section = { heading, paragraphs };
+                if (media) section.media = media;
+                if (mediaCaption) section.media_caption = mediaCaption;
+                sections.push(section);
+            });
+            output.value = JSON.stringify(sections);
+        };
+
+        let initial = [];
+        try { initial = JSON.parse(builder.dataset.initial || '[]'); } catch (e) {}
+        initial.forEach((s) => createSection(s));
+        addBtn.addEventListener('click', () => { createSection(); serialize(); });
+        serialize();
+
+        form.addEventListener('submit', () => serialize());
+    });
+
+    const starRating = document.getElementById('star-rating');
+    if (starRating) {
+        const ratingInput = document.getElementById('rating-input');
+        const stars = starRating.querySelectorAll('[data-star]');
+        const update = (value) => {
+            stars.forEach((btn) => {
+                btn.classList.toggle('text-primary', parseInt(btn.dataset.star) <= value);
+                btn.classList.toggle('text-muted-foreground/30', parseInt(btn.dataset.star) > value);
+            });
+            ratingInput.value = value;
+        };
+        stars.forEach((btn) => btn.addEventListener('click', () => update(parseInt(btn.dataset.star))));
+        if (ratingInput.value) update(parseInt(ratingInput.value));
+    }
 });

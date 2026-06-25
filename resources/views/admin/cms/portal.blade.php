@@ -14,7 +14,7 @@
         @csrf
         @method('PUT')
 
-        <div class="grid gap-8 xl:grid-cols-2">
+        <div class="grid gap-8 lg:grid-cols-2">
             <div class="luxury-card space-y-6">
                 <div>
                     <p class="section-label">Portal Login</p>
@@ -385,7 +385,7 @@
                 </div>
             </div>
         </div>
-        <div class="grid gap-8 xl:grid-cols-2">
+        <div class="grid gap-8 lg:grid-cols-2">
             <div class="luxury-card space-y-6">
                 <div>
                     <p class="section-label">Updates and Profile</p>

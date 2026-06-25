@@ -22,7 +22,7 @@
         @csrf
         @method('PUT')
 
-        <div class="grid gap-8 xl:grid-cols-[1.08fr_0.92fr]">
+        <div class="grid gap-8 lg:grid-cols-[1.08fr_0.92fr]">
             <div class="min-w-0 space-y-8">
                 <div class="luxury-card space-y-6">
                     <div>
@@ -39,13 +39,24 @@
                             </div>
 
                             <div>
-                                <label class="admin-label">Hero Title</label>
-                                <input name="hero_title" value="{{ old('hero_title', $homepage['hero_title']) }}" class="input-shell">
+                                <label class="admin-label">Hero Title Lines</label>
+                                <p class="mb-2 text-xs text-muted-foreground">Each line appears stacked. Adjust the size per line (sm, base, lg, xl, 2xl, 3xl, 4xl, 5xl, 6xl, 7xl).</p>
+                                <div data-hero-lines data-initial='@json($homepage["hero_lines"] ?? [])' class="space-y-2"></div>
+                                <button type="button" data-hero-add-line class="luxury-btn-outline mt-2 text-xs">+ Add Line</button>
+                                <input type="hidden" name="hero_lines_json" data-hero-lines-output>
+                                <input type="hidden" name="hero_title" value="{{ $homepage['hero_title'] }}">
                             </div>
 
                             <div>
                                 <label class="admin-label">Hero Description</label>
-                                <textarea name="hero_description" rows="4" class="input-shell">{{ old('hero_description', $homepage['hero_description']) }}</textarea>
+                                <div class="flex gap-2">
+                                    <textarea name="hero_description" rows="4" class="input-shell flex-1">{{ old('hero_description', $homepage['hero_description']) }}</textarea>
+                                    <select name="hero_description_size" class="input-shell w-24 self-start" title="Font size">
+                                        @foreach (['text-sm' => 'SM', 'text-base' => 'BASE', 'text-lg' => 'LG', 'text-xl' => 'XL', 'text-2xl' => '2XL', 'text-3xl' => '3XL'] as $val => $label)
+                                            <option value="{{ $val }}" @selected(($homepage['font_sizes']['hero_description'] ?? 'text-lg') === $val)>{{ $label }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
                             </div>
 
                             <div class="grid gap-4 md:grid-cols-3">
@@ -133,7 +144,12 @@
                         <p class="mt-2 text-sm text-muted-foreground">Edit the section titles, labels, and supporting copy used across the homepage so the full page reads consistently from admin.</p>
                     </div>
 
-                    <div class="grid gap-5 xl:grid-cols-2">
+                    <div class="grid gap-5 lg:grid-cols-2">
+                        @php
+                            $sizeOptions = ['text-xs' => 'XS', 'text-sm' => 'SM', 'text-base' => 'BASE', 'text-lg' => 'LG', 'text-xl' => 'XL', 'text-2xl' => '2XL', 'text-3xl' => '3XL', 'text-4xl' => '4XL', 'text-5xl' => '5XL'];
+                            $fontSizes = $homepage['font_sizes'] ?? [];
+                        @endphp
+
                         <div class="form-section">
                             <p class="form-section-title">Featured Developments</p>
                             <div>
@@ -142,11 +158,25 @@
                             </div>
                             <div>
                                 <label class="admin-label">Title</label>
-                                <input name="featured_title" value="{{ old('featured_title', $featuredSection['title'] ?? '') }}" class="input-shell">
+                                <div class="flex gap-2">
+                                    <input name="featured_title" value="{{ old('featured_title', $featuredSection['title'] ?? '') }}" class="input-shell flex-1">
+                                    <select name="font_sizes[featured_title]" class="input-shell w-24" title="Font size">
+                                        @foreach ($sizeOptions as $val => $label)
+                                            <option value="{{ $val }}" @selected(($fontSizes['featured_title'] ?? 'text-3xl') === $val)>{{ $label }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
                             </div>
                             <div>
                                 <label class="admin-label">Description</label>
-                                <textarea name="featured_description" rows="4" class="input-shell">{{ old('featured_description', $featuredSection['description'] ?? '') }}</textarea>
+                                <div class="flex gap-2">
+                                    <textarea name="featured_description" rows="4" class="input-shell flex-1">{{ old('featured_description', $featuredSection['description'] ?? '') }}</textarea>
+                                    <select name="font_sizes[featured_description]" class="input-shell w-24 self-start" title="Font size">
+                                        @foreach ($sizeOptions as $val => $label)
+                                            <option value="{{ $val }}" @selected(($fontSizes['featured_description'] ?? 'text-base') === $val)>{{ $label }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
                             </div>
                             <div>
                                 <label class="admin-label">CTA Label</label>
@@ -162,11 +192,25 @@
                             </div>
                             <div>
                                 <label class="admin-label">Title</label>
-                                <input name="services_title" value="{{ old('services_title', $servicesSection['title'] ?? '') }}" class="input-shell">
+                                <div class="flex gap-2">
+                                    <input name="services_title" value="{{ old('services_title', $servicesSection['title'] ?? '') }}" class="input-shell flex-1">
+                                    <select name="font_sizes[services_title]" class="input-shell w-24" title="Font size">
+                                        @foreach ($sizeOptions as $val => $label)
+                                            <option value="{{ $val }}" @selected(($fontSizes['services_title'] ?? 'text-3xl') === $val)>{{ $label }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
                             </div>
                             <div>
                                 <label class="admin-label">Description</label>
-                                <textarea name="services_description" rows="4" class="input-shell">{{ old('services_description', $servicesSection['description'] ?? '') }}</textarea>
+                                <div class="flex gap-2">
+                                    <textarea name="services_description" rows="4" class="input-shell flex-1">{{ old('services_description', $servicesSection['description'] ?? '') }}</textarea>
+                                    <select name="font_sizes[services_description]" class="input-shell w-24 self-start" title="Font size">
+                                        @foreach ($sizeOptions as $val => $label)
+                                            <option value="{{ $val }}" @selected(($fontSizes['services_description'] ?? 'text-base') === $val)>{{ $label }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
                             </div>
                         </div>
 
@@ -178,7 +222,14 @@
                             </div>
                             <div>
                                 <label class="admin-label">Title</label>
-                                <input name="why_title" value="{{ old('why_title', $whySection['title'] ?? '') }}" class="input-shell">
+                                <div class="flex gap-2">
+                                    <input name="why_title" value="{{ old('why_title', $whySection['title'] ?? '') }}" class="input-shell flex-1">
+                                    <select name="font_sizes[why_title]" class="input-shell w-24" title="Font size">
+                                        @foreach ($sizeOptions as $val => $label)
+                                            <option value="{{ $val }}" @selected(($fontSizes['why_title'] ?? 'text-3xl') === $val)>{{ $label }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
                             </div>
                             <div>
                                 <label class="admin-label">CTA Label</label>
@@ -199,11 +250,25 @@
                             </div>
                             <div>
                                 <label class="admin-label">Title</label>
-                                <input name="process_title" value="{{ old('process_title', $processSection['title'] ?? '') }}" class="input-shell">
+                                <div class="flex gap-2">
+                                    <input name="process_title" value="{{ old('process_title', $processSection['title'] ?? '') }}" class="input-shell flex-1">
+                                    <select name="font_sizes[process_title]" class="input-shell w-24" title="Font size">
+                                        @foreach ($sizeOptions as $val => $label)
+                                            <option value="{{ $val }}" @selected(($fontSizes['process_title'] ?? 'text-3xl') === $val)>{{ $label }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
                             </div>
                             <div>
                                 <label class="admin-label">Description</label>
-                                <textarea name="process_description" rows="4" class="input-shell">{{ old('process_description', $processSection['description'] ?? '') }}</textarea>
+                                <div class="flex gap-2">
+                                    <textarea name="process_description" rows="4" class="input-shell flex-1">{{ old('process_description', $processSection['description'] ?? '') }}</textarea>
+                                    <select name="font_sizes[process_description]" class="input-shell w-24 self-start" title="Font size">
+                                        @foreach ($sizeOptions as $val => $label)
+                                            <option value="{{ $val }}" @selected(($fontSizes['process_description'] ?? 'text-base') === $val)>{{ $label }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
                             </div>
                             <div>
                                 <label class="admin-label">Process Steps</label>
@@ -220,7 +285,14 @@
                             </div>
                             <div>
                                 <label class="admin-label">Testimonials Title</label>
-                                <input name="testimonials_title" value="{{ old('testimonials_title', $testimonialsSection['title'] ?? '') }}" class="input-shell">
+                                <div class="flex gap-2">
+                                    <input name="testimonials_title" value="{{ old('testimonials_title', $testimonialsSection['title'] ?? '') }}" class="input-shell flex-1">
+                                    <select name="font_sizes[testimonials_title]" class="input-shell w-24" title="Font size">
+                                        @foreach ($sizeOptions as $val => $label)
+                                            <option value="{{ $val }}" @selected(($fontSizes['testimonials_title'] ?? 'text-3xl') === $val)>{{ $label }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
                             </div>
                             <div>
                                 <label class="admin-label">Insights Label</label>
@@ -228,11 +300,25 @@
                             </div>
                             <div>
                                 <label class="admin-label">Insights Title</label>
-                                <input name="insights_title" value="{{ old('insights_title', $insightsSection['title'] ?? '') }}" class="input-shell">
+                                <div class="flex gap-2">
+                                    <input name="insights_title" value="{{ old('insights_title', $insightsSection['title'] ?? '') }}" class="input-shell flex-1">
+                                    <select name="font_sizes[insights_title]" class="input-shell w-24" title="Font size">
+                                        @foreach ($sizeOptions as $val => $label)
+                                            <option value="{{ $val }}" @selected(($fontSizes['insights_title'] ?? 'text-3xl') === $val)>{{ $label }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
                             </div>
                             <div>
                                 <label class="admin-label">Insights Description</label>
-                                <textarea name="insights_description" rows="4" class="input-shell">{{ old('insights_description', $insightsSection['description'] ?? '') }}</textarea>
+                                <div class="flex gap-2">
+                                    <textarea name="insights_description" rows="4" class="input-shell flex-1">{{ old('insights_description', $insightsSection['description'] ?? '') }}</textarea>
+                                    <select name="font_sizes[insights_description]" class="input-shell w-24 self-start" title="Font size">
+                                        @foreach ($sizeOptions as $val => $label)
+                                            <option value="{{ $val }}" @selected(($fontSizes['insights_description'] ?? 'text-base') === $val)>{{ $label }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
                             </div>
                         </div>
 

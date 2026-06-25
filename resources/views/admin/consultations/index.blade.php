@@ -22,7 +22,7 @@
         @endif
 
         @if ($moduleReady)
-        <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
+        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
             <div class="stat-card">
                 <p class="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">Total Bookings</p>
                 <p class="mt-2 font-display text-3xl">{{ $stats['total'] }}</p>
@@ -45,7 +45,7 @@
             </div>
         </div>
 
-        <div class="grid gap-8 xl:grid-cols-[1.24fr_0.76fr]">
+        <div class="grid gap-8 lg:grid-cols-[1.24fr_0.76fr]">
             <div class="min-w-0 space-y-8">
                 <div class="luxury-card overflow-hidden p-0">
                     <div class="border-b border-border px-6 py-5">
@@ -285,7 +285,7 @@
             </div>
         </div>
         @else
-            <div class="grid gap-6 xl:grid-cols-2">
+            <div class="grid gap-6 lg:grid-cols-2">
                 <div class="luxury-card">
                     <p class="section-label">Current State</p>
                     <h2 class="mt-3 font-display text-2xl">Booking management is waiting on database setup.</h2>

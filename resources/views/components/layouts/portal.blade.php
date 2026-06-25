@@ -46,7 +46,7 @@
                 </button>
             </div>
 
-            <nav class="flex-1 space-y-1 py-4">
+            <nav class="flex-1 overflow-y-auto space-y-1 px-3 py-4">
                 @foreach ($navItems as $item)
                     <a
                         href="{{ route($item['route']) }}"
@@ -58,7 +58,7 @@
                 @endforeach
             </nav>
 
-            <div class="border-t border-border p-4">
+            <div class="sticky bottom-0 border-t border-border bg-card p-3">
                 <form action="{{ route('portal.logout') }}" method="POST">
                     @csrf
                     <button type="submit" class="portal-nav-link w-full px-0 text-muted-foreground hover:text-destructive" data-portal-logout>

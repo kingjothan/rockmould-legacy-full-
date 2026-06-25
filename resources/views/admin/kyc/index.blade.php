@@ -26,7 +26,7 @@
             </form>
         </div>
 
-        <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <div class="stat-card">
                 <div class="mb-4 flex h-10 w-10 items-center justify-center rounded-lg bg-amber-500/10">
                     <x-portal-icon name="clock" class="h-5 w-5 text-amber-400" />

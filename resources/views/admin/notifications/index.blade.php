@@ -1,5 +1,5 @@
 <x-layouts.admin :company="$company" page-heading="Notifications">
-    <div class="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
+    <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
         @foreach ($notifications as $notification)
             <div class="stat-card">
                 <div class="mb-3 flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10">

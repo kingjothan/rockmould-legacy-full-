@@ -10,7 +10,7 @@
             </div>
         </div>
 
-        <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <div class="luxury-card">
                 <p class="text-[10px] uppercase tracking-[0.22em] text-muted-foreground">Total Projects</p>
                 <p class="mt-2 font-display text-3xl">{{ $projects->count() }}</p>
@@ -30,7 +30,7 @@
             </div>
         </div>
 
-        <div class="grid gap-8 xl:grid-cols-[1.2fr_0.8fr]">
+        <div class="grid gap-8 lg:grid-cols-[1.2fr_0.8fr]">
             <div class="luxury-card overflow-hidden p-0">
                 <div class="border-b border-border p-5">
                     <form method="GET" class="flex flex-col gap-3 md:flex-row">

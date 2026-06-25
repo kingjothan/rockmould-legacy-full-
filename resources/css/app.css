@@ -1178,11 +1178,11 @@
 
   /* ── Portal shell ───────────────────────────────────── */
   .portal-shell {
-    @apply min-h-screen bg-background md:flex;
+    @apply min-h-screen w-full bg-background md:flex;
   }
 
   .portal-sidebar {
-    @apply hidden shrink-0 border-r border-border bg-card transition-all duration-300 md:flex md:flex-col;
+    @apply hidden shrink-0 border-r border-border bg-card transition-all duration-300 md:sticky md:top-0 md:flex md:h-screen md:flex-col;
     width: 16rem;
   }
 
@@ -1243,11 +1243,11 @@
   }
 
   .admin-shell {
-    @apply min-h-screen bg-background md:flex;
+    @apply min-h-screen w-full bg-background md:flex;
   }
 
   .admin-sidebar {
-    @apply hidden shrink-0 border-r border-border bg-card transition-all duration-300 md:flex md:flex-col;
+    @apply hidden shrink-0 border-r border-border bg-card transition-all duration-300 md:sticky md:top-0 md:flex md:h-screen md:flex-col;
     width: 16rem;
   }
 

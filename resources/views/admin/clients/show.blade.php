@@ -43,7 +43,7 @@
             </div>
         </div>
 
-        <div class="grid gap-8 xl:grid-cols-[0.9fr_1.1fr]">
+        <div class="grid gap-8 lg:grid-cols-[0.9fr_1.1fr]">
             <div class="space-y-6">
                 <div class="luxury-card-flat overflow-hidden p-0">
                     <div class="border-b border-border px-6 py-4">

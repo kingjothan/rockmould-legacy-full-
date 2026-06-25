@@ -26,7 +26,7 @@
             @csrf
             @method('PUT')
 
-            <div class="grid gap-8 xl:grid-cols-[1.1fr_0.9fr]">
+            <div class="grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
                 <div class="space-y-8">
                     <div class="luxury-card space-y-5">
                         <div>
@@ -196,7 +196,7 @@
             </div>
         </form>
 
-        <div class="grid gap-8 xl:grid-cols-[1.15fr_0.85fr]">
+        <div class="grid gap-8 lg:grid-cols-[1.15fr_0.85fr]">
             <div class="luxury-card">
                 <div class="mb-6 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                     <div>
@@ -277,7 +277,7 @@
             </div>
         </div>
 
-        <div class="grid gap-8 xl:grid-cols-[1.15fr_0.85fr]">
+        <div class="grid gap-8 lg:grid-cols-[1.15fr_0.85fr]">
             <div class="luxury-card">
                 <div class="mb-6 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                     <div>

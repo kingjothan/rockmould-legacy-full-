@@ -37,12 +37,44 @@
 
                     @foreach ($post->content ?? [] as $section)
                         <section>
-                            <h2 class="mb-4 font-display text-2xl font-semibold">{{ $section['heading'] }}</h2>
+                            @if (!empty($section['heading']))
+                                <h2 class="mb-4 font-display text-2xl font-semibold">{{ $section['heading'] }}</h2>
+                            @endif
                             <div class="space-y-4 leading-relaxed text-muted-foreground">
-                                @foreach ($section['paragraphs'] as $paragraph)
+                                @foreach ($section['paragraphs'] ?? [] as $paragraph)
                                     <p>{{ $paragraph }}</p>
                                 @endforeach
                             </div>
+                            @if (!empty($section['media']))
+                                <div class="mt-6 overflow-hidden rounded-lg border border-border">
+                                    @if (str_contains($section['media'], '.mp4') || str_contains($section['media'], '.webm') || str_contains($section['media'], '.mov') || str_contains($section['media'], 'youtube') || str_contains($section['media'], 'vimeo'))
+                                        @if (str_contains($section['media'], 'youtube.com') || str_contains($section['media'], 'youtu.be'))
+                                            @php
+                                                preg_match('/(?:v=|youtu\.be\/)([\w-]+)/', $section['media'], $m);
+                                                $ytId = $m[1] ?? '';
+                                            @endphp
+                                            <div class="aspect-video">
+                                                <iframe src="https://www.youtube.com/embed/{{ $ytId }}" class="h-full w-full" frameborder="0" allowfullscreen></iframe>
+                                            </div>
+                                        @elseif (str_contains($section['media'], 'vimeo.com'))
+                                            @php
+                                                preg_match('/vimeo\.com\/(\d+)/', $section['media'], $m);
+                                                $vimeoId = $m[1] ?? '';
+                                            @endphp
+                                            <div class="aspect-video">
+                                                <iframe src="https://player.vimeo.com/video/{{ $vimeoId }}" class="h-full w-full" frameborder="0" allowfullscreen></iframe>
+                                            </div>
+                                        @else
+                                            <video controls class="w-full"><source src="{{ $section['media'] }}"></video>
+                                        @endif
+                                    @else
+                                        <x-media :path="$section['media']" alt="{{ $section['media_caption'] ?? $post->title }}" class="w-full object-cover" />
+                                    @endif
+                                    @if (!empty($section['media_caption']))
+                                        <p class="bg-card px-4 py-2 text-xs text-muted-foreground">{{ $section['media_caption'] }}</p>
+                                    @endif
+                                </div>
+                            @endif
                         </section>
                     @endforeach
 

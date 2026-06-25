@@ -17,7 +17,7 @@
             </div>
         </div>
 
-        <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <div class="stat-card">
                 <div class="mb-4 flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
                     <x-portal-icon name="image" class="h-5 w-5 text-primary" />
@@ -78,7 +78,7 @@
             </div>
         </div>
 
-        <div class="grid gap-8 xl:grid-cols-[1.15fr_0.85fr]">
+        <div class="grid gap-8 lg:grid-cols-[1.15fr_0.85fr]">
             <div class="min-w-0 space-y-6">
                 <div class="luxury-card-flat overflow-hidden p-0">
                     <div class="border-b border-border p-5">

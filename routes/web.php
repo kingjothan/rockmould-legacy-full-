@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\DocumentController as AdminDocumentController;
 use App\Http\Controllers\Admin\FormController as AdminFormController;
 use App\Http\Controllers\Admin\KycController as AdminKycController;
 use App\Http\Controllers\Admin\MediaController as AdminMediaController;
+use App\Http\Controllers\Admin\NewsletterController as AdminNewsletterController;
 use App\Http\Controllers\Admin\NotificationController as AdminNotificationController;
 use App\Http\Controllers\Admin\PaymentController as AdminPaymentController;
 use App\Http\Controllers\Admin\ProjectController as AdminProjectController;
@@ -78,6 +79,7 @@ Route::controller(PublicFormController::class)->group(function () {
     Route::post('/partnerships', 'partnership')->name('forms.partnership');
     Route::post('/projects/{project:slug}/inquire', 'projectInquiry')->name('forms.project-inquiry');
     Route::post('/careers/{careerOpening:slug}/apply', 'career')->name('forms.career');
+    Route::post('/testimonials', 'review')->name('forms.review');
 });
 
 Route::prefix('consultation')->name('consultations.')->controller(ConsultationController::class)->group(function () {
@@ -205,6 +207,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::get('/cms/blog', [AdminCmsController::class, 'blog'])->name('cms.blog');
             Route::post('/cms/blog', [AdminCmsController::class, 'storePost'])->name('cms.blog.store');
             Route::put('/cms/blog/{post}', [AdminCmsController::class, 'updatePost'])->name('cms.blog.update');
+            Route::delete('/cms/blog/{post}', [AdminCmsController::class, 'destroyPost'])->name('cms.blog.destroy');
             Route::get('/cms/testimonials', [AdminCmsController::class, 'testimonials'])->name('cms.testimonials');
             Route::post('/cms/testimonials', [AdminCmsController::class, 'storeTestimonial'])->name('cms.testimonials.store');
             Route::put('/cms/testimonials/{testimonial}', [AdminCmsController::class, 'updateTestimonial'])->name('cms.testimonials.update');
@@ -219,6 +222,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
         Route::middleware('role:admin,editor,content_manager')->group(function () {
             Route::get('/forms', [AdminFormController::class, 'index'])->name('forms.index');
+            Route::get('/newsletter', [AdminNewsletterController::class, 'index'])->name('newsletter.index');
+            Route::post('/newsletter/send', [AdminNewsletterController::class, 'send'])->name('newsletter.send');
+            Route::put('/newsletter/{subscriber}', [AdminNewsletterController::class, 'destroy'])->name('newsletter.unsubscribe');
             Route::get('/notifications', [AdminNotificationController::class, 'index'])->name('notifications.index');
         });
 

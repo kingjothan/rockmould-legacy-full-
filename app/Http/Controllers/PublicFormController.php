@@ -8,6 +8,7 @@ use App\Models\ContactSubmission;
 use App\Models\NewsletterSubscriber;
 use App\Models\PartnershipInquiry;
 use App\Models\Project;
+use App\Models\Testimonial;
 use App\Support\Activity;
 use App\Support\SiteData;
 use Illuminate\Http\RedirectResponse;
@@ -115,6 +116,25 @@ class PublicFormController extends Controller
         $this->notifyContactTeam($submission);
 
         return back()->with('success', 'Your expression of interest has been recorded for this role.');
+    }
+
+    public function review(Request $request): RedirectResponse
+    {
+        $data = $request->validate([
+            'client_name' => ['required', 'string', 'max:255'],
+            'role' => ['nullable', 'string', 'max:255'],
+            'quote' => ['required', 'string', 'max:2000'],
+            'rating' => ['required', 'integer', 'min:1', 'max:5'],
+        ]);
+
+        Testimonial::query()->create($data + [
+            'is_visible' => false,
+            'sort_order' => 999,
+        ]);
+
+        Activity::log('testimonial.created', 'New public review submitted.', null, null);
+
+        return back()->with('success', 'Thank you for your review! It will appear on the site once approved by our team.');
     }
 
     private function notifyContactTeam(ContactSubmission $submission): void
