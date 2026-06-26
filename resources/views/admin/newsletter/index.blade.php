@@ -39,7 +39,7 @@
                         <h2 class="text-base font-semibold">Compose Newsletter</h2>
                     </div>
                 </div>
-                <form action="{{ route('admin.newsletter.send') }}" method="POST" class="space-y-4 px-6 py-5" onsubmit="return confirm('Send this newsletter to {{ $subscribers->count() }} subscriber(s)?')">
+                <form action="{{ route('admin.newsletter.send') }}" method="POST" enctype="multipart/form-data" class="space-y-4 px-6 py-5" onsubmit="return confirm('Send this newsletter to {{ $subscribers->count() }} subscriber(s)?')">
                     @csrf
                     <div>
                         <label class="admin-label">Subject Line</label>
@@ -49,6 +49,17 @@
                         <label class="admin-label">Email Body</label>
                         <p class="mb-2 text-xs text-muted-foreground">Write in plain text. Use blank lines to separate paragraphs.</p>
                         <textarea name="body" rows="10" required placeholder="Write your newsletter content here..." class="input-shell w-full">{{ old('body') }}</textarea>
+                    </div>
+                    <div>
+                        <label class="admin-label">Image (optional)</label>
+                        <p class="mb-2 text-xs text-muted-foreground">Paste a URL or upload an image to include in the email.</p>
+                        <input name="image_url" value="{{ old('image_url') }}" placeholder="Paste image URL" class="input-shell w-full">
+                        <input type="file" name="image_upload" accept="image/*" class="input-shell mt-2 w-full">
+                    </div>
+                    <div>
+                        <label class="admin-label">Video Link (optional)</label>
+                        <p class="mb-2 text-xs text-muted-foreground">Paste a YouTube or Vimeo link. A clickable thumbnail will be included in the email.</p>
+                        <input name="video_url" value="{{ old('video_url') }}" placeholder="e.g. https://youtube.com/watch?v=..." class="input-shell w-full">
                     </div>
                     <button class="luxury-btn-primary w-full justify-center">
                         Send to {{ $subscribers->count() }} Subscriber(s)

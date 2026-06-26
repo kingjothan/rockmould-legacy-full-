@@ -27,6 +27,9 @@ class NewsletterController extends Controller
         $data = $request->validate([
             'subject' => ['required', 'string', 'max:255'],
             'body' => ['required', 'string'],
+            'image_url' => ['nullable', 'string', 'max:2048'],
+            'image_upload' => ['nullable', 'file', 'max:10240', 'mimes:jpg,jpeg,png,webp,gif'],
+            'video_url' => ['nullable', 'string', 'max:2048'],
         ]);
 
         $subscribers = NewsletterSubscriber::query()->where('status', 'subscribed')->get();
@@ -34,6 +37,14 @@ class NewsletterController extends Controller
         if ($subscribers->isEmpty()) {
             return back()->withErrors(['subject' => 'No active subscribers to send to.']);
         }
+
+        $imageUrl = $data['image_url'] ?? null;
+        if ($request->hasFile('image_upload')) {
+            $path = $request->file('image_upload')->store('newsletter', 'public');
+            $imageUrl = asset('storage/'.$path);
+        }
+
+        $videoUrl = $data['video_url'] ?? null;
 
         $company = SiteData::company();
         $unsubscribeEmail = $company['email'] ?? config('mail.from.address', 'info@rockmould.com');
@@ -47,6 +58,8 @@ class NewsletterController extends Controller
                     $data['body'],
                     $company,
                     $unsubscribeEmail,
+                    $imageUrl,
+                    $videoUrl,
                 ));
                 $sent++;
             } catch (\Throwable $e) {
