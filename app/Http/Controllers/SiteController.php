@@ -264,13 +264,6 @@ class SiteController extends Controller
             ]);
         }
 
-        $liveUpdates = \App\Models\ProjectUpdate::query()
-            ->where('visible_to_client', true)
-            ->with('project')
-            ->latest('update_date')
-            ->take(12)
-            ->get();
-
         return view('site.gallery', [
             'company' => SiteData::company(),
             'page' => SiteData::publicPage('gallery'),
@@ -279,7 +272,6 @@ class SiteController extends Controller
             'gallerySections' => $gallerySections,
             'supportsGallerySections' => $supportsGallerySections,
             'projects' => Project::query()->published()->orderBy('title')->get(),
-            'liveUpdates' => $liveUpdates,
         ]);
     }
 

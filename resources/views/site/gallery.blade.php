@@ -8,67 +8,6 @@
         :description-size="$page['font_sizes']['hero_description'] ?? null"
     />
 
-    @if ($liveUpdates->isNotEmpty())
-        <section class="section-padding bg-card">
-            <div class="container-luxury">
-                <x-section-heading
-                    label="Live Updates"
-                    title="Project Progress"
-                    description="The latest construction progress and development updates direct from our project sites."
-                />
-
-                <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                    @foreach ($liveUpdates as $update)
-                        @php
-                            $attachments = is_array($update->attachments) ? $update->attachments : [];
-                            $firstAttachment = $attachments[0] ?? null;
-                            $isVideo = $firstAttachment && (str_contains((string) $firstAttachment, '.mp4') || str_contains((string) $firstAttachment, '.webm') || str_contains((string) $firstAttachment, '.mov'));
-                        @endphp
-                        <div class="luxury-card reveal overflow-hidden p-0">
-                            @if ($firstAttachment)
-                                <div class="aspect-[16/10] bg-muted">
-                                    @if ($isVideo)
-                                        <video controls class="h-full w-full object-cover">
-                                            <source src="{{ asset($firstAttachment) }}">
-                                        </video>
-                                    @else
-                                        <x-media :path="$firstAttachment" alt="{{ $update->title }}" class="h-full w-full object-cover" />
-                                    @endif
-                                </div>
-                            @endif
-                            <div class="p-5">
-                                <div class="mb-3 flex items-center justify-between gap-3">
-                                    @if ($update->project)
-                                        <span class="text-[10px] uppercase tracking-[0.15em] text-primary">{{ $update->project->title }}</span>
-                                    @endif
-                                    @if ($update->update_date)
-                                        <span class="text-[10px] text-muted-foreground">{{ $update->update_date->format('M j, Y') }}</span>
-                                    @endif
-                                </div>
-                                <h3 class="font-display text-lg font-semibold">{{ $update->title }}</h3>
-                                <p class="mt-2 text-sm leading-relaxed text-muted-foreground line-clamp-3">{{ $update->body }}</p>
-                                @if ($update->progress)
-                                    <div class="mt-4">
-                                        <div class="flex items-center justify-between text-xs text-muted-foreground">
-                                            <span>Progress</span>
-                                            <span class="font-medium text-primary">{{ $update->progress }}%</span>
-                                        </div>
-                                        <div class="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-muted">
-                                            <div class="h-full rounded-full bg-primary" style="width: {{ $update->progress }}%"></div>
-                                        </div>
-                                    </div>
-                                @endif
-                                @if (count($attachments) > 1)
-                                    <p class="mt-3 text-xs text-muted-foreground">+{{ count($attachments) - 1 }} more {{ count($attachments) - 1 === 1 ? 'photo' : 'photos' }}</p>
-                                @endif
-                            </div>
-                        </div>
-                    @endforeach
-                </div>
-            </div>
-        </section>
-    @endif
-
     <section class="section-padding">
         <div class="container-luxury">
             @php
@@ -76,6 +15,7 @@
                     'exterior' => 'Facade views, site progress, landscape moments, and the arrival experience.',
                     'interior' => 'Lobbies, living areas, kitchens, amenities, and interior fit-out visuals.',
                     'general' => 'Complete media gallery for each project, including mixed updates and supporting visuals.',
+                    'live-updates' => 'Real-time construction progress, site visits, and development milestones from our active projects.',
                 ];
             @endphp
 

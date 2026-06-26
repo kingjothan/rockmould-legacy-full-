@@ -22,6 +22,8 @@ class MediaAsset extends Model
 
     public const SECTION_GENERAL = 'general';
 
+    public const SECTION_LIVE_UPDATES = 'live-updates';
+
     protected $guarded = [];
 
     protected function casts(): array
@@ -108,6 +110,7 @@ class MediaAsset extends Model
             self::SECTION_EXTERIOR => 'Exterior',
             self::SECTION_INTERIOR => 'Interior',
             self::SECTION_GENERAL => 'Gallery',
+            self::SECTION_LIVE_UPDATES => 'Live Updates',
         ];
     }
 
