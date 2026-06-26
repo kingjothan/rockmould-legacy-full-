@@ -19,18 +19,20 @@
 
                 <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                     @foreach ($liveUpdates as $update)
+                        @php
+                            $attachments = is_array($update->attachments) ? $update->attachments : [];
+                            $firstAttachment = $attachments[0] ?? null;
+                            $isVideo = $firstAttachment && (str_contains((string) $firstAttachment, '.mp4') || str_contains((string) $firstAttachment, '.webm') || str_contains((string) $firstAttachment, '.mov'));
+                        @endphp
                         <div class="luxury-card reveal overflow-hidden p-0">
-                            @if (!empty($update->attachments))
+                            @if ($firstAttachment)
                                 <div class="aspect-[16/10] bg-muted">
-                                    @php($firstAttachment = $update->attachments[0] ?? null)
-                                    @if ($firstAttachment)
-                                        @if (str_contains($firstAttachment, '.mp4') || str_contains($firstAttachment, '.webm') || str_contains($firstAttachment, '.mov'))
-                                            <video controls class="h-full w-full object-cover">
-                                                <source src="{{ \App\Support\AssetPath::url($firstAttachment) }}">
-                                            </video>
-                                        @else
-                                            <x-media :path="$firstAttachment" alt="{{ $update->title }}" class="h-full w-full object-cover" />
-                                        @endif
+                                    @if ($isVideo)
+                                        <video controls class="h-full w-full object-cover">
+                                            <source src="{{ asset($firstAttachment) }}">
+                                        </video>
+                                    @else
+                                        <x-media :path="$firstAttachment" alt="{{ $update->title }}" class="h-full w-full object-cover" />
                                     @endif
                                 </div>
                             @endif
@@ -56,8 +58,8 @@
                                         </div>
                                     </div>
                                 @endif
-                                @if (count($update->attachments ?? []) > 1)
-                                    <p class="mt-3 text-xs text-muted-foreground">+{{ count($update->attachments) - 1 }} more {{ count($update->attachments) - 1 === 1 ? 'photo' : 'photos' }}</p>
+                                @if (count($attachments) > 1)
+                                    <p class="mt-3 text-xs text-muted-foreground">+{{ count($attachments) - 1 }} more {{ count($attachments) - 1 === 1 ? 'photo' : 'photos' }}</p>
                                 @endif
                             </div>
                         </div>
