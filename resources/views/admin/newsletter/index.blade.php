@@ -57,9 +57,10 @@
                         <input type="file" name="image_upload" accept="image/*" class="input-shell mt-2 w-full">
                     </div>
                     <div>
-                        <label class="admin-label">Video Link (optional)</label>
-                        <p class="mb-2 text-xs text-muted-foreground">Paste a YouTube or Vimeo link. A clickable thumbnail will be included in the email.</p>
-                        <input name="video_url" value="{{ old('video_url') }}" placeholder="e.g. https://youtube.com/watch?v=..." class="input-shell w-full">
+                        <label class="admin-label">Video (optional)</label>
+                        <p class="mb-2 text-xs text-muted-foreground">Paste a video URL (YouTube, Vimeo, or direct .mp4 link) or upload a video file.</p>
+                        <input name="video_url" value="{{ old('video_url') }}" placeholder="Paste video URL (YouTube, Vimeo, or direct .mp4)" class="input-shell w-full">
+                        <input type="file" name="video_upload" accept="video/*" class="input-shell mt-2 w-full">
                     </div>
                     <button class="luxury-btn-primary w-full justify-center">
                         Send to {{ $subscribers->count() }} Subscriber(s)

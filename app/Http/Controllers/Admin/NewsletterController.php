@@ -30,6 +30,7 @@ class NewsletterController extends Controller
             'image_url' => ['nullable', 'string', 'max:2048'],
             'image_upload' => ['nullable', 'file', 'max:10240', 'mimes:jpg,jpeg,png,webp,gif'],
             'video_url' => ['nullable', 'string', 'max:2048'],
+            'video_upload' => ['nullable', 'file', 'max:204800', 'mimes:mp4,webm,mov,ogg'],
         ]);
 
         $subscribers = NewsletterSubscriber::query()->where('status', 'subscribed')->get();
@@ -45,6 +46,10 @@ class NewsletterController extends Controller
         }
 
         $videoUrl = $data['video_url'] ?? null;
+        if ($request->hasFile('video_upload')) {
+            $path = $request->file('video_upload')->store('newsletter', 'public');
+            $videoUrl = asset('storage/'.$path);
+        }
 
         $company = SiteData::company();
         $unsubscribeEmail = $company['email'] ?? config('mail.from.address', 'info@rockmould.com');

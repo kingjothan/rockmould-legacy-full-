@@ -13,24 +13,25 @@
 
     @if ($videoUrl)
         @php
-            $videoThumbnail = null;
-            $videoLink = $videoUrl;
-            if (preg_match('/(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]+)/', $videoUrl, $m)) {
-                $videoThumbnail = "https://img.youtube.com/vi/{$m[1]}/maxresdefault.jpg";
-            } elseif (preg_match('/vimeo\.com\/(\d+)/', $videoUrl, $m)) {
-                $videoThumbnail = null;
-            }
+            $isYouTube = preg_match('/(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]+)/', $videoUrl, $ytMatch);
+            $isDirectVideo = preg_match('/\.(mp4|webm|mov|ogg)(\?|$)/i', $videoUrl);
         @endphp
         <div style="margin:24px 0;text-align:center;">
-            @if ($videoThumbnail)
-                <a href="{{ $videoLink }}" target="_blank" style="display:block;position:relative;border-radius:12px;overflow:hidden;border:1px solid #29231a;">
-                    <img src="{{ $videoThumbnail }}" alt="Watch video" style="display:block;width:100%;max-width:100%;height:auto;border:0;">
+            @if ($isYouTube)
+                <a href="{{ $videoUrl }}" target="_blank" style="display:block;position:relative;border-radius:12px;overflow:hidden;border:1px solid #29231a;">
+                    <img src="https://img.youtube.com/vi/{{ $ytMatch[1] }}/maxresdefault.jpg" alt="Watch video" style="display:block;width:100%;max-width:100%;height:auto;border:0;">
                     <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:64px;height:64px;background:rgba(0,0,0,0.7);border-radius:50%;display:flex;align-items:center;justify-content:center;">
                         <div style="width:0;height:0;border-top:12px solid transparent;border-bottom:12px solid transparent;border-left:20px solid #fff;margin-left:4px;"></div>
                     </div>
                 </a>
+            @elseif ($isDirectVideo)
+                <div style="border-radius:12px;overflow:hidden;border:1px solid #29231a;">
+                    <video controls style="display:block;width:100%;max-width:100%;height:auto;">
+                        <source src="{{ $videoUrl }}">
+                    </video>
+                </div>
             @else
-                <a href="{{ $videoLink }}" target="_blank" style="display:inline-block;padding:15px 28px;border-radius:999px;background:#c6a96a;color:#111;text-decoration:none;font-size:12px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;">Watch Video</a>
+                <a href="{{ $videoUrl }}" target="_blank" style="display:inline-block;padding:15px 28px;border-radius:999px;background:#c6a96a;color:#111;text-decoration:none;font-size:12px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;">Watch Video</a>
             @endif
         </div>
     @endif
