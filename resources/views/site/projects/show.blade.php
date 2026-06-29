@@ -163,8 +163,6 @@
                     @endif
                 </div>
 
-                </div>
-
                 <div class="space-y-6">
                     <div class="luxury-card sticky top-24">
                         <h3 class="mb-5 font-display text-lg font-semibold">Project Summary</h3>
