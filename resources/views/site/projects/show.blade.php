@@ -163,64 +163,6 @@
                     @endif
                 </div>
 
-                    @php
-                        $visibleUpdates = $project->updates->where('visible_to_client', true)->sortBy('update_date');
-                    @endphp
-                    @if ($visibleUpdates->isNotEmpty())
-                        <div>
-                            <h2 class="mb-6 font-display text-2xl font-semibold">Live Updates</h2>
-                            <div class="relative ml-3 border-l-2 border-primary/20 pl-6">
-                                @foreach ($visibleUpdates as $update)
-                                    @php
-                                        $attachments = is_array($update->attachments) ? $update->attachments : [];
-                                    @endphp
-                                    <div class="reveal relative mb-10 last:mb-0">
-                                        <div class="absolute -left-[1.85rem] top-0 flex h-5 w-5 items-center justify-center rounded-full border-2 border-primary bg-card">
-                                            <div class="h-2 w-2 rounded-full bg-primary"></div>
-                                        </div>
-
-                                        <div class="flex flex-wrap items-center gap-3 text-xs">
-                                            @if ($update->update_date)
-                                                <span class="rounded-full bg-primary/10 px-3 py-1 font-medium text-primary">{{ $update->update_date->format('F j, Y') }}</span>
-                                            @endif
-                                            @if ($update->progress)
-                                                <span class="text-muted-foreground">{{ $update->progress }}%</span>
-                                            @endif
-                                        </div>
-
-                                        <h4 class="mt-2 font-display text-lg font-semibold">{{ $update->title }}</h4>
-
-                                        @if ($update->body)
-                                            <p class="mt-1 text-sm leading-relaxed text-muted-foreground">{{ $update->body }}</p>
-                                        @endif
-
-                                        @if ($update->progress)
-                                            <div class="mt-3 max-w-xs">
-                                                <div class="h-1.5 w-full overflow-hidden rounded-full bg-muted">
-                                                    <div class="h-full rounded-full bg-primary" style="width: {{ $update->progress }}%"></div>
-                                                </div>
-                                            </div>
-                                        @endif
-
-                                        @if (count($attachments) > 0)
-                                            <div class="mt-4 grid gap-2 {{ count($attachments) === 1 ? 'max-w-md' : 'grid-cols-2 md:grid-cols-3' }}">
-                                                @foreach ($attachments as $att)
-                                                    @php($isVid = str_contains((string) $att, '.mp4') || str_contains((string) $att, '.webm') || str_contains((string) $att, '.mov'))
-                                                    <div class="overflow-hidden rounded-lg border border-border">
-                                                        @if ($isVid)
-                                                            <video controls class="aspect-video w-full object-cover"><source src="{{ asset($att) }}"></video>
-                                                        @else
-                                                            <x-media :path="$att" alt="{{ $update->title }}" class="aspect-video w-full object-cover" />
-                                                        @endif
-                                                    </div>
-                                                @endforeach
-                                            </div>
-                                        @endif
-                                    </div>
-                                @endforeach
-                            </div>
-                        </div>
-                    @endif
                 </div>
 
                 <div class="space-y-6">
@@ -284,6 +226,85 @@
             </div>
         </div>
     </section>
+
+    @php
+        $visibleUpdates = $project->updates->where('visible_to_client', true)->sortBy('update_date');
+    @endphp
+    @if ($visibleUpdates->isNotEmpty())
+        <section class="section-padding bg-card">
+            <div class="container-luxury">
+                <x-section-heading
+                    label="Live Updates"
+                    title="Construction Progress"
+                />
+                <div class="relative ml-5 border-l-2 border-primary/20 pl-8 md:ml-6 md:pl-10">
+                    @foreach ($visibleUpdates as $update)
+                        @php
+                            $attachments = is_array($update->attachments) ? $update->attachments : [];
+                            $hasMedia = count($attachments) > 0;
+                        @endphp
+                        <div class="reveal relative mb-14 last:mb-0">
+                            <div class="absolute -left-[2.85rem] top-0 flex h-6 w-6 items-center justify-center rounded-full border-2 border-primary bg-card md:-left-[3.35rem]">
+                                <div class="h-2.5 w-2.5 rounded-full bg-primary"></div>
+                            </div>
+
+                            <div class="flex flex-wrap items-center gap-3 text-xs">
+                                @if ($update->update_date)
+                                    <span class="rounded-full bg-primary/10 px-3 py-1 font-medium text-primary">{{ $update->update_date->format('F j, Y') }}</span>
+                                @endif
+                                @if ($update->progress)
+                                    <span class="text-muted-foreground">{{ $update->progress }}%</span>
+                                @endif
+                            </div>
+
+                            <h4 class="mt-2 font-display text-lg font-semibold">{{ $update->title }}</h4>
+
+                            @if ($update->body)
+                                <p class="mt-1 text-sm leading-relaxed text-muted-foreground line-clamp-2">{{ $update->body }}</p>
+                            @endif
+
+                            @if ($hasMedia)
+                                @if (count($attachments) === 1)
+                                    @php
+                                        $att = $attachments[0];
+                                        $isVid = str_contains((string) $att, '.mp4') || str_contains((string) $att, '.webm') || str_contains((string) $att, '.mov');
+                                    @endphp
+                                    <div class="mt-4 max-w-2xl overflow-hidden rounded-xl border border-border">
+                                        @if ($isVid)
+                                            <video controls class="aspect-video w-full object-cover"><source src="{{ asset($att) }}"></video>
+                                        @else
+                                            <x-media :path="$att" alt="{{ $update->title }}" class="aspect-[16/9] w-full object-cover" />
+                                        @endif
+                                    </div>
+                                @else
+                                    <div class="mt-4 grid gap-3 grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+                                        @foreach ($attachments as $att)
+                                            @php($isVid = str_contains((string) $att, '.mp4') || str_contains((string) $att, '.webm') || str_contains((string) $att, '.mov'))
+                                            <div class="overflow-hidden rounded-xl border border-border">
+                                                @if ($isVid)
+                                                    <video controls class="aspect-video w-full object-cover"><source src="{{ asset($att) }}"></video>
+                                                @else
+                                                    <x-media :path="$att" alt="{{ $update->title }}" class="aspect-video w-full object-cover" />
+                                                @endif
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                @endif
+                            @endif
+
+                            @if ($update->progress)
+                                <div class="mt-3 max-w-sm">
+                                    <div class="h-1.5 w-full overflow-hidden rounded-full bg-muted">
+                                        <div class="h-full rounded-full bg-primary" style="width: {{ $update->progress }}%"></div>
+                                    </div>
+                                </div>
+                            @endif
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        </section>
+    @endif
 
     @if ($relatedProjects->isNotEmpty())
         <section class="section-padding bg-card">
