@@ -27,10 +27,12 @@ class NewsletterController extends Controller
         $data = $request->validate([
             'subject' => ['required', 'string', 'max:255'],
             'body' => ['required', 'string'],
-            'image_url' => ['nullable', 'string', 'max:2048'],
-            'image_upload' => ['nullable', 'file', 'max:10240', 'mimes:jpg,jpeg,png,webp,gif'],
-            'video_url' => ['nullable', 'string', 'max:2048'],
-            'video_upload' => ['nullable', 'file', 'max:204800', 'mimes:mp4,webm,mov,ogg'],
+            'image_urls' => ['nullable', 'string'],
+            'image_uploads' => ['nullable', 'array'],
+            'image_uploads.*' => ['file', 'max:10240', 'mimes:jpg,jpeg,png,webp,gif'],
+            'video_urls' => ['nullable', 'string'],
+            'video_uploads' => ['nullable', 'array'],
+            'video_uploads.*' => ['file', 'max:204800', 'mimes:mp4,webm,mov,ogg'],
         ]);
 
         $subscribers = NewsletterSubscriber::query()->where('status', 'subscribed')->get();
@@ -39,16 +41,28 @@ class NewsletterController extends Controller
             return back()->withErrors(['subject' => 'No active subscribers to send to.']);
         }
 
-        $imageUrl = $data['image_url'] ?? null;
-        if ($request->hasFile('image_upload')) {
-            $path = $request->file('image_upload')->store('newsletter', 'public');
-            $imageUrl = asset('storage/'.$path);
+        $imageUrls = [];
+        if (!empty($data['image_urls'])) {
+            foreach (preg_split('/\r?\n/', $data['image_urls']) as $url) {
+                $url = trim($url);
+                if ($url) $imageUrls[] = $url;
+            }
+        }
+        foreach ($request->file('image_uploads', []) as $file) {
+            $path = $file->store('newsletter', 'public');
+            $imageUrls[] = asset('storage/'.$path);
         }
 
-        $videoUrl = $data['video_url'] ?? null;
-        if ($request->hasFile('video_upload')) {
-            $path = $request->file('video_upload')->store('newsletter', 'public');
-            $videoUrl = asset('storage/'.$path);
+        $videoUrls = [];
+        if (!empty($data['video_urls'])) {
+            foreach (preg_split('/\r?\n/', $data['video_urls']) as $url) {
+                $url = trim($url);
+                if ($url) $videoUrls[] = $url;
+            }
+        }
+        foreach ($request->file('video_uploads', []) as $file) {
+            $path = $file->store('newsletter', 'public');
+            $videoUrls[] = asset('storage/'.$path);
         }
 
         $company = SiteData::company();
@@ -63,8 +77,8 @@ class NewsletterController extends Controller
                     $data['body'],
                     $company,
                     $unsubscribeEmail,
-                    $imageUrl,
-                    $videoUrl,
+                    $imageUrls,
+                    $videoUrls,
                 ));
                 $sent++;
             } catch (\Throwable $e) {

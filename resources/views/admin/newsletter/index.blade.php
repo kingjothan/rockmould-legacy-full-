@@ -51,16 +51,18 @@
                         <textarea name="body" rows="10" required placeholder="Write your newsletter content here..." class="input-shell w-full">{{ old('body') }}</textarea>
                     </div>
                     <div>
-                        <label class="admin-label">Image (optional)</label>
-                        <p class="mb-2 text-xs text-muted-foreground">Paste a URL or upload an image to include in the email.</p>
-                        <input name="image_url" value="{{ old('image_url') }}" placeholder="Paste image URL" class="input-shell w-full">
-                        <input type="file" name="image_upload" accept="image/*" class="input-shell mt-2 w-full">
+                        <label class="admin-label">Images (optional)</label>
+                        <p class="mb-2 text-xs text-muted-foreground">Upload multiple images or paste URLs (one per line).</p>
+                        <textarea name="image_urls" rows="3" placeholder="Paste image URLs, one per line" class="input-shell w-full">{{ old('image_urls') }}</textarea>
+                        <input type="file" name="image_uploads[]" accept="image/*" multiple class="input-shell mt-2 w-full">
+                        <p class="mt-1 text-xs text-muted-foreground">Hold Ctrl/Cmd to select multiple files.</p>
                     </div>
                     <div>
-                        <label class="admin-label">Video (optional)</label>
-                        <p class="mb-2 text-xs text-muted-foreground">Paste a video URL (YouTube, Vimeo, or direct .mp4 link) or upload a video file.</p>
-                        <input name="video_url" value="{{ old('video_url') }}" placeholder="Paste video URL (YouTube, Vimeo, or direct .mp4)" class="input-shell w-full">
-                        <input type="file" name="video_upload" accept="video/*" class="input-shell mt-2 w-full">
+                        <label class="admin-label">Videos (optional)</label>
+                        <p class="mb-2 text-xs text-muted-foreground">Upload multiple videos or paste URLs (YouTube, Vimeo, or direct links — one per line).</p>
+                        <textarea name="video_urls" rows="3" placeholder="Paste video URLs, one per line" class="input-shell w-full">{{ old('video_urls') }}</textarea>
+                        <input type="file" name="video_uploads[]" accept="video/*" multiple class="input-shell mt-2 w-full">
+                        <p class="mt-1 text-xs text-muted-foreground">Hold Ctrl/Cmd to select multiple files.</p>
                     </div>
                     <button class="luxury-btn-primary w-full justify-center">
                         Send to {{ $subscribers->count() }} Subscriber(s)

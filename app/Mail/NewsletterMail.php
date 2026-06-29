@@ -17,8 +17,8 @@ class NewsletterMail extends Mailable
         public string $body,
         public array $company,
         public string $unsubscribeEmail,
-        public ?string $imageUrl = null,
-        public ?string $videoUrl = null,
+        public array $imageUrls = [],
+        public array $videoUrls = [],
     ) {}
 
     public function envelope(): Envelope
