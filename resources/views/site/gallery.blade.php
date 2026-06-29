@@ -134,7 +134,7 @@
                 <x-section-heading
                     label="Project Journey"
                     title="Live Construction Timeline"
-                    description="Follow the progress of our developments from ground-breaking to completion — every milestone, every stage, one story at a time."
+                    description="Follow the progress of our developments from ground-breaking to completion."
                 />
 
                 @php
@@ -142,67 +142,107 @@
                 @endphp
 
                 @foreach ($groupedTimeline as $projectTitle => $updates)
-                    <div class="mb-16 last:mb-0">
-                        <div class="mb-8 flex items-center gap-4">
-                            <div class="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
-                                <svg class="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"/></svg>
-                            </div>
-                            <div>
+                    <div class="mb-20 last:mb-0">
+                        <div class="mb-10 flex items-center justify-between gap-4 border-b border-border pb-6">
+                            <div class="flex items-center gap-4">
+                                <div class="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+                                    <svg class="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"/></svg>
+                                </div>
                                 <h3 class="font-display text-2xl font-semibold">{{ $projectTitle }}</h3>
-                                <p class="text-xs text-muted-foreground">{{ $updates->count() }} {{ $updates->count() === 1 ? 'update' : 'updates' }} &middot; Progress: {{ $updates->last()->progress ?? 0 }}%</p>
                             </div>
+                            @if ($updates->last()->progress)
+                                <div class="hidden items-center gap-3 sm:flex">
+                                    <div class="h-2 w-32 overflow-hidden rounded-full bg-muted">
+                                        <div class="h-full rounded-full bg-primary" style="width: {{ $updates->last()->progress }}%"></div>
+                                    </div>
+                                    <span class="text-sm font-medium text-primary">{{ $updates->last()->progress }}%</span>
+                                </div>
+                            @endif
                         </div>
 
-                        <div class="relative ml-5 border-l-2 border-primary/20 pl-8">
+                        <div class="relative ml-5 border-l-2 border-primary/20 pl-8 md:ml-6 md:pl-10">
                             @foreach ($updates as $update)
                                 @php
                                     $attachments = is_array($update->attachments) ? $update->attachments : [];
+                                    $hasMedia = count($attachments) > 0;
                                 @endphp
-                                <div class="reveal relative mb-10 last:mb-0">
-                                    <div class="absolute -left-[2.6rem] top-1 flex h-5 w-5 items-center justify-center rounded-full border-2 border-primary bg-card">
-                                        <div class="h-2 w-2 rounded-full bg-primary"></div>
+                                <div class="reveal relative mb-14 last:mb-0">
+                                    <div class="absolute -left-[2.85rem] top-0 flex h-6 w-6 items-center justify-center rounded-full border-2 border-primary bg-card md:-left-[3.35rem]">
+                                        <div class="h-2.5 w-2.5 rounded-full bg-primary"></div>
                                     </div>
 
-                                    <div class="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
+                                    <div class="flex flex-wrap items-center gap-3 text-xs">
                                         @if ($update->update_date)
                                             <span class="rounded-full bg-primary/10 px-3 py-1 font-medium text-primary">{{ $update->update_date->format('F j, Y') }}</span>
                                         @endif
                                         @if ($update->progress)
-                                            <span>{{ $update->progress }}% Complete</span>
+                                            <span class="text-muted-foreground">{{ $update->progress }}%</span>
                                         @endif
                                     </div>
 
-                                    <h4 class="mt-3 font-display text-lg font-semibold">{{ $update->title }}</h4>
+                                    <h4 class="mt-2 font-display text-lg font-semibold">{{ $update->title }}</h4>
 
                                     @if ($update->body)
-                                        <p class="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">{{ $update->body }}</p>
+                                        <p class="mt-1 text-sm leading-relaxed text-muted-foreground line-clamp-2">{{ $update->body }}</p>
                                     @endif
 
-                                    @if ($update->progress)
-                                        <div class="mt-3 max-w-sm">
-                                            <div class="h-1.5 w-full overflow-hidden rounded-full bg-muted">
-                                                <div class="h-full rounded-full bg-primary transition-all duration-500" style="width: {{ $update->progress }}%"></div>
+                                    @if ($hasMedia)
+                                        @if (count($attachments) === 1)
+                                            @php
+                                                $att = $attachments[0];
+                                                $isVid = str_contains((string) $att, '.mp4') || str_contains((string) $att, '.webm') || str_contains((string) $att, '.mov');
+                                            @endphp
+                                            <div class="mt-4 max-w-2xl overflow-hidden rounded-xl border border-border">
+                                                @if ($isVid)
+                                                    <video controls class="aspect-video w-full object-cover"><source src="{{ asset($att) }}"></video>
+                                                @else
+                                                    <x-media :path="$att" alt="{{ $update->title }}" class="aspect-[16/9] w-full object-cover" />
+                                                @endif
                                             </div>
-                                        </div>
-                                    @endif
-
-                                    @if (count($attachments) > 0)
-                                        <div class="mt-4 grid gap-3 {{ count($attachments) === 1 ? 'max-w-md' : 'grid-cols-2 md:grid-cols-3 lg:grid-cols-4' }}">
-                                            @foreach ($attachments as $attachment)
-                                                @php
-                                                    $isVideo = str_contains((string) $attachment, '.mp4') || str_contains((string) $attachment, '.webm') || str_contains((string) $attachment, '.mov');
-                                                @endphp
-                                                <div class="overflow-hidden rounded-lg border border-border bg-muted">
-                                                    @if ($isVideo)
-                                                        <video controls class="aspect-[16/10] w-full object-cover">
-                                                            <source src="{{ asset($attachment) }}">
-                                                        </video>
+                                        @elseif (count($attachments) === 2)
+                                            <div class="mt-4 grid grid-cols-2 gap-3">
+                                                @foreach ($attachments as $att)
+                                                    @php($isVid = str_contains((string) $att, '.mp4') || str_contains((string) $att, '.webm') || str_contains((string) $att, '.mov'))
+                                                    <div class="overflow-hidden rounded-xl border border-border">
+                                                        @if ($isVid)
+                                                            <video controls class="aspect-[4/3] w-full object-cover"><source src="{{ asset($att) }}"></video>
+                                                        @else
+                                                            <x-media :path="$att" alt="{{ $update->title }}" class="aspect-[4/3] w-full object-cover" />
+                                                        @endif
+                                                    </div>
+                                                @endforeach
+                                            </div>
+                                        @else
+                                            @php
+                                                $firstAtt = $attachments[0];
+                                                $isFirstVid = str_contains((string) $firstAtt, '.mp4') || str_contains((string) $firstAtt, '.webm') || str_contains((string) $firstAtt, '.mov');
+                                                $remainingAtts = array_slice($attachments, 1);
+                                            @endphp
+                                            <div class="mt-4 grid gap-3 md:grid-cols-[1.4fr_0.6fr]">
+                                                <div class="overflow-hidden rounded-xl border border-border">
+                                                    @if ($isFirstVid)
+                                                        <video controls class="aspect-[16/10] w-full object-cover"><source src="{{ asset($firstAtt) }}"></video>
                                                     @else
-                                                        <x-media :path="$attachment" alt="{{ $update->title }}" class="aspect-[16/10] w-full object-cover" />
+                                                        <x-media :path="$firstAtt" alt="{{ $update->title }}" class="aspect-[16/10] w-full object-cover" />
                                                     @endif
                                                 </div>
-                                            @endforeach
-                                        </div>
+                                                <div class="grid gap-3" style="grid-template-rows: repeat({{ min(count($remainingAtts), 3) }}, 1fr);">
+                                                    @foreach (array_slice($remainingAtts, 0, 3) as $idx => $att)
+                                                        @php($isVid = str_contains((string) $att, '.mp4') || str_contains((string) $att, '.webm') || str_contains((string) $att, '.mov'))
+                                                        <div class="relative overflow-hidden rounded-xl border border-border">
+                                                            @if ($isVid)
+                                                                <video controls class="h-full w-full object-cover"><source src="{{ asset($att) }}"></video>
+                                                            @else
+                                                                <x-media :path="$att" alt="{{ $update->title }}" class="h-full w-full object-cover" />
+                                                            @endif
+                                                            @if ($idx === 2 && count($remainingAtts) > 3)
+                                                                <div class="absolute inset-0 flex items-center justify-center bg-black/50 text-lg font-bold text-white">+{{ count($remainingAtts) - 3 }}</div>
+                                                            @endif
+                                                        </div>
+                                                    @endforeach
+                                                </div>
+                                            </div>
+                                        @endif
                                     @endif
                                 </div>
                             @endforeach
