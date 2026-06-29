@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Portal;
 
 use App\Http\Controllers\Controller;
+use App\Models\Payment;
 use App\Support\SiteData;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
@@ -23,5 +25,23 @@ class BalanceController extends Controller
                 'outstanding' => $assignments->sum('outstanding_balance'),
             ],
         ]);
+    }
+
+    public function receipt(Payment $payment)
+    {
+        $payment->load('assignment.project', 'assignment.user', 'assignment.unit');
+        $assignment = $payment->assignment;
+
+        abort_unless($assignment && $assignment->user_id === Auth::id(), 403);
+
+        $pdf = Pdf::loadView('pdf.receipt', [
+            'payment' => $payment,
+            'assignment' => $assignment,
+            'company' => SiteData::company(),
+        ]);
+
+        $filename = 'Rockmould_Receipt_'.($payment->reference ?? 'RCK-'.$payment->id).'.pdf';
+
+        return $pdf->download($filename);
     }
 }

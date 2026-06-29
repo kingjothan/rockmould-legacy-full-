@@ -54,6 +54,7 @@
                                     <td>{{ optional($payment->paid_at ?: $payment->due_at)->format('M j, Y') ?: 'Pending date' }}</td>
                                     <td>{{ $payment->payment_method ?: 'Not set' }}</td>
                                     <td><x-status-badge :value="$payment->status" /></td>
+                                    <td><a href="{{ route('admin.payments.receipt', $payment) }}" class="text-xs text-primary hover:underline">Receipt PDF</a></td>
                                 </tr>
                             @empty
                                 <tr>

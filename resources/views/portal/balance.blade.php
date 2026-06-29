@@ -84,6 +84,9 @@
                                                 <p class="mt-1 text-xs text-muted-foreground">{{ str($payment->status)->title() }}</p>
                                             </div>
                                             <x-status-badge :value="$payment->status" />
+                                            <a href="{{ route('portal.balance.receipt', $payment) }}" class="text-xs text-primary hover:underline" title="Download Receipt">
+                                                <x-portal-icon name="file-text" class="h-4 w-4" />
+                                            </a>
                                         </div>
                                     </div>
                                 @endforeach

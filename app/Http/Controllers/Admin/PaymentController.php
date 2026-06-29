@@ -7,6 +7,7 @@ use App\Models\Payment;
 use App\Models\ProjectAssignment;
 use App\Support\Activity;
 use App\Support\SiteData;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -70,5 +71,21 @@ class PaymentController extends Controller
         Activity::log('assignment.financials.updated', 'Client assignment financials updated.', $request->user(), $assignment);
 
         return back()->with('success', 'Client financial details updated.');
+    }
+
+    public function receipt(Payment $payment)
+    {
+        $payment->load('assignment.project', 'assignment.user', 'assignment.unit');
+        $assignment = $payment->assignment;
+
+        $pdf = Pdf::loadView('pdf.receipt', [
+            'payment' => $payment,
+            'assignment' => $assignment,
+            'company' => SiteData::company(),
+        ]);
+
+        $filename = 'Rockmould_Receipt_'.($payment->reference ?? 'RCK-'.$payment->id).'.pdf';
+
+        return $pdf->download($filename);
     }
 }

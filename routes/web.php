@@ -108,6 +108,7 @@ Route::prefix('portal')->name('portal.')->group(function () {
         Route::get('/media', [PortalMediaController::class, 'index'])->name('media');
         Route::get('/media/{mediaAsset}/download', [PortalMediaController::class, 'download'])->name('media.download');
         Route::get('/balance', [PortalBalanceController::class, 'index'])->name('balance');
+            Route::get('/balance/{payment}/receipt', [PortalBalanceController::class, 'receipt'])->name('balance.receipt');
         Route::get('/updates', [PortalUpdateController::class, 'index'])->name('updates');
         Route::get('/profile', [PortalProfileController::class, 'show'])->name('profile.show');
         Route::put('/profile', [PortalProfileController::class, 'update'])->name('profile.update');
@@ -163,6 +164,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::get('/payments', [AdminPaymentController::class, 'index'])->name('payments.index');
             Route::post('/payments', [AdminPaymentController::class, 'store'])->name('payments.store');
             Route::put('/payments/assignments/{assignment}', [AdminPaymentController::class, 'updateAssignmentFinancials'])->name('payments.assignments.update');
+            Route::get('/payments/{payment}/receipt', [AdminPaymentController::class, 'receipt'])->name('payments.receipt');
         });
 
         Route::middleware('role:admin,project_manager')->group(function () {
