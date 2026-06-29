@@ -264,6 +264,15 @@ class SiteController extends Controller
             ]);
         }
 
+        $timelineQuery = \App\Models\ProjectUpdate::query()
+            ->where('visible_to_client', true)
+            ->with('project')
+            ->orderBy('update_date');
+
+        if ($request->filled('project')) {
+            $timelineQuery->whereHas('project', fn ($q) => $q->where('slug', $request->string('project')->toString()));
+        }
+
         return view('site.gallery', [
             'company' => SiteData::company(),
             'page' => SiteData::publicPage('gallery'),
@@ -272,6 +281,7 @@ class SiteController extends Controller
             'gallerySections' => $gallerySections,
             'supportsGallerySections' => $supportsGallerySections,
             'projects' => Project::query()->published()->orderBy('title')->get(),
+            'timeline' => $timelineQuery->get(),
         ]);
     }
 

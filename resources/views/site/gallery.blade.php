@@ -127,4 +127,89 @@
             @endif
         </div>
     </section>
+
+    @if ($timeline->isNotEmpty())
+        <section class="section-padding bg-card">
+            <div class="container-luxury">
+                <x-section-heading
+                    label="Project Journey"
+                    title="Live Construction Timeline"
+                    description="Follow the progress of our developments from ground-breaking to completion — every milestone, every stage, one story at a time."
+                />
+
+                @php
+                    $groupedTimeline = $timeline->groupBy(fn ($u) => $u->project?->title ?? 'Project');
+                @endphp
+
+                @foreach ($groupedTimeline as $projectTitle => $updates)
+                    <div class="mb-16 last:mb-0">
+                        <div class="mb-8 flex items-center gap-4">
+                            <div class="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
+                                <svg class="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"/></svg>
+                            </div>
+                            <div>
+                                <h3 class="font-display text-2xl font-semibold">{{ $projectTitle }}</h3>
+                                <p class="text-xs text-muted-foreground">{{ $updates->count() }} {{ $updates->count() === 1 ? 'update' : 'updates' }} &middot; Progress: {{ $updates->last()->progress ?? 0 }}%</p>
+                            </div>
+                        </div>
+
+                        <div class="relative ml-5 border-l-2 border-primary/20 pl-8">
+                            @foreach ($updates as $update)
+                                @php
+                                    $attachments = is_array($update->attachments) ? $update->attachments : [];
+                                @endphp
+                                <div class="reveal relative mb-10 last:mb-0">
+                                    <div class="absolute -left-[2.6rem] top-1 flex h-5 w-5 items-center justify-center rounded-full border-2 border-primary bg-card">
+                                        <div class="h-2 w-2 rounded-full bg-primary"></div>
+                                    </div>
+
+                                    <div class="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
+                                        @if ($update->update_date)
+                                            <span class="rounded-full bg-primary/10 px-3 py-1 font-medium text-primary">{{ $update->update_date->format('F j, Y') }}</span>
+                                        @endif
+                                        @if ($update->progress)
+                                            <span>{{ $update->progress }}% Complete</span>
+                                        @endif
+                                    </div>
+
+                                    <h4 class="mt-3 font-display text-lg font-semibold">{{ $update->title }}</h4>
+
+                                    @if ($update->body)
+                                        <p class="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">{{ $update->body }}</p>
+                                    @endif
+
+                                    @if ($update->progress)
+                                        <div class="mt-3 max-w-sm">
+                                            <div class="h-1.5 w-full overflow-hidden rounded-full bg-muted">
+                                                <div class="h-full rounded-full bg-primary transition-all duration-500" style="width: {{ $update->progress }}%"></div>
+                                            </div>
+                                        </div>
+                                    @endif
+
+                                    @if (count($attachments) > 0)
+                                        <div class="mt-4 grid gap-3 {{ count($attachments) === 1 ? 'max-w-md' : 'grid-cols-2 md:grid-cols-3 lg:grid-cols-4' }}">
+                                            @foreach ($attachments as $attachment)
+                                                @php
+                                                    $isVideo = str_contains((string) $attachment, '.mp4') || str_contains((string) $attachment, '.webm') || str_contains((string) $attachment, '.mov');
+                                                @endphp
+                                                <div class="overflow-hidden rounded-lg border border-border bg-muted">
+                                                    @if ($isVideo)
+                                                        <video controls class="aspect-[16/10] w-full object-cover">
+                                                            <source src="{{ asset($attachment) }}">
+                                                        </video>
+                                                    @else
+                                                        <x-media :path="$attachment" alt="{{ $update->title }}" class="aspect-[16/10] w-full object-cover" />
+                                                    @endif
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    @endif
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        </section>
+    @endif
 </x-layouts.public>
