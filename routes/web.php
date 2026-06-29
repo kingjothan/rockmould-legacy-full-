@@ -182,6 +182,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
             Route::get('/updates', [AdminUpdateController::class, 'index'])->name('updates.index');
             Route::post('/updates', [AdminUpdateController::class, 'store'])->name('updates.store');
+            Route::put('/updates/{projectUpdate}', [AdminUpdateController::class, 'update'])->name('updates.update');
+            Route::delete('/updates/{projectUpdate}', [AdminUpdateController::class, 'destroy'])->name('updates.destroy');
         });
 
         Route::middleware('role:admin,editor,content_manager')->group(function () {

@@ -65,4 +65,55 @@ class UpdateController extends Controller
 
         return back()->with('success', 'Project update published.');
     }
+
+    public function update(Request $request, ProjectUpdate $projectUpdate): RedirectResponse
+    {
+        $data = $request->validate([
+            'project_id' => ['required', 'integer', 'exists:projects,id'],
+            'title' => ['required', 'string', 'max:255'],
+            'body' => ['required', 'string'],
+            'update_date' => ['required', 'date'],
+            'progress' => ['nullable', 'integer', 'min:0', 'max:100'],
+            'visible_to_client' => ['nullable', 'boolean'],
+            'attachment_uploads' => ['nullable', 'array'],
+            'attachment_uploads.*' => ['file', 'max:204800', 'mimes:jpg,jpeg,png,webp,gif,mp4,webm,mov,ogg'],
+            'attachment_urls' => ['nullable', 'string'],
+        ]);
+
+        $attachments = is_array($projectUpdate->attachments) ? $projectUpdate->attachments : [];
+
+        foreach ($request->file('attachment_uploads', []) as $file) {
+            $path = PublicStorage::store($file, 'updates');
+            if ($path) $attachments[] = $path;
+        }
+
+        if (!empty($data['attachment_urls'])) {
+            foreach (preg_split('/\r?\n/', $data['attachment_urls']) as $url) {
+                $url = trim($url);
+                if ($url) $attachments[] = $url;
+            }
+        }
+
+        $projectUpdate->update([
+            'project_id' => $data['project_id'],
+            'title' => $data['title'],
+            'body' => $data['body'],
+            'update_date' => $data['update_date'],
+            'progress' => $data['progress'] ?? null,
+            'attachments' => $attachments,
+            'visible_to_client' => $request->boolean('visible_to_client', true),
+        ]);
+
+        Activity::log('update.updated', 'Project update edited.', $request->user(), $projectUpdate);
+
+        return back()->with('success', 'Update saved.');
+    }
+
+    public function destroy(Request $request, ProjectUpdate $projectUpdate): RedirectResponse
+    {
+        Activity::log('update.deleted', "Update \"{$projectUpdate->title}\" deleted.", $request->user(), null);
+        $projectUpdate->delete();
+
+        return redirect()->route('admin.updates.index')->with('success', 'Update deleted.');
+    }
 }
