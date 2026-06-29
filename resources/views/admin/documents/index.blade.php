@@ -127,8 +127,8 @@
 
                                     <div class="rounded-md border border-dashed border-border bg-muted/10 p-4">
                                         <label class="admin-label">Replace file</label>
-                                        <input type="file" name="file" data-preview-target="#document-file-preview-{{ $document->id }}" class="input-shell">
-                                        <p id="document-file-preview-{{ $document->id }}" class="mt-1 text-xs text-muted-foreground">Leave empty to keep the current file</p>
+                                        <input type="file" name="file" accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv,.zip,.rar,.jpg,.jpeg,.png,.webp,.gif" data-preview-target="#document-file-preview-{{ $document->id }}" class="input-shell">
+                                        <p id="document-file-preview-{{ $document->id }}" class="mt-1 text-xs text-muted-foreground">Leave empty to keep the current file. PDF, Word, Excel, PowerPoint, images, or archives — up to 50MB</p>
                                     </div>
 
                                     <div class="flex flex-wrap items-center justify-between gap-3 border-t border-border/60 pt-4">
@@ -197,8 +197,8 @@
                     </div>
                     <div>
                         <label class="admin-label">File Upload</label>
-                        <input type="file" name="file" data-preview-target="#document-file-preview" class="input-shell">
-                        <p id="document-file-preview" class="mt-1 text-xs text-muted-foreground">No file selected</p>
+                        <input type="file" name="file" accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv,.zip,.rar,.jpg,.jpeg,.png,.webp,.gif" data-preview-target="#document-file-preview" class="input-shell" required>
+                        <p id="document-file-preview" class="mt-1 text-xs text-muted-foreground">PDF, Word, Excel, PowerPoint, images, or archives — up to 50MB</p>
                     </div>
                     <div class="grid grid-cols-2 gap-3">
                         <label class="flex items-center gap-2 rounded-sm border border-border px-3 py-2 text-xs text-muted-foreground">

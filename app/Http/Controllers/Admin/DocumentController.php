@@ -112,7 +112,7 @@ class DocumentController extends Controller
             'category' => ['required', 'string', 'max:255'],
             'version' => ['nullable', 'string', 'max:50'],
             'notes' => ['nullable', 'string'],
-            'file' => [$requireFile ? 'required' : 'nullable', 'file', 'max:8192'],
+            'file' => [$requireFile ? 'required' : 'nullable', 'file', 'max:51200', 'mimes:pdf,doc,docx,xls,xlsx,ppt,pptx,txt,csv,zip,rar,jpg,jpeg,png,webp,gif'],
         ]);
 
         if (blank($data['project_id'] ?? null) && blank($data['project_assignment_id'] ?? null)) {

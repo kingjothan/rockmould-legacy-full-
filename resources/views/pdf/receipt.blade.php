@@ -34,6 +34,10 @@
 <body>
     <div class="header">
         <div>
+            @php($logoPath = public_path('images/rockmould_logo.png'))
+            @if (file_exists($logoPath))
+                <img src="{{ $logoPath }}" alt="Rockmould Limited" style="height: 50px; width: auto; margin-bottom: 6px;">
+            @endif
             <div class="brand">ROCKMOULD</div>
             <div class="brand-sub">Limited</div>
         </div>
