@@ -790,6 +790,14 @@ class CmsController extends Controller
         return back()->with('success', 'FAQ item updated.');
     }
 
+    public function destroyFaq(Request $request, Faq $faq): RedirectResponse
+    {
+        Activity::log('cms.faq.deleted', "FAQ \"{$faq->question}\" deleted.", $request->user(), null);
+        $faq->delete();
+
+        return redirect()->route('admin.cms.faq')->with('success', 'FAQ deleted.');
+    }
+
     public function careers(): View
     {
         return view('admin.cms.careers', ['company' => SiteData::company(), 'roles' => CareerOpening::query()->latest('published_at')->get()]);

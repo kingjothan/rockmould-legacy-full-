@@ -11,6 +11,11 @@
                         <textarea name="answer" rows="4" class="input-shell">{{ $faq->answer }}</textarea>
                         <button class="luxury-btn-primary">Update FAQ</button>
                     </form>
+                    <form action="{{ route('admin.cms.faq.destroy', $faq) }}" method="POST" class="mt-3" onsubmit="return confirm('Delete this FAQ? This cannot be undone.')">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="text-xs text-destructive hover:underline">Delete this FAQ</button>
+                    </form>
                 </div>
             @endforeach
         </div>

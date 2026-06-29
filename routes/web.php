@@ -219,6 +219,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::get('/cms/faq', [AdminCmsController::class, 'faq'])->name('cms.faq');
             Route::post('/cms/faq', [AdminCmsController::class, 'storeFaq'])->name('cms.faq.store');
             Route::put('/cms/faq/{faq}', [AdminCmsController::class, 'updateFaq'])->name('cms.faq.update');
+            Route::delete('/cms/faq/{faq}', [AdminCmsController::class, 'destroyFaq'])->name('cms.faq.destroy');
             Route::get('/cms/careers', [AdminCmsController::class, 'careers'])->name('cms.careers');
             Route::post('/cms/careers', [AdminCmsController::class, 'storeCareer'])->name('cms.careers.store');
             Route::put('/cms/careers/{careerOpening}', [AdminCmsController::class, 'updateCareer'])->name('cms.careers.update');
