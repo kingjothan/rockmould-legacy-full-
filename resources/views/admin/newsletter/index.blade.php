@@ -39,8 +39,27 @@
                         <h2 class="text-base font-semibold">Compose Newsletter</h2>
                     </div>
                 </div>
-                <form action="{{ route('admin.newsletter.send') }}" method="POST" enctype="multipart/form-data" class="space-y-4 px-6 py-5" onsubmit="return confirm('Send this newsletter to {{ $subscribers->count() }} subscriber(s)?')">
+                <form action="{{ route('admin.newsletter.send') }}" method="POST" enctype="multipart/form-data" class="space-y-4 px-6 py-5" data-newsletter-form>
                     @csrf
+                    <div>
+                        <label class="admin-label">Send To</label>
+                        <div class="flex gap-3 mb-2">
+                            <label class="flex items-center gap-2 text-sm text-muted-foreground">
+                                <input type="radio" name="send_to" value="all" checked class="h-4 w-4 text-primary" data-send-toggle> All Subscribers ({{ $subscribers->count() }})
+                            </label>
+                            <label class="flex items-center gap-2 text-sm text-muted-foreground">
+                                <input type="radio" name="send_to" value="selected" class="h-4 w-4 text-primary" data-send-toggle> Select Recipients
+                            </label>
+                        </div>
+                        <div data-recipients-list class="hidden max-h-48 overflow-y-auto rounded-lg border border-border bg-background/50 p-3 space-y-1">
+                            @foreach ($subscribers as $sub)
+                                <label class="flex items-center gap-2 rounded px-2 py-1.5 text-sm text-muted-foreground hover:bg-muted/30">
+                                    <input type="checkbox" name="recipients[]" value="{{ $sub->id }}" class="h-4 w-4 rounded border-border text-primary">
+                                    {{ $sub->email }}
+                                </label>
+                            @endforeach
+                        </div>
+                    </div>
                     <div>
                         <label class="admin-label">Subject Line</label>
                         <input name="subject" value="{{ old('subject') }}" required placeholder="e.g. Rockmould Project Update — June 2026" class="input-shell w-full">

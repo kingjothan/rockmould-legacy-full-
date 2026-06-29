@@ -1092,6 +1092,29 @@ document.addEventListener('DOMContentLoaded', () => {
         // Reserved for future dropdown interactions.
     });
 
+    // Newsletter recipient toggle
+    const nlForm = document.querySelector('[data-newsletter-form]');
+    if (nlForm) {
+        const recipientsList = nlForm.querySelector('[data-recipients-list]');
+        const toggles = nlForm.querySelectorAll('[data-send-toggle]');
+        toggles.forEach((radio) => {
+            radio.addEventListener('change', () => {
+                recipientsList.classList.toggle('hidden', radio.value === 'all');
+            });
+        });
+        nlForm.addEventListener('submit', (e) => {
+            const sendTo = nlForm.querySelector('[name="send_to"]:checked').value;
+            let count;
+            if (sendTo === 'selected') {
+                count = nlForm.querySelectorAll('[name="recipients[]"]:checked').length;
+                if (count === 0) { e.preventDefault(); alert('Please select at least one recipient.'); return; }
+            } else {
+                count = nlForm.querySelectorAll('[name="recipients[]"]').length || nlForm.querySelector('[data-send-toggle]').parentElement.textContent.match(/\d+/)?.[0] || 'all';
+            }
+            if (!confirm('Send this newsletter to ' + count + ' subscriber(s)?')) e.preventDefault();
+        });
+    }
+
     // Footer groups builder
     const footerForm = document.querySelector('[data-footer-form]');
     if (footerForm) {

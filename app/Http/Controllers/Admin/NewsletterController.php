@@ -27,6 +27,9 @@ class NewsletterController extends Controller
         $data = $request->validate([
             'subject' => ['required', 'string', 'max:255'],
             'body' => ['required', 'string'],
+            'send_to' => ['required', 'string', 'in:all,selected'],
+            'recipients' => ['nullable', 'array'],
+            'recipients.*' => ['integer', 'exists:newsletter_subscribers,id'],
             'image_urls' => ['nullable', 'string'],
             'image_uploads' => ['nullable', 'array'],
             'image_uploads.*' => ['file', 'max:10240', 'mimes:jpg,jpeg,png,webp,gif'],
@@ -35,7 +38,11 @@ class NewsletterController extends Controller
             'video_uploads.*' => ['file', 'max:204800', 'mimes:mp4,webm,mov,ogg'],
         ]);
 
-        $subscribers = NewsletterSubscriber::query()->where('status', 'subscribed')->get();
+        if ($data['send_to'] === 'selected' && !empty($data['recipients'])) {
+            $subscribers = NewsletterSubscriber::query()->whereIn('id', $data['recipients'])->where('status', 'subscribed')->get();
+        } else {
+            $subscribers = NewsletterSubscriber::query()->where('status', 'subscribed')->get();
+        }
 
         if ($subscribers->isEmpty()) {
             return back()->withErrors(['subject' => 'No active subscribers to send to.']);
