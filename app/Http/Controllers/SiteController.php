@@ -168,23 +168,15 @@ class SiteController extends Controller
 
     public function faq(Request $request): View
     {
-        $query = Faq::query()->where('is_published', true);
-
-        if ($request->filled('category')) {
-            $query->where('category', $request->string('category')->toString());
-        }
-
-        if ($request->filled('q')) {
-            $search = $request->string('q')->toString();
-            $query->where(function ($builder) use ($search) {
-                $builder->where('question', 'like', '%'.$search.'%')->orWhere('answer', 'like', '%'.$search.'%');
-            });
-        }
-
         return view('site.faq', [
             'company' => SiteData::company(),
             'page' => SiteData::publicPage('faq'),
-            'faqs' => $query->orderBy('category')->orderBy('sort_order')->get()->groupBy('category'),
+            'faqs' => Faq::query()
+                ->where('is_published', true)
+                ->orderBy('category')
+                ->orderBy('sort_order')
+                ->get()
+                ->groupBy('category'),
         ]);
     }
 
