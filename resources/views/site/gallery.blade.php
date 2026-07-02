@@ -202,7 +202,10 @@
                                         @elseif (count($attachments) === 2)
                                             <div class="mt-4 grid grid-cols-2 gap-3">
                                                 @foreach ($attachments as $att)
-                                                    @php($isVid = str_contains((string) $att, '.mp4') || str_contains((string) $att, '.webm') || str_contains((string) $att, '.mov'))
+                                                    @php
+                                                        $attStr = (string) $att;
+                                                        $isVid = str_contains($attStr, '.mp4') || str_contains($attStr, '.webm') || str_contains($attStr, '.mov');
+                                                    @endphp
                                                     <div class="overflow-hidden rounded-xl border border-border">
                                                         @if ($isVid)
                                                             <video controls class="aspect-[4/3] w-full object-cover"><source src="{{ asset($att) }}"></video>
@@ -228,7 +231,10 @@
                                                 </div>
                                                 <div class="grid gap-3" style="grid-template-rows: repeat({{ min(count($remainingAtts), 3) }}, 1fr);">
                                                     @foreach (array_slice($remainingAtts, 0, 3) as $idx => $att)
-                                                        @php($isVid = str_contains((string) $att, '.mp4') || str_contains((string) $att, '.webm') || str_contains((string) $att, '.mov'))
+                                                        @php
+                                                            $attStr = (string) $att;
+                                                            $isVid = str_contains($attStr, '.mp4') || str_contains($attStr, '.webm') || str_contains($attStr, '.mov');
+                                                        @endphp
                                                         <div class="relative overflow-hidden rounded-xl border border-border">
                                                             @if ($isVid)
                                                                 <video controls class="h-full w-full object-cover"><source src="{{ asset($att) }}"></video>
