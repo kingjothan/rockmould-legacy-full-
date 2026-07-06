@@ -3,10 +3,13 @@
 namespace App\Http\Controllers\Portal;
 
 use App\Http\Controllers\Controller;
+use App\Mail\ReceiptMail;
 use App\Models\Payment;
 use App\Support\SiteData;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\View\View;
 
 class BalanceController extends Controller
@@ -43,5 +46,19 @@ class BalanceController extends Controller
         $filename = 'Rockmould_Receipt_'.($payment->reference ?? 'RCK-'.$payment->id).'.pdf';
 
         return $pdf->download($filename);
+    }
+
+    public function emailReceipt(Payment $payment): RedirectResponse
+    {
+        $payment->load('assignment.project', 'assignment.user', 'assignment.unit');
+        $assignment = $payment->assignment;
+
+        abort_unless($assignment && $assignment->user_id === Auth::id(), 403);
+
+        $recipient = $assignment->user->email;
+
+        Mail::to($recipient)->send(new ReceiptMail($payment));
+
+        return back()->with('success', 'Receipt sent to '.$recipient.'.');
     }
 }

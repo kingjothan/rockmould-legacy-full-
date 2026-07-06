@@ -78,15 +78,31 @@
                                             </div>
                                         </div>
 
-                                        <div class="flex items-center gap-4 md:text-right">
-                                            <div>
+                                        <div class="flex flex-wrap items-center justify-end gap-3 md:text-right">
+                                            <div class="mr-2">
                                                 <p class="font-medium text-primary">NGN {{ number_format((float) $payment->amount) }}</p>
                                                 <p class="mt-1 text-xs text-muted-foreground">{{ str($payment->status)->title() }}</p>
                                             </div>
                                             <x-status-badge :value="$payment->status" />
-                                            <a href="{{ route('portal.balance.receipt', $payment) }}" class="text-xs text-primary hover:underline" title="Download Receipt">
-                                                <x-portal-icon name="file-text" class="h-4 w-4" />
+
+                                            {{-- Download PDF --}}
+                                            <a href="{{ route('portal.balance.receipt', $payment) }}"
+                                               class="inline-flex items-center gap-1.5 rounded-sm border border-primary/40 px-3 py-1.5 text-xs font-medium text-primary transition hover:bg-primary/10"
+                                               title="Download PDF Receipt">
+                                                <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                                                Download PDF
                                             </a>
+
+                                            {{-- Email Receipt --}}
+                                            <form action="{{ route('portal.balance.email-receipt', $payment) }}" method="POST"
+                                                  onsubmit="return confirm('Send this receipt to your registered email address?')">
+                                                @csrf
+                                                <button type="submit"
+                                                        class="inline-flex items-center gap-1.5 rounded-sm border border-border px-3 py-1.5 text-xs font-medium text-muted-foreground transition hover:border-primary/40 hover:text-primary">
+                                                    <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                                                    Email Receipt
+                                                </button>
+                                            </form>
                                         </div>
                                     </div>
                                 @endforeach

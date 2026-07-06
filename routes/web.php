@@ -108,7 +108,8 @@ Route::prefix('portal')->name('portal.')->group(function () {
         Route::get('/media', [PortalMediaController::class, 'index'])->name('media');
         Route::get('/media/{mediaAsset}/download', [PortalMediaController::class, 'download'])->name('media.download');
         Route::get('/balance', [PortalBalanceController::class, 'index'])->name('balance');
-            Route::get('/balance/{payment}/receipt', [PortalBalanceController::class, 'receipt'])->name('balance.receipt');
+        Route::get('/balance/{payment}/receipt', [PortalBalanceController::class, 'receipt'])->name('balance.receipt');
+        Route::post('/balance/{payment}/email-receipt', [PortalBalanceController::class, 'emailReceipt'])->name('balance.email-receipt');
         Route::get('/updates', [PortalUpdateController::class, 'index'])->name('updates');
         Route::get('/profile', [PortalProfileController::class, 'show'])->name('profile.show');
         Route::put('/profile', [PortalProfileController::class, 'update'])->name('profile.update');
