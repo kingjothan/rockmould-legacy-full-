@@ -47,9 +47,27 @@
                                 Remove current cover media if no new link or upload is provided
                             </label>
                         </div>
-                        <input type="number" name="progress" value="{{ $project->progress }}" class="input-shell">
-                        <input type="number" name="budget" value="{{ $project->budget }}" class="input-shell">
-                        <input type="number" name="price_from" value="{{ $project->price_from }}" class="input-shell">
+                        <input type="number" name="progress" value="{{ $project->progress }}" placeholder="Progress %" class="input-shell">
+                        <input type="number" name="budget" value="{{ $project->budget }}" placeholder="Budget (NGN)" class="input-shell">
+                        <input type="number" name="price_from" value="{{ $project->price_from }}" placeholder="Price From (NGN)" class="input-shell">
+                        <div class="grid gap-3 sm:grid-cols-3">
+                            <div>
+                                <label class="admin-label">Total Units</label>
+                                <input type="number" name="total_units" value="{{ $project->total_units }}" placeholder="e.g. 24" class="input-shell">
+                            </div>
+                            <div>
+                                <label class="admin-label">Available Units</label>
+                                <input type="number" name="available_units" value="{{ $project->available_units }}" placeholder="e.g. 8" class="input-shell">
+                            </div>
+                            <div>
+                                <label class="admin-label">Built Area</label>
+                                <input name="built_area" value="{{ $project->built_area }}" placeholder="e.g. 450 sqm per unit" class="input-shell">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="admin-label">Residence Profile</label>
+                            <textarea name="residence_profile" rows="4" placeholder="Describe the residence — layout types, finishes, lifestyle positioning…" class="input-shell">{{ $project->residence_profile }}</textarea>
+                        </div>
                         <div class="grid gap-3 sm:grid-cols-2">
                             <div>
                                 <label class="admin-label">Start Date</label>

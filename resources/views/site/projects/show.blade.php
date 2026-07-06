@@ -37,6 +37,13 @@
                         <p class="leading-relaxed text-muted-foreground">{{ $project->description ?: $project->overview }}</p>
                     </div>
 
+                    @if ($project->residence_profile)
+                        <div>
+                            <h2 class="mb-4 font-display text-2xl font-semibold">Residence Profile</h2>
+                            <p class="leading-relaxed text-muted-foreground">{{ $project->residence_profile }}</p>
+                        </div>
+                    @endif
+
                     @if (!empty($project->highlights))
                         <div class="grid grid-cols-2 gap-4 md:grid-cols-4">
                             @foreach ($project->highlights as $highlight)
@@ -186,6 +193,34 @@
                                 <span class="text-muted-foreground">Progress</span>
                                 <span class="font-medium">{{ $project->progress }}%</span>
                             </div>
+                            @if ($project->total_units)
+                                <div class="luxury-divider"></div>
+                                <div class="flex justify-between gap-2">
+                                    <span class="text-muted-foreground">Total Units</span>
+                                    <span class="font-medium">{{ $project->total_units }}</span>
+                                </div>
+                            @endif
+                            @if ($project->available_units !== null && $project->total_units)
+                                <div class="luxury-divider"></div>
+                                <div class="flex justify-between gap-2">
+                                    <span class="text-muted-foreground">Available Units</span>
+                                    <span class="font-medium text-primary">{{ $project->available_units }}</span>
+                                </div>
+                            @endif
+                            @if ($project->built_area)
+                                <div class="luxury-divider"></div>
+                                <div class="flex justify-between gap-2">
+                                    <span class="text-muted-foreground">Built Area</span>
+                                    <span class="text-right font-medium">{{ $project->built_area }}</span>
+                                </div>
+                            @endif
+                            @if ($project->price_from)
+                                <div class="luxury-divider"></div>
+                                <div class="flex justify-between gap-2">
+                                    <span class="text-muted-foreground">Price From</span>
+                                    <span class="font-medium text-primary">NGN {{ number_format($project->price_from) }}</span>
+                                </div>
+                            @endif
                         </div>
                         <a href="{{ route('contact') }}" class="luxury-btn-primary w-full justify-center text-xs">
                             Inquire Now
