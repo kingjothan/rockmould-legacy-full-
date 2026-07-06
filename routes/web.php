@@ -110,6 +110,7 @@ Route::prefix('portal')->name('portal.')->group(function () {
         Route::get('/balance', [PortalBalanceController::class, 'index'])->name('balance');
         Route::get('/balance/{payment}/receipt', [PortalBalanceController::class, 'receipt'])->name('balance.receipt');
         Route::post('/balance/{payment}/email-receipt', [PortalBalanceController::class, 'emailReceipt'])->name('balance.email-receipt');
+        Route::get('/balance/statement/{assignment}', [PortalBalanceController::class, 'statement'])->name('balance.statement');
         Route::get('/updates', [PortalUpdateController::class, 'index'])->name('updates');
         Route::get('/profile', [PortalProfileController::class, 'show'])->name('profile.show');
         Route::put('/profile', [PortalProfileController::class, 'update'])->name('profile.update');

@@ -48,6 +48,23 @@ class BalanceController extends Controller
         return $pdf->download($filename);
     }
 
+    public function statement(\App\Models\ProjectAssignment $assignment)
+    {
+        abort_unless((int) $assignment->user_id === (int) Auth::id(), 403);
+
+        $assignment->load(['project', 'user', 'unit', 'payments']);
+
+        $pdf = Pdf::loadView('pdf.statement', [
+            'assignment' => $assignment,
+            'company'    => SiteData::company(),
+        ]);
+
+        $slug = str($assignment->project?->title ?? 'Project')->slug()->toString();
+        $filename = 'Rockmould_Statement_'.$slug.'_'.now()->format('Y-m-d').'.pdf';
+
+        return $pdf->download($filename);
+    }
+
     public function emailReceipt(Payment $payment): RedirectResponse
     {
         $payment->load('assignment.project', 'assignment.user', 'assignment.unit');
