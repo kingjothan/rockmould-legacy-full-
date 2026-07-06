@@ -35,7 +35,7 @@ class BalanceController extends Controller
         $payment->load('assignment.project', 'assignment.user', 'assignment.unit');
         $assignment = $payment->assignment;
 
-        abort_unless($assignment && $assignment->user_id === Auth::id(), 403);
+        abort_unless($assignment && (int) $assignment->user_id === (int) Auth::id(), 403);
 
         $pdf = Pdf::loadView('pdf.receipt', [
             'payment' => $payment,
@@ -53,7 +53,7 @@ class BalanceController extends Controller
         $payment->load('assignment.project', 'assignment.user', 'assignment.unit');
         $assignment = $payment->assignment;
 
-        abort_unless($assignment && $assignment->user_id === Auth::id(), 403);
+        abort_unless($assignment && (int) $assignment->user_id === (int) Auth::id(), 403);
 
         $recipient = $assignment->user->email;
 

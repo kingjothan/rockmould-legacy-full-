@@ -34,7 +34,7 @@ class ProjectController extends Controller
 
     public function show(ProjectAssignment $assignment): View
     {
-        abort_unless($assignment->user_id === Auth::id(), 403);
+        abort_unless((int) $assignment->user_id === (int) Auth::id(), 403);
 
         $assignment->load(['project.milestones', 'project.updates', 'payments', 'unit']);
         abort_unless($assignment->project, 404);

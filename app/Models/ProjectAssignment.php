@@ -16,6 +16,8 @@ class ProjectAssignment extends Model
     protected function casts(): array
     {
         return [
+            'user_id' => 'integer',
+            'project_id' => 'integer',
             'contract_amount' => 'decimal:2',
             'amount_paid' => 'decimal:2',
             'outstanding_balance' => 'decimal:2',
