@@ -32,7 +32,7 @@ class BalanceController extends Controller
 
     public function receipt(Payment $payment)
     {
-        $payment->load('assignment.project', 'assignment.user', 'assignment.unit');
+        $payment->load('assignment.project', 'assignment.user', 'assignment.unit', 'assignment.payments');
         $assignment = $payment->assignment;
 
         abort_unless($assignment && (int) $assignment->user_id === (int) Auth::id(), 403);
@@ -67,7 +67,7 @@ class BalanceController extends Controller
 
     public function emailReceipt(Payment $payment): RedirectResponse
     {
-        $payment->load('assignment.project', 'assignment.user', 'assignment.unit');
+        $payment->load('assignment.project', 'assignment.user', 'assignment.unit', 'assignment.payments');
         $assignment = $payment->assignment;
 
         abort_unless($assignment && (int) $assignment->user_id === (int) Auth::id(), 403);

@@ -128,6 +128,40 @@
         </tbody>
     </table>
 
+    @if ($assignment->payments && $assignment->payments->count() > 1)
+        <div style="margin-bottom: 8px; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: #1f3a5f; font-weight: 700; padding-bottom: 6px; border-bottom: 1px solid #e8e4de;">Payment History</div>
+        <table style="width:100%;border-collapse:collapse;margin-bottom:30px;">
+            <thead>
+                <tr>
+                    <th style="background:#1f3a5f;color:#fff;font-size:9px;text-transform:uppercase;letter-spacing:1.5px;padding:9px 12px;text-align:left;">Reference</th>
+                    <th style="background:#1f3a5f;color:#fff;font-size:9px;text-transform:uppercase;letter-spacing:1.5px;padding:9px 12px;text-align:left;">Date</th>
+                    <th style="background:#1f3a5f;color:#fff;font-size:9px;text-transform:uppercase;letter-spacing:1.5px;padding:9px 12px;text-align:left;">Method</th>
+                    <th style="background:#1f3a5f;color:#fff;font-size:9px;text-transform:uppercase;letter-spacing:1.5px;padding:9px 12px;text-align:left;">Status</th>
+                    <th style="background:#1f3a5f;color:#fff;font-size:9px;text-transform:uppercase;letter-spacing:1.5px;padding:9px 12px;text-align:right;">Amount (NGN)</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($assignment->payments as $p)
+                    <tr style="{{ $p->id === $payment->id ? 'background:#fffbf0;' : ($loop->even ? 'background:#faf8f5;' : '') }}">
+                        <td style="padding:9px 12px;border-bottom:1px solid #f0ede7;font-size:12px;{{ $p->id === $payment->id ? 'font-weight:700;' : '' }}">
+                            {{ $p->reference ?: 'RCK-'.str_pad($p->id, 5, '0', STR_PAD_LEFT) }}
+                            @if ($p->id === $payment->id) <span style="font-size:9px;color:#c6a96a;margin-left:4px;">← this receipt</span> @endif
+                        </td>
+                        <td style="padding:9px 12px;border-bottom:1px solid #f0ede7;font-size:12px;">{{ ($p->paid_at ?? $p->due_at ?? $p->created_at)?->format('M j, Y') }}</td>
+                        <td style="padding:9px 12px;border-bottom:1px solid #f0ede7;font-size:12px;">{{ $p->payment_method ?: '—' }}</td>
+                        <td style="padding:9px 12px;border-bottom:1px solid #f0ede7;font-size:12px;">
+                            <span style="padding:2px 8px;border-radius:3px;font-size:9px;font-weight:700;text-transform:uppercase;
+                                {{ $p->status === 'paid' ? 'background:#e6f4ea;color:#1e7e34;' : ($p->status === 'overdue' ? 'background:#fde8e8;color:#c0392b;' : 'background:#fff8e1;color:#b8860b;') }}">
+                                {{ ucfirst($p->status) }}
+                            </span>
+                        </td>
+                        <td style="padding:9px 12px;border-bottom:1px solid #f0ede7;font-size:12px;text-align:right;font-weight:600;">{{ number_format($p->amount, 2) }}</td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+    @endif
+
     <div class="footer">
         <p>
             {{ $company['name'] ?? 'Rockmould Limited' }}<br>
