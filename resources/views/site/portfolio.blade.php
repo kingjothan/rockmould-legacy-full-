@@ -12,17 +12,26 @@
                     </div>
 
                     <div class="{{ $loop->iteration % 2 === 0 ? 'lg:order-1' : '' }}">
-                        <span class="text-xs uppercase tracking-[0.2em] text-primary mb-3 block">{{ $project->category }}</span>
-                        <h2 class="font-display text-3xl font-semibold">{{ $project->title }}</h2>
+                        <x-status-badge :value="$project->status" class="mb-3" />
+                        <h2 class="font-display text-3xl font-semibold mt-3">{{ $project->title }}</h2>
                         <p class="mt-2 text-sm text-muted-foreground">{{ $project->location }}</p>
-                        <p class="mt-4 leading-relaxed text-muted-foreground">{{ $project->description ?: $project->overview }}</p>
+                        <p class="mt-4 leading-relaxed text-muted-foreground">{{ $project->residence_profile ?: ($project->description ?: $project->overview) }}</p>
 
-                        @if (! empty($project->highlights))
+                        @php
+                            $cards = [];
+                            if ($project->total_units)     $cards[] = ['label' => 'Total Units',     'value' => $project->total_units];
+                            if ($project->available_units !== null && $project->total_units)
+                                                            $cards[] = ['label' => 'Available Units',  'value' => $project->available_units];
+                            if ($project->built_area)      $cards[] = ['label' => 'Built Area',       'value' => $project->built_area];
+                            if ($project->completion_date) $cards[] = ['label' => 'Completion',       'value' => \Carbon\Carbon::parse($project->completion_date)->format('M Y')];
+                        @endphp
+
+                        @if (!empty($cards))
                             <div class="mt-5 grid gap-3 sm:grid-cols-2">
-                                @foreach (collect($project->highlights)->take(4) as $highlight)
+                                @foreach (array_slice($cards, 0, 4) as $card)
                                     <div class="rounded-md border border-border bg-muted/30 px-4 py-3">
-                                        <p class="text-[10px] uppercase tracking-[0.15em] text-muted-foreground">{{ $highlight['label'] }}</p>
-                                        <p class="mt-1.5 text-sm font-medium text-foreground">{{ $highlight['value'] }}</p>
+                                        <p class="text-[10px] uppercase tracking-[0.15em] text-muted-foreground">{{ $card['label'] }}</p>
+                                        <p class="mt-1.5 text-sm font-medium text-foreground">{{ $card['value'] }}</p>
                                     </div>
                                 @endforeach
                             </div>

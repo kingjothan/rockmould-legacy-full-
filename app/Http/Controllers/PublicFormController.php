@@ -41,7 +41,7 @@ class PublicFormController extends Controller
             'email' => ['required', 'email', 'max:255'],
         ]);
 
-        NewsletterSubscriber::query()->firstOrCreate(
+        NewsletterSubscriber::query()->updateOrCreate(
             ['email' => $data['email']],
             ['status' => 'subscribed', 'subscribed_at' => now()],
         );

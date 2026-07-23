@@ -22,7 +22,15 @@
         <div class="grid gap-8 lg:grid-cols-[1.2fr_0.8fr]">
             <div class="space-y-8">
                 <div class="luxury-card">
-                    <h2 class="font-display text-3xl">Project Overview</h2>
+                    <div class="flex items-start justify-between gap-4">
+                        <h2 class="font-display text-3xl">Project Overview</h2>
+                        @if ($assignment->project->brochure_path)
+                            <a href="{{ asset('storage/'.$assignment->project->brochure_path) }}" target="_blank" download class="luxury-btn-outline shrink-0 py-2 text-xs">
+                                <svg class="mr-1.5 h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg>
+                                Download Brochure
+                            </a>
+                        @endif
+                    </div>
                     <p class="mt-4 text-sm leading-7 text-muted-foreground md:text-base">{{ $assignment->project->description ?: $assignment->project->overview }}</p>
 
                     @php

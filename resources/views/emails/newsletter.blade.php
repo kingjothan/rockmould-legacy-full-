@@ -36,6 +36,31 @@
         </div>
     @endforeach
 
+    @if (!empty($documentLinks))
+        <div style="margin:28px 0;padding:20px 24px;background:#1a1510;border:1px solid #3a2f1e;border-radius:12px;">
+            <p style="margin:0 0 14px;font-size:11px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:#c6a96a;">Attachments &amp; Documents</p>
+            @foreach ($documentLinks as $doc)
+                @php
+                    $ext = strtolower(pathinfo($doc['name'], PATHINFO_EXTENSION));
+                    $icon = match($ext) {
+                        'pdf'  => '📄',
+                        'doc','docx' => '📝',
+                        'xls','xlsx' => '📊',
+                        'ppt','pptx' => '📑',
+                        default      => '📎',
+                    };
+                @endphp
+                <a href="{{ $doc['url'] }}" target="_blank"
+                   style="display:flex;align-items:center;gap:12px;padding:10px 14px;margin-bottom:8px;background:#221c13;border:1px solid #3a2f1e;border-radius:8px;text-decoration:none;color:#d8d1c5;font-size:13px;line-height:1.4;">
+                    <span style="font-size:20px;flex-shrink:0;">{{ $icon }}</span>
+                    <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ $doc['name'] }}</span>
+                    <span style="flex-shrink:0;font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#c6a96a;padding:4px 10px;border:1px solid #c6a96a;border-radius:999px;">Download</span>
+                </a>
+            @endforeach
+            <p style="margin:10px 0 0;font-size:11px;color:#7a7368;">Documents are also attached directly to this email for offline access.</p>
+        </div>
+    @endif
+
     <div style="margin-top:30px;padding-top:20px;border-top:1px solid #29231a;">
         <p style="margin:0;font-size:11px;line-height:1.6;color:#7a7368;">
             You're receiving this because you subscribed to updates from Rockmould Limited.

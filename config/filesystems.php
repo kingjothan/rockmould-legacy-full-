@@ -47,6 +47,15 @@ return [
             'report' => false,
         ],
 
+        // Points directly to public_html/storage on cPanel hosting (web root is public_html, not public/)
+        'site_public' => [
+            'driver' => 'local',
+            'root' => env('SITE_PUBLIC_PATH', public_path('storage')),
+            'url' => env('APP_URL').'/storage',
+            'visibility' => 'public',
+            'throw' => false,
+        ],
+
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),

@@ -83,7 +83,23 @@
                         <input type="file" name="video_uploads[]" accept="video/*" multiple class="input-shell mt-2 w-full">
                         <p class="mt-1 text-xs text-muted-foreground">Hold Ctrl/Cmd to select multiple files.</p>
                     </div>
-                    <button class="luxury-btn-primary w-full justify-center">
+                    <div class="rounded-lg border border-primary/20 bg-primary/5 p-4">
+                        <label class="admin-label flex items-center gap-2">
+                            <svg class="h-4 w-4 text-primary" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg>
+                            Documents &amp; PDFs (optional)
+                        </label>
+                        <p class="mb-3 text-xs text-muted-foreground">Uploaded files are <strong class="text-foreground/80">attached directly</strong> to the email and also shown as download buttons inside it. Paste URLs for externally hosted documents.</p>
+                        <div>
+                            <p class="mb-1 text-xs text-muted-foreground">Upload files (PDF, Word, Excel, PowerPoint — max 50 MB each)</p>
+                            <input type="file" name="document_uploads[]" accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx" multiple class="input-shell w-full">
+                            <p class="mt-1 text-xs text-muted-foreground">Hold Ctrl/Cmd to select multiple files.</p>
+                        </div>
+                        <div class="mt-3">
+                            <p class="mb-1 text-xs text-muted-foreground">Or paste document URLs (one per line)</p>
+                            <textarea name="document_urls" rows="3" placeholder="https://example.com/brochure.pdf" class="input-shell w-full">{{ old('document_urls') }}</textarea>
+                        </div>
+                    </div>
+                    <button class="luxury-btn-primary w-full justify-center" data-send-btn>
                         Send to {{ $subscribers->count() }} Subscriber(s)
                     </button>
                 </form>
@@ -119,4 +135,34 @@
             </div>
         </div>
     </div>
+<script>
+(function () {
+    const totalCount = {{ $subscribers->count() }};
+    const form        = document.querySelector('[data-newsletter-form]');
+    const btn         = form.querySelector('[data-send-btn]');
+    const radios      = form.querySelectorAll('[data-send-toggle]');
+    const listWrap    = form.querySelector('[data-recipients-list]');
+
+    function updateBtn() {
+        const mode = form.querySelector('[data-send-toggle]:checked')?.value;
+        if (mode === 'selected') {
+            const checked = listWrap.querySelectorAll('input[type="checkbox"]:checked').length;
+            btn.textContent = checked > 0
+                ? `Send to ${checked} Recipient(s)`
+                : 'Select at least one recipient';
+        } else {
+            btn.textContent = `Send to ${totalCount} Subscriber(s)`;
+        }
+    }
+
+    // Toggle recipient list visibility
+    radios.forEach(r => r.addEventListener('change', () => {
+        listWrap.classList.toggle('hidden', r.value !== 'selected' || !form.querySelector('[value="selected"]').checked);
+        updateBtn();
+    }));
+
+    // Update count as checkboxes change
+    listWrap.addEventListener('change', updateBtn);
+})();
+</script>
 </x-layouts.admin>

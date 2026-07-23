@@ -81,10 +81,6 @@
                 <x-portal-icon name="sun" class="h-4 w-4" />
             </span>
         </span>
-        <span class="theme-toggle-copy">
-            <span class="theme-toggle-kicker">Appearance</span>
-            <span class="theme-toggle-label" data-theme-label>Dark Mode</span>
-        </span>
     </button>
 </body>
 </html>

@@ -17,7 +17,6 @@
                 Back to Projects
             </a>
             <div class="mb-3 flex flex-wrap items-center gap-3">
-                <span class="section-label mb-0">{{ $project->category }}</span>
                 <x-status-badge :value="$project->status" />
             </div>
             <h1 class="font-display text-4xl font-bold md:text-5xl lg:text-6xl">{{ $project->title }}</h1>
@@ -44,17 +43,6 @@
                         </div>
                     @endif
 
-                    @if (!empty($project->highlights))
-                        <div class="grid grid-cols-2 gap-4 md:grid-cols-4">
-                            @foreach ($project->highlights as $highlight)
-                                <div class="luxury-card text-center">
-                                    <p class="font-display text-2xl font-bold text-primary">{{ $highlight['value'] }}</p>
-                                    <p class="mt-1 text-xs uppercase tracking-wider text-muted-foreground">{{ $highlight['label'] }}</p>
-                                </div>
-                            @endforeach
-                        </div>
-                    @endif
-
                     @if (!empty($project->features))
                         <div>
                             <h2 class="mb-6 font-display text-2xl font-semibold">Features and Amenities</h2>
@@ -69,15 +57,29 @@
                         </div>
                     @endif
 
+                    @php
+                        if ($project->status === 'completed') {
+                            $computedProgress = 100;
+                        } elseif ($project->launch_date && $project->completion_date) {
+                            $start = $project->launch_date->timestamp;
+                            $end   = $project->completion_date->timestamp;
+                            $now   = now()->timestamp;
+                            $computedProgress = $end > $start
+                                ? (int) min(99, max(0, round(($now - $start) / ($end - $start) * 100)))
+                                : $project->progress;
+                        } else {
+                            $computedProgress = $project->progress;
+                        }
+                    @endphp
                     <div>
                         <h2 class="mb-6 font-display text-2xl font-semibold">Construction Progress</h2>
                         <div class="mb-6">
                             <div class="mb-2 flex items-center justify-between text-sm">
                                 <span class="text-muted-foreground">Overall Completion</span>
-                                <span class="font-semibold text-primary">{{ $project->progress }}%</span>
+                                <span class="font-semibold text-primary">{{ $computedProgress }}%</span>
                             </div>
                             <div class="h-2 overflow-hidden rounded-full bg-muted">
-                                <div class="h-full rounded-full bg-primary transition-all duration-1000" style="width: {{ $project->progress }}%"></div>
+                                <div class="h-full rounded-full bg-primary transition-all duration-1000" style="width: {{ $computedProgress }}%"></div>
                             </div>
                         </div>
                         <div class="space-y-0">
@@ -180,18 +182,13 @@
                             </div>
                             <div class="luxury-divider"></div>
                             <div class="flex justify-between gap-2">
-                                <span class="text-muted-foreground">Category</span>
-                                <span class="font-medium">{{ $project->category }}</span>
-                            </div>
-                            <div class="luxury-divider"></div>
-                            <div class="flex justify-between gap-2">
                                 <span class="text-muted-foreground">Status</span>
                                 <span class="font-medium text-primary">{{ str($project->status)->title() }}</span>
                             </div>
                             <div class="luxury-divider"></div>
                             <div class="flex justify-between gap-2">
                                 <span class="text-muted-foreground">Progress</span>
-                                <span class="font-medium">{{ $project->progress }}%</span>
+                                <span class="font-medium">{{ $computedProgress }}%</span>
                             </div>
                             @if ($project->total_units)
                                 <div class="luxury-divider"></div>
@@ -214,21 +211,39 @@
                                     <span class="text-right font-medium">{{ $project->built_area }}</span>
                                 </div>
                             @endif
-                            @if ($project->price_from)
-                                <div class="luxury-divider"></div>
-                                <div class="flex justify-between gap-2">
-                                    <span class="text-muted-foreground">Price From</span>
-                                    <span class="font-medium text-primary">NGN {{ number_format($project->price_from) }}</span>
-                                </div>
-                            @endif
                         </div>
                         <a href="{{ route('contact') }}" class="luxury-btn-primary w-full justify-center text-xs">
                             Inquire Now
                             <svg class="ml-1.5 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
                         </a>
                         <div class="mt-3 flex gap-3">
-                            <a href="{{ route('contact') }}" class="luxury-btn-outline flex-1 justify-center py-2 text-xs">Brochure</a>
-                            <a href="{{ route('contact') }}" class="luxury-btn-outline flex-1 justify-center py-2 text-xs">Share</a>
+                            @if ($project->brochure_path)
+                                <a href="{{ asset('storage/'.$project->brochure_path) }}" target="_blank" download class="luxury-btn-outline flex-1 justify-center py-2 text-xs">
+                                    <svg class="mr-1.5 h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg>
+                                    Brochure
+                                </a>
+                            @endif
+                            <button type="button" onclick="shareProject()" class="luxury-btn-outline flex-1 justify-center py-2 text-xs" id="share-btn">
+                                <svg class="mr-1.5 h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.933-2.185 2.25 2.25 0 00-3.933 2.185z"/></svg>
+                                Share
+                            </button>
+                            <script>
+                            function shareProject() {
+                                const url  = '{{ route('projects.show', $project->slug) }}';
+                                const title = '{{ addslashes($project->title) }} — Rockmould Limited';
+                                const text  = '{{ addslashes($project->location) }}';
+                                if (navigator.share) {
+                                    navigator.share({ title, text, url }).catch(() => {});
+                                } else {
+                                    navigator.clipboard.writeText(url).then(function() {
+                                        const btn = document.getElementById('share-btn');
+                                        const orig = btn.innerHTML;
+                                        btn.textContent = 'Link Copied!';
+                                        setTimeout(() => { btn.innerHTML = orig; }, 2000);
+                                    });
+                                }
+                            }
+                            </script>
                         </div>
                     </div>
 
@@ -260,83 +275,13 @@
         </div>
     </section>
 
-    @php
-        $visibleUpdates = $project->updates->where('visible_to_client', true)->sortBy('update_date');
-    @endphp
-    @if ($visibleUpdates->isNotEmpty())
-        <section class="section-padding bg-card">
-            <div class="container-luxury">
-                <x-section-heading
-                    label="Live Updates"
-                    title="Construction Progress"
-                />
-                <div class="relative ml-5 border-l-2 border-primary/20 pl-8 md:ml-6 md:pl-10">
-                    @foreach ($visibleUpdates as $update)
-                        @php
-                            $attachments = is_array($update->attachments) ? $update->attachments : [];
-                            $hasMedia = count($attachments) > 0;
-                        @endphp
-                        <div class="reveal relative mb-14 last:mb-0">
-                            <div class="absolute -left-[2.85rem] top-0 flex h-6 w-6 items-center justify-center rounded-full border-2 border-primary bg-card md:-left-[3.35rem]">
-                                <div class="h-2.5 w-2.5 rounded-full bg-primary"></div>
-                            </div>
-
-                            <div class="flex flex-wrap items-center gap-3 text-xs">
-                                @if ($update->update_date)
-                                    <span class="rounded-full bg-primary/10 px-3 py-1 font-medium text-primary">{{ $update->update_date->format('F j, Y') }}</span>
-                                @endif
-                                @if ($update->progress)
-                                    <span class="text-muted-foreground">{{ $update->progress }}%</span>
-                                @endif
-                            </div>
-
-                            <h4 class="mt-2 font-display text-lg font-semibold">{{ $update->title }}</h4>
-
-                            @if ($update->body)
-                                <p class="mt-1 text-sm leading-relaxed text-muted-foreground line-clamp-2">{{ $update->body }}</p>
-                            @endif
-
-                            @if ($hasMedia)
-                                @if (count($attachments) === 1)
-                                    @php
-                                        $att = $attachments[0];
-                                        $isVid = str_contains((string) $att, '.mp4') || str_contains((string) $att, '.webm') || str_contains((string) $att, '.mov');
-                                    @endphp
-                                    <div class="mt-4 max-w-2xl overflow-hidden rounded-xl border border-border">
-                                        @if ($isVid)
-                                            <video controls class="aspect-video w-full object-cover"><source src="{{ asset($att) }}"></video>
-                                        @else
-                                            <x-media :path="$att" alt="{{ $update->title }}" class="aspect-[16/9] w-full object-cover" />
-                                        @endif
-                                    </div>
-                                @else
-                                    <div class="mt-4 grid gap-3 grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-                                        @foreach ($attachments as $att)
-                                            @php($isVid = str_contains((string) $att, '.mp4') || str_contains((string) $att, '.webm') || str_contains((string) $att, '.mov'))
-                                            <div class="overflow-hidden rounded-xl border border-border">
-                                                @if ($isVid)
-                                                    <video controls class="aspect-video w-full object-cover"><source src="{{ asset($att) }}"></video>
-                                                @else
-                                                    <x-media :path="$att" alt="{{ $update->title }}" class="aspect-video w-full object-cover" />
-                                                @endif
-                                            </div>
-                                        @endforeach
-                                    </div>
-                                @endif
-                            @endif
-
-                            @if ($update->progress)
-                                <div class="mt-3 max-w-sm">
-                                    <div class="h-1.5 w-full overflow-hidden rounded-full bg-muted">
-                                        <div class="h-full rounded-full bg-primary" style="width: {{ $update->progress }}%"></div>
-                                    </div>
-                                </div>
-                            @endif
-                        </div>
-                    @endforeach
-                </div>
-            </div>
-        </section>
+    @if ($project->updates->where('visible_to_client', true)->isNotEmpty())
+        <div class="container-luxury py-6 text-center">
+            <a href="{{ route('portal.login') }}" class="luxury-btn-primary inline-flex items-center gap-2">
+                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"/></svg>
+                View Live Updates
+            </a>
+        </div>
     @endif
 
     @if ($relatedProjects->isNotEmpty())

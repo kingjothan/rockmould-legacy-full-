@@ -12,21 +12,7 @@
     <section class="section-padding">
         <div class="container-luxury">
             <form method="GET" class="mb-12 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-                <div>
-                    <label class="admin-label">Project Type</label>
-                    <div class="flex flex-wrap gap-2">
-                        @php($activeType = $filters['type'] ?? 'all')
-                        @foreach (['all' => 'All', 'attas-residence' => 'Attas Residence', 'regent-residence' => 'Regent Residence', 'meridian-residence' => 'Meridian Residence', 'grove-residence' => 'Grove Residence'] as $value => $label)
-                            <button
-                                type="submit"
-                                name="type"
-                                value="{{ $value === 'all' ? '' : $value }}"
-                                class="filter-pill {{ ($value === 'all' && !filled($filters['type'] ?? null)) || $activeType === $value ? 'filter-pill-active' : 'filter-pill-inactive' }}"
-                            >{{ $label }}</button>
-                        @endforeach
-                    </div>
-                </div>
-                <div class="flex flex-wrap items-end gap-3">
+<div class="flex flex-wrap items-end gap-3">
                     <div>
                         <label class="admin-label">Search</label>
                         <input type="search" name="q" value="{{ $filters['q'] ?? '' }}" placeholder="Search projects..." class="input-shell lg:w-52">
@@ -70,7 +56,6 @@
                             </div>
                             <div class="min-w-0 flex-1">
                                 <div class="mb-1.5 flex flex-wrap items-center gap-3">
-                                    <span class="section-label mb-0">{{ $project->category }}</span>
                                     <x-status-badge :value="$project->status" />
                                 </div>
                                 <h3 class="truncate font-display text-lg font-semibold transition-colors group-hover:text-primary">{{ $project->title }}</h3>

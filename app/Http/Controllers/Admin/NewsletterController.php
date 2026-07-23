@@ -10,6 +10,7 @@ use App\Support\SiteData;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class NewsletterController extends Controller
@@ -36,6 +37,9 @@ class NewsletterController extends Controller
             'video_urls' => ['nullable', 'string'],
             'video_uploads' => ['nullable', 'array'],
             'video_uploads.*' => ['file', 'max:204800', 'mimes:mp4,webm,mov,ogg'],
+            'document_urls' => ['nullable', 'string'],
+            'document_uploads' => ['nullable', 'array'],
+            'document_uploads.*' => ['file', 'max:51200', 'mimes:pdf,doc,docx,xls,xlsx,ppt,pptx'],
         ]);
 
         if ($data['send_to'] === 'selected' && !empty($data['recipients'])) {
@@ -55,8 +59,11 @@ class NewsletterController extends Controller
                 if ($url) $imageUrls[] = $url;
             }
         }
+        // Use site_public disk so files land in public_html/storage (directly web-accessible on cPanel)
+        $disk = 'site_public';
+
         foreach ($request->file('image_uploads', []) as $file) {
-            $path = $file->store('newsletter', 'public');
+            $path = $file->store('newsletter', $disk);
             $imageUrls[] = asset('storage/'.$path);
         }
 
@@ -68,8 +75,26 @@ class NewsletterController extends Controller
             }
         }
         foreach ($request->file('video_uploads', []) as $file) {
-            $path = $file->store('newsletter', 'public');
+            $path = $file->store('newsletter', $disk);
             $videoUrls[] = asset('storage/'.$path);
+        }
+
+        // Documents: attached to email AND shown as download buttons in email body
+        $documentLinks = [];
+        $documentPaths = [];
+        if (!empty($data['document_urls'])) {
+            foreach (preg_split('/\r?\n/', $data['document_urls']) as $url) {
+                $url = trim($url);
+                if ($url) {
+                    $documentLinks[] = ['name' => basename(parse_url($url, PHP_URL_PATH)) ?: $url, 'url' => $url];
+                }
+            }
+        }
+        foreach ($request->file('document_uploads', []) as $file) {
+            $originalName = $file->getClientOriginalName();
+            $path = $file->storeAs('newsletter/docs', $originalName, $disk);
+            $documentPaths[] = ['path' => Storage::disk($disk)->path('newsletter/docs/'.$originalName), 'name' => $originalName];
+            $documentLinks[] = ['name' => $originalName, 'url' => asset('storage/newsletter/docs/'.rawurlencode($originalName))];
         }
 
         $company = SiteData::company();
@@ -86,10 +111,13 @@ class NewsletterController extends Controller
                     $unsubscribeEmail,
                     $imageUrls,
                     $videoUrls,
+                    $documentLinks,
+                    $documentPaths,
                 ));
                 $sent++;
             } catch (\Throwable $e) {
                 $failed++;
+                \Log::error('Newsletter send failed to '.$subscriber->email.': '.$e->getMessage());
             }
         }
 

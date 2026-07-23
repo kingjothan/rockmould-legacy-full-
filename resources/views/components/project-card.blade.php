@@ -12,8 +12,7 @@
         </div>
     </div>
     <div class="flex flex-1 flex-col p-6">
-        <p class="mb-2 text-[11px] uppercase tracking-[0.2em] text-primary">{{ $project->category }}</p>
-        <h3 class="font-display text-xl font-semibold transition-colors duration-300 group-hover:text-primary">{{ $project->title }}</h3>
+<h3 class="font-display text-xl font-semibold transition-colors duration-300 group-hover:text-primary">{{ $project->title }}</h3>
         <div class="mt-2 flex items-center gap-2 text-sm text-muted-foreground">
             <span aria-hidden="true" class="text-primary/60">&middot;</span>
             <span>{{ $project->location }}</span>

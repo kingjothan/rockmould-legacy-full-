@@ -16,6 +16,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
@@ -274,6 +275,7 @@ class ProjectController extends Controller
             'description' => ['nullable', 'string'],
             'cover_image' => ['nullable', 'string', 'max:2048'],
             'cover_image_upload' => ['nullable', 'file', 'max:204800', 'mimes:jpg,jpeg,png,webp,gif,mp4,webm,mov,ogg'],
+            'brochure_upload' => ['nullable', 'file', 'max:51200', 'mimes:pdf'],
             'progress' => ['required', 'integer', 'min:0', 'max:100'],
             'budget' => ['nullable', 'numeric', 'min:0'],
             'price_from' => ['nullable', 'numeric', 'min:0'],
@@ -305,6 +307,7 @@ class ProjectController extends Controller
         $data = $request->validate($rules);
 
         $coverImage = $this->syncMediaInput($request, 'cover_image', 'cover_image_upload', 'projects/covers', $project?->cover_image, 'remove_cover_image');
+        $brochurePath = $this->syncBrochureUpload($request, $project?->brochure_path);
 
         return [
             'title' => $data['title'],
@@ -315,6 +318,7 @@ class ProjectController extends Controller
             'overview' => $data['overview'],
             'description' => $data['description'] ?? null,
             'cover_image' => $coverImage,
+            'brochure_path' => $brochurePath,
             'progress' => $data['progress'],
             'budget' => $data['budget'] ?? null,
             'price_from' => $data['price_from'] ?? null,
@@ -482,6 +486,28 @@ class ProjectController extends Controller
         $extension = strtolower(pathinfo((string) parse_url($path, PHP_URL_PATH), PATHINFO_EXTENSION));
 
         return in_array($extension, ['mp4', 'webm', 'mov', 'ogg'], true) ? 'video' : 'image';
+    }
+
+    private function syncBrochureUpload(Request $request, ?string $current): ?string
+    {
+        if ($request->hasFile('brochure_upload')) {
+            $file = $request->file('brochure_upload');
+            $name = Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)).'.pdf';
+            $path = $file->storeAs('projects/brochures', $name, 'site_public');
+            if ($current && $current !== $path) {
+                Storage::disk('site_public')->delete($current);
+            }
+            return $path;
+        }
+
+        if ($request->boolean('remove_brochure')) {
+            if ($current) {
+                Storage::disk('site_public')->delete($current);
+            }
+            return null;
+        }
+
+        return $current;
     }
 
     private function syncMediaInput(Request $request, string $pathField, string $fileField, string $directory, ?string $currentPath = null, ?string $removeField = null): ?string
