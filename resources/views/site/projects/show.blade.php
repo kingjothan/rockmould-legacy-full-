@@ -28,87 +28,8 @@
     </section>
 
     @php
-        $navTabs = [];
-        if (($publicMedia ?? collect())->isNotEmpty()) {
-            foreach ($gallerySections as $sectionKey => $sectionLabel) {
-                $sectionMediaCheck = $publicMediaSections[$sectionKey] ?? collect();
-                if ($sectionMediaCheck->isNotEmpty()) {
-                    $navTabs[$sectionKey] = $sectionLabel;
-                }
-            }
-        } elseif (!empty($project->gallery)) {
-            $navTabs['gallery'] = 'Gallery';
-        }
         $hasLiveUpdates = $project->updates->where('visible_to_client', true)->isNotEmpty();
     @endphp
-
-    @if (count($navTabs) > 0 || $hasLiveUpdates)
-        <div class="sticky top-[64px] z-40 border-b border-border bg-background/90 backdrop-blur-md">
-            <div class="container-luxury">
-                <div class="flex items-center gap-1 overflow-x-auto py-3 scrollbar-hide">
-                    @foreach ($navTabs as $key => $label)
-                        <button
-                            type="button"
-                            data-section-tab="{{ $key }}"
-                            onclick="scrollToSection('{{ $key }}')"
-                            class="section-tab-pill shrink-0 rounded-full border border-border px-4 py-1.5 text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground transition-all duration-200 hover:border-primary/40 hover:text-primary"
-                        >{{ $label }}</button>
-                    @endforeach
-                    @if ($hasLiveUpdates)
-                        <a
-                            href="{{ route('portal.login') }}"
-                            class="shrink-0 inline-flex items-center gap-1.5 rounded-full border border-primary/30 px-4 py-1.5 text-xs font-medium uppercase tracking-[0.16em] text-primary transition-all duration-200 hover:border-primary hover:bg-primary/10"
-                        >
-                            <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"/></svg>
-                            Live Updates
-                        </a>
-                    @endif
-                </div>
-            </div>
-        </div>
-        <script>
-        function scrollToSection(key) {
-            const el = document.getElementById('gallery-section-' + key);
-            if (!el) return;
-            const offset = 120;
-            const top = el.getBoundingClientRect().top + window.scrollY - offset;
-            window.scrollTo({ top, behavior: 'smooth' });
-        }
-
-        (function () {
-            const tabs = document.querySelectorAll('[data-section-tab]');
-            if (!tabs.length) return;
-
-            const sections = Array.from(tabs).map(t => ({
-                key: t.dataset.sectionTab,
-                el: document.getElementById('gallery-section-' + t.dataset.sectionTab),
-                tab: t,
-            })).filter(s => s.el);
-
-            const activate = (key) => {
-                tabs.forEach(t => {
-                    const active = t.dataset.sectionTab === key;
-                    t.classList.toggle('border-primary', active);
-                    t.classList.toggle('bg-primary/10', active);
-                    t.classList.toggle('text-primary', active);
-                    t.classList.toggle('border-border', !active);
-                    t.classList.toggle('text-muted-foreground', !active);
-                });
-            };
-
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) activate(entry.target.dataset.sectionId);
-                });
-            }, { rootMargin: '-30% 0px -60% 0px', threshold: 0 });
-
-            sections.forEach(s => {
-                s.el.dataset.sectionId = s.key;
-                observer.observe(s.el);
-            });
-        })();
-        </script>
-    @endif
 
     <section class="section-padding">
         <div class="container-luxury">
@@ -185,72 +106,109 @@
                         </div>
                     </div>
 
-                    @if (($publicMedia ?? collect())->isNotEmpty())
+                    @php
+                        $mediaTabs = [];
+                        if (($publicMedia ?? collect())->isNotEmpty()) {
+                            foreach ($gallerySections as $sectionKey => $sectionLabel) {
+                                $sm = $publicMediaSections[$sectionKey] ?? collect();
+                                if ($sm->isNotEmpty()) $mediaTabs[$sectionKey] = ['label' => $sectionLabel, 'media' => $sm];
+                            }
+                        }
+                        $hasLegacyGallery = empty($mediaTabs) && !empty($project->gallery);
+                    @endphp
+
+                    @if (!empty($mediaTabs) || $hasLegacyGallery || $hasLiveUpdates)
                         <div>
-                            <h2 class="mb-6 font-display text-2xl font-semibold">Project Media</h2>
-                            <div class="space-y-8">
-                                @foreach ($gallerySections as $sectionKey => $sectionLabel)
-                                    @php
-                                        $sectionMedia = $publicMediaSections[$sectionKey] ?? collect();
-                                    @endphp
+                            <h2 class="mb-5 font-display text-2xl font-semibold">Project Media</h2>
 
-                                    @continue($sectionMedia->isEmpty())
+                            {{-- Tab pills --}}
+                            <div class="mb-6 flex flex-wrap items-center gap-2">
+                                @foreach ($mediaTabs as $key => $tab)
+                                    <button
+                                        type="button"
+                                        data-media-tab="{{ $key }}"
+                                        class="media-tab-pill rounded-full border border-border px-4 py-1.5 text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground transition-all duration-200 hover:border-primary/40 hover:text-primary"
+                                    >{{ $tab['label'] }}</button>
+                                @endforeach
+                                @if ($hasLegacyGallery)
+                                    <button type="button" data-media-tab="legacy" class="media-tab-pill rounded-full border border-border px-4 py-1.5 text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground transition-all duration-200 hover:border-primary/40 hover:text-primary">Gallery</button>
+                                @endif
+                                @if ($hasLiveUpdates)
+                                    <a href="{{ route('portal.login') }}" class="inline-flex items-center gap-1.5 rounded-full border border-primary/30 px-4 py-1.5 text-xs font-medium uppercase tracking-[0.16em] text-primary transition-all duration-200 hover:border-primary hover:bg-primary/10">
+                                        <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"/></svg>
+                                        Live Updates
+                                    </a>
+                                @endif
+                            </div>
 
-                                    <div id="gallery-section-{{ $sectionKey }}" class="space-y-4 scroll-mt-32">
-                                        <div class="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
-                                            <div>
-                                                <span class="section-label mb-2">{{ $sectionLabel }}</span>
-                                                <h3 class="font-display text-xl font-semibold">
-                                                    {{ $sectionKey === \App\Models\MediaAsset::SECTION_GENERAL ? 'Gallery' : $sectionLabel.' Gallery' }}
-                                                </h3>
-                                            </div>
-                                            <p class="max-w-2xl text-sm text-muted-foreground">{{ $sectionDescriptions[$sectionKey] ?? 'Curated visuals from the project.' }}</p>
-                                        </div>
-
-                                        <div class="grid grid-cols-2 gap-3 md:grid-cols-4">
-                                            @foreach ($sectionMedia as $asset)
-                                                @php
-                                                    $isVideoAsset = $asset->media_type === 'video';
-                                                    $previewPath = $isVideoAsset ? $asset->file_path : ($asset->thumbnail_path ?: $asset->file_path);
-                                                @endphp
-                                                @if ($isVideoAsset && $asset->file_url)
-                                                    <a href="{{ $asset->file_url }}" data-video-lightbox-trigger data-video-src="{{ $asset->file_url }}" data-video-title="{{ $asset->title }}" aria-label="{{ $asset->title }}" class="group gallery-item aspect-square border border-border bg-card">
-                                                @elseif ($asset->file_url)
-                                                    <a href="{{ $asset->file_url }}" data-image-lightbox-trigger data-image-src="{{ $asset->file_url }}" data-image-title="{{ $asset->title }}" aria-label="{{ $asset->title }}" class="group gallery-item aspect-square border border-border bg-card">
-                                                @else
-                                                    <a href="#" aria-label="{{ $asset->title }}" class="group gallery-item aspect-square border border-border bg-card">
-                                                @endif
-                                                    <x-media
-                                                        :path="$previewPath"
-                                                        fallback="images/project-1.jpg"
-                                                        alt="{{ $asset->title }}"
-                                                        class="h-full w-full object-cover"
-                                                        :loop="false"
-                                                    />
-                                                    <div class="gallery-item-overlay">
-                                                        <div class="flex h-10 w-10 items-center justify-center rounded-full bg-black/55 opacity-0 transition duration-300 group-hover:opacity-100">
-                                                            <x-portal-icon :name="$asset->media_type === 'video' ? 'video' : 'eye'" class="h-4 w-4 text-white" />
-                                                        </div>
+                            {{-- Section panels (hidden until tab clicked) --}}
+                            @foreach ($mediaTabs as $key => $tab)
+                                <div data-media-panel="{{ $key }}" class="hidden">
+                                    <p class="mb-4 text-sm text-muted-foreground">{{ $sectionDescriptions[$key] ?? '' }}</p>
+                                    <div class="grid grid-cols-2 gap-3 md:grid-cols-4">
+                                        @foreach ($tab['media'] as $asset)
+                                            @php
+                                                $isVideoAsset = $asset->media_type === 'video';
+                                                $previewPath = $isVideoAsset ? $asset->file_path : ($asset->thumbnail_path ?: $asset->file_path);
+                                            @endphp
+                                            @if ($isVideoAsset && $asset->file_url)
+                                                <a href="{{ $asset->file_url }}" data-video-lightbox-trigger data-video-src="{{ $asset->file_url }}" data-video-title="{{ $asset->title }}" aria-label="{{ $asset->title }}" class="group gallery-item aspect-square border border-border bg-card">
+                                            @elseif ($asset->file_url)
+                                                <a href="{{ $asset->file_url }}" data-image-lightbox-trigger data-image-src="{{ $asset->file_url }}" data-image-title="{{ $asset->title }}" aria-label="{{ $asset->title }}" class="group gallery-item aspect-square border border-border bg-card">
+                                            @else
+                                                <a href="#" aria-label="{{ $asset->title }}" class="group gallery-item aspect-square border border-border bg-card">
+                                            @endif
+                                                <x-media :path="$previewPath" fallback="images/project-1.jpg" alt="{{ $asset->title }}" class="h-full w-full object-cover" :loop="false" />
+                                                <div class="gallery-item-overlay">
+                                                    <div class="flex h-10 w-10 items-center justify-center rounded-full bg-black/55 opacity-0 transition duration-300 group-hover:opacity-100">
+                                                        <x-portal-icon :name="$asset->media_type === 'video' ? 'video' : 'eye'" class="h-4 w-4 text-white" />
                                                     </div>
-                                                    <span class="sr-only">{{ $asset->title }}</span>
-                                                </a>
-                                            @endforeach
-                                        </div>
+                                                </div>
+                                                <span class="sr-only">{{ $asset->title }}</span>
+                                            </a>
+                                        @endforeach
                                     </div>
-                                @endforeach
-                            </div>
-                        </div>
-                    @elseif (!empty($project->gallery))
-                        <div id="gallery-section-gallery" class="scroll-mt-32">
-                            <h2 class="mb-6 font-display text-2xl font-semibold">Gallery</h2>
-                            <div class="grid grid-cols-2 gap-3 md:grid-cols-4">
-                                @foreach ($project->gallery as $image)
-                                    <div class="gallery-item aspect-square">
-                                        <x-media :path="$image" fallback="images/project-1.jpg" alt="{{ $project->title }}" class="h-full w-full object-cover" />
-                                        <div class="gallery-item-overlay"></div>
+                                </div>
+                            @endforeach
+
+                            @if ($hasLegacyGallery)
+                                <div data-media-panel="legacy" class="hidden">
+                                    <div class="grid grid-cols-2 gap-3 md:grid-cols-4">
+                                        @foreach ($project->gallery as $image)
+                                            <div class="gallery-item aspect-square">
+                                                <x-media :path="$image" fallback="images/project-1.jpg" alt="{{ $project->title }}" class="h-full w-full object-cover" />
+                                                <div class="gallery-item-overlay"></div>
+                                            </div>
+                                        @endforeach
                                     </div>
-                                @endforeach
-                            </div>
+                                </div>
+                            @endif
+
+                            <script>
+                            (function () {
+                                const tabs = document.querySelectorAll('[data-media-tab]');
+                                const panels = document.querySelectorAll('[data-media-panel]');
+
+                                tabs.forEach(tab => {
+                                    tab.addEventListener('click', () => {
+                                        const key = tab.dataset.mediaTab;
+
+                                        tabs.forEach(t => {
+                                            const active = t.dataset.mediaTab === key;
+                                            t.classList.toggle('border-primary', active);
+                                            t.classList.toggle('bg-primary/10', active);
+                                            t.classList.toggle('text-primary', active);
+                                            t.classList.toggle('border-border', !active);
+                                            t.classList.toggle('text-muted-foreground', !active);
+                                        });
+
+                                        panels.forEach(p => {
+                                            p.classList.toggle('hidden', p.dataset.mediaPanel !== key);
+                                        });
+                                    });
+                                });
+                            })();
+                            </script>
                         </div>
                     @endif
                 </div>
@@ -358,14 +316,6 @@
         </div>
     </section>
 
-    @if ($project->updates->where('visible_to_client', true)->isNotEmpty())
-        <div class="container-luxury py-6 text-center">
-            <a href="{{ route('portal.login') }}" class="luxury-btn-primary inline-flex items-center gap-2">
-                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"/></svg>
-                View Live Updates
-            </a>
-        </div>
-    @endif
 
     @if ($relatedProjects->isNotEmpty())
         <section class="section-padding bg-card">
