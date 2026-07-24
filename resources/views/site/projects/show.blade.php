@@ -189,24 +189,27 @@
                                 const tabs = document.querySelectorAll('[data-media-tab]');
                                 const panels = document.querySelectorAll('[data-media-panel]');
 
-                                tabs.forEach(tab => {
-                                    tab.addEventListener('click', () => {
-                                        const key = tab.dataset.mediaTab;
-
-                                        tabs.forEach(t => {
-                                            const active = t.dataset.mediaTab === key;
-                                            t.classList.toggle('border-primary', active);
-                                            t.classList.toggle('bg-primary/10', active);
-                                            t.classList.toggle('text-primary', active);
-                                            t.classList.toggle('border-border', !active);
-                                            t.classList.toggle('text-muted-foreground', !active);
-                                        });
-
-                                        panels.forEach(p => {
-                                            p.classList.toggle('hidden', p.dataset.mediaPanel !== key);
-                                        });
+                                const activate = (key) => {
+                                    tabs.forEach(t => {
+                                        const active = t.dataset.mediaTab === key;
+                                        t.classList.toggle('border-primary', active);
+                                        t.classList.toggle('bg-primary/10', active);
+                                        t.classList.toggle('text-primary', active);
+                                        t.classList.toggle('border-border', !active);
+                                        t.classList.toggle('text-muted-foreground', !active);
                                     });
+                                    panels.forEach(p => {
+                                        p.classList.toggle('hidden', p.dataset.mediaPanel !== key);
+                                    });
+                                };
+
+                                tabs.forEach(tab => {
+                                    tab.addEventListener('click', () => activate(tab.dataset.mediaTab));
                                 });
+
+                                // Auto-open first tab on load
+                                const firstTab = Array.from(tabs).find(t => t.dataset.mediaTab);
+                                if (firstTab) activate(firstTab.dataset.mediaTab);
                             })();
                             </script>
                         </div>
