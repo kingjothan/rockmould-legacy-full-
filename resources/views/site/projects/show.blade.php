@@ -4,6 +4,7 @@
             'exterior' => 'Site photography, building facades, landscape progress, and arrival moments.',
             'interior' => 'Lobbies, living spaces, amenities, and fit-out details from within the project.',
             'general' => 'Complete media gallery for this project, including mixed updates and supporting visuals.',
+            'floor-plan' => 'Detailed floor plans and layout drawings for this project.',
         ];
         $projectTimeline = $project->timelineMilestones();
     @endphp

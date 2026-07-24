@@ -22,7 +22,7 @@ class MediaAsset extends Model
 
     public const SECTION_GENERAL = 'general';
 
-    public const SECTION_LIVE_UPDATES = 'live-updates';
+    public const SECTION_LIVE_UPDATES = 'floor-plan';
 
     protected $guarded = [];
 
@@ -110,7 +110,7 @@ class MediaAsset extends Model
             self::SECTION_EXTERIOR => 'Exterior',
             self::SECTION_INTERIOR => 'Interior',
             self::SECTION_GENERAL => 'Gallery',
-            self::SECTION_LIVE_UPDATES => 'Live Updates',
+            self::SECTION_LIVE_UPDATES => 'Floor Plan',
         ];
     }
 
