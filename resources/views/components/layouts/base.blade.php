@@ -29,22 +29,7 @@
     @if (file_exists(public_path('fonts/gotham-bold.woff2')))
         <link rel="preload" href="{{ asset('fonts/gotham-bold.woff2') }}" as="font" type="font/woff2" crossorigin>
     @endif
-    <script>
-        (() => {
-            try {
-                const storedTheme = window.localStorage.getItem('rockmould-theme');
-                const theme = storedTheme === 'light' || storedTheme === 'dark'
-                    ? storedTheme
-                    : 'dark';
-
-                document.documentElement.dataset.theme = theme;
-                document.documentElement.style.colorScheme = theme;
-            } catch (error) {
-                document.documentElement.dataset.theme = 'dark';
-                document.documentElement.style.colorScheme = 'dark';
-            }
-        })();
-    </script>
+    <script>document.documentElement.dataset.theme='dark';document.documentElement.style.colorScheme='dark';</script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="{{ $attributes->get('body-class', '') }}">
@@ -66,21 +51,5 @@
 
     {{ $slot }}
 
-    <button
-        type="button"
-        class="theme-toggle"
-        data-theme-toggle
-        aria-pressed="false"
-        aria-label="Switch to light theme"
-    >
-        <span class="theme-toggle-icon-shell" aria-hidden="true">
-            <span class="theme-toggle-icon" data-theme-icon="dark">
-                <x-portal-icon name="moon" class="h-4 w-4" />
-            </span>
-            <span class="theme-toggle-icon" data-theme-icon="light">
-                <x-portal-icon name="sun" class="h-4 w-4" />
-            </span>
-        </span>
-    </button>
 </body>
 </html>

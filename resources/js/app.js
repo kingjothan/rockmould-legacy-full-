@@ -21,61 +21,6 @@ document.addEventListener('change', (event) => {
 });
 
 document.addEventListener('DOMContentLoaded', () => {
-    const root = document.documentElement;
-    const themeToggles = document.querySelectorAll('[data-theme-toggle]');
-    const themeStorageKey = 'rockmould-theme';
-
-    const getStoredTheme = () => {
-        try {
-            const theme = window.localStorage.getItem(themeStorageKey);
-            return theme === 'light' || theme === 'dark' ? theme : null;
-        } catch {
-            return null;
-        }
-    };
-
-    const resolveTheme = () => getStoredTheme() ?? 'dark';
-
-    const syncThemeToggle = (theme) => {
-        themeToggles.forEach((toggle) => {
-            if (!(toggle instanceof HTMLButtonElement)) {
-                return;
-            }
-
-            const isLight = theme === 'light';
-            toggle.setAttribute('aria-pressed', isLight ? 'true' : 'false');
-            toggle.setAttribute('aria-label', isLight ? 'Switch to dark theme' : 'Switch to light theme');
-
-            const label = toggle.querySelector('[data-theme-label]');
-
-            if (label) {
-                label.textContent = isLight ? 'Light Mode' : 'Dark Mode';
-            }
-        });
-    };
-
-    const applyTheme = (theme, persist = false) => {
-        root.dataset.theme = theme;
-        root.style.colorScheme = theme;
-        syncThemeToggle(theme);
-
-        if (persist) {
-            try {
-                window.localStorage.setItem(themeStorageKey, theme);
-            } catch {
-                // Ignore localStorage restrictions.
-            }
-        }
-    };
-
-    applyTheme(resolveTheme());
-
-    themeToggles.forEach((toggle) => {
-        toggle.addEventListener('click', () => {
-            const nextTheme = root.dataset.theme === 'light' ? 'dark' : 'light';
-            applyTheme(nextTheme, true);
-        });
-    });
 
     requestAnimationFrame(() => {
         requestAnimationFrame(() => {

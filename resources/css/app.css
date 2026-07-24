@@ -129,51 +129,6 @@
     --font-body: 'Rockmould Gotham', Montserrat, Arial, sans-serif;
   }
 
-  :root[data-theme='light'] {
-    color-scheme: light;
-    /* Minimalist palette using neutrals and gold. White and light grey create an airy backdrop while dark grey provides comfortable readability. Gold serves as the luxurious accent【322528062014674†L657-L661】【322528062014674†L20-L27】. */
-    --background: 0 0% 100%;
-    --foreground: 0 0% 14%;            /* dark grey text for reduced eye strain【322528062014674†L25-L27】 */
-    --card: 0 0% 98%;
-    --card-foreground: var(--foreground);
-    --popover: var(--background);
-    --popover-foreground: var(--foreground);
-    --primary: 46 65% 52%;
-    --primary-foreground: 0 0% 14%;
-    --secondary: 0 0% 96%;
-    --secondary-foreground: var(--foreground);
-    --muted: var(--secondary);
-    --muted-foreground: var(--foreground);
-    --accent: 0 0% 15%;
-    --accent-foreground: 46 65% 52%;
-    --border: 0 0% 90%;
-    --input: var(--border);
-    --ring: 46 65% 52%;
-    --sidebar-background: var(--background);
-    --sidebar-foreground: var(--foreground);
-    --sidebar-primary: var(--primary);
-    --sidebar-primary-foreground: var(--primary-foreground);
-    --sidebar-accent: var(--secondary);
-    --sidebar-accent-foreground: var(--foreground);
-    --sidebar-border: var(--border);
-    --sidebar-ring: var(--ring);
-    --gold: 46 65% 52%;
-    --gold-light: 46 65% 70%;
-    --gold-dark: 46 65% 35%;
-    --charcoal: var(--secondary);
-    --charcoal-light: var(--border);
-    --ash: var(--foreground);
-    --cream: var(--background);
-    --surface: var(--card);
-    --surface-elevated: var(--background);
-    --surface-overlay: var(--secondary);
-    --gradient-gold: linear-gradient(135deg, hsl(var(--gold)), hsl(var(--gold-light)));
-    --gradient-dark: linear-gradient(180deg, hsl(var(--background)), hsl(var(--secondary)));
-    --gradient-hero: linear-gradient(180deg, hsl(var(--background) / 0) 0%, hsl(var(--background) / 0.08) 42%, hsl(var(--background) / 0.16) 100%);
-    --shadow-card: 0 4px 24px hsl(var(--foreground) / 0.08);
-    --shadow-glow: 0 0 40px hsl(var(--gold) / 0.2);
-    --shadow-glow-strong: 0 0 60px hsl(var(--gold) / 0.3);
-  }
 
   * {
     @apply border-border;
@@ -277,81 +232,6 @@
     opacity: 0.9;
   }
 
-  .theme-toggle {
-    @apply fixed bottom-20 right-5 z-[65] inline-flex items-center gap-2.5 rounded-full border border-border bg-card/90 px-2.5 py-2 text-left text-foreground backdrop-blur-xl transition-all duration-300 md:bottom-24 md:right-8 md:px-3;
-    box-shadow: var(--shadow-card);
-  }
-
-  .theme-toggle:hover {
-    @apply border-primary/35;
-    box-shadow: var(--shadow-glow);
-    transform: translateY(-2px);
-  }
-
-  .theme-toggle:active {
-    transform: translateY(0);
-  }
-
-  .theme-toggle-icon-shell {
-    @apply relative flex h-8 w-8 items-center justify-center overflow-hidden rounded-full border border-border bg-background/70;
-  }
-
-  .theme-toggle-icon-shell::after {
-    content: '';
-    @apply absolute inset-[3px] rounded-full;
-    background: linear-gradient(135deg, hsl(var(--primary) / 0.24), transparent 72%);
-  }
-
-  .theme-toggle-icon {
-    @apply absolute inset-0 flex items-center justify-center text-foreground transition-all duration-300;
-  }
-
-  .theme-toggle-copy {
-    @apply flex min-w-[5.4rem] flex-col;
-  }
-
-  .theme-toggle-kicker {
-    @apply text-[9px] uppercase tracking-[0.22em] text-muted-foreground;
-    font-family: var(--font-subheader);
-  }
-
-  .theme-toggle-label {
-    @apply mt-0.5 text-[13px] font-medium leading-tight text-foreground;
-    font-family: var(--font-subheader);
-  }
-
-  .admin-shell .theme-toggle,
-  .portal-shell .theme-toggle {
-    @apply h-11 w-11 justify-center gap-0 rounded-full p-0 bottom-5 right-5;
-  }
-
-  .admin-shell .theme-toggle-copy,
-  .portal-shell .theme-toggle-copy {
-    display: none;
-  }
-
-  .admin-shell .theme-toggle-icon-shell,
-  .portal-shell .theme-toggle-icon-shell {
-    @apply h-11 w-11 border-0 bg-transparent;
-  }
-
-  @media (max-width: 767px) {
-    .theme-toggle {
-      @apply h-11 w-11 justify-center gap-0 rounded-full p-0;
-    }
-
-    .theme-toggle-copy {
-      display: none;
-    }
-
-    .theme-toggle-icon-shell {
-      @apply h-11 w-11 border-0 bg-transparent;
-    }
-
-    .theme-toggle-icon-shell::after {
-      inset: 4px;
-    }
-  }
 
   .brand-mark {
     @apply relative;
@@ -363,36 +243,6 @@
 
   .brand-mark-image[data-brand-theme='light'] {
     display: none;
-  }
-
-  :root[data-theme='light'] .brand-mark-image[data-brand-theme='dark'] {
-    display: none;
-  }
-
-  :root[data-theme='light'] .brand-mark-image[data-brand-theme='light'] {
-    display: block;
-  }
-
-  :root[data-theme='dark'] .theme-toggle-icon[data-theme-icon='dark'],
-  :root:not([data-theme='light']) .theme-toggle-icon[data-theme-icon='dark'] {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-
-  :root[data-theme='dark'] .theme-toggle-icon[data-theme-icon='light'],
-  :root:not([data-theme='light']) .theme-toggle-icon[data-theme-icon='light'] {
-    opacity: 0;
-    transform: translateY(16px) scale(0.7);
-  }
-
-  :root[data-theme='light'] .theme-toggle-icon[data-theme-icon='light'] {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-
-  :root[data-theme='light'] .theme-toggle-icon[data-theme-icon='dark'] {
-    opacity: 0;
-    transform: translateY(-16px) scale(0.7);
   }
 
   .public-main {
@@ -654,17 +504,6 @@
     border: 1px solid hsl(var(--border));
   }
 
-  :root[data-theme='light'] .status-active {
-    color: hsl(142 71% 28%);
-  }
-
-  :root[data-theme='light'] .status-pending {
-    color: hsl(32 92% 32%);
-  }
-
-  :root[data-theme='light'] .status-completed {
-    color: hsl(46 65% 32%);
-  }
 
   /* ── Hero ───────────────────────────────────────────── */
   .hero-shell {
@@ -695,108 +534,6 @@
     @apply absolute inset-0 bg-background/65;
   }
 
-  :root[data-theme='light'] .hero-soft-overlay {
-    @apply bg-background/15;
-  }
-
-  :root[data-theme='light'] .hero-shell .public-hero-title,
-  :root[data-theme='light'] .hero-shell h1,
-  :root[data-theme='light'] .hero-shell h2 {
-    color: #000000;
-    text-shadow: 0 1px 14px rgba(255, 255, 255, 0.55), 0 1px 3px rgba(255, 255, 255, 0.7);
-  }
-
-  :root[data-theme='light'] .hero-shell p,
-  :root[data-theme='light'] .hero-shell .text-muted-foreground {
-    color: #111111;
-    text-shadow: 0 1px 14px rgba(255, 255, 255, 0.55), 0 1px 3px rgba(255, 255, 255, 0.7);
-  }
-
-  :root[data-theme='light'] .hero-shell .section-label {
-    color: #000000;
-    text-shadow: 0 1px 14px rgba(255, 255, 255, 0.55), 0 1px 3px rgba(255, 255, 255, 0.7);
-  }
-
-  :root[data-theme='light'] .hero-shell a,
-  :root[data-theme='light'] .hero-shell button {
-    filter: drop-shadow(0 2px 6px rgba(255,255,255,0.5));
-  }
-
-  :root[data-theme='light'] .hero-shell .luxury-btn-outline {
-    border-color: rgba(0, 0, 0, 0.25);
-    color: #000000;
-    background: rgba(255, 255, 255, 0.65);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    filter: none;
-  }
-
-  :root[data-theme='light'] .hero-shell .luxury-btn-outline:hover {
-    border-color: rgba(0, 0, 0, 0.4);
-    background: rgba(255, 255, 255, 0.85);
-  }
-
-  :root[data-theme='light'] .hero-shell .luxury-btn-ghost {
-    color: #000000;
-    background: rgba(255, 255, 255, 0.55);
-    border-radius: 999px;
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    filter: none;
-  }
-
-  :root[data-theme='light'] .hero-shell .luxury-btn-ghost:hover {
-    background: rgba(255, 255, 255, 0.75);
-    color: #000000;
-  }
-
-  :root[data-theme='light'] .hero-shell .status-badge {
-    background: rgba(255, 255, 255, 0.65);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-  }
-
-  :root[data-theme='light'] .hero-shell .status-active {
-    color: hsl(142 71% 30%);
-    border-color: hsl(142 71% 45% / 0.35);
-  }
-
-  :root[data-theme='light'] .hero-shell .status-pending {
-    color: hsl(32 92% 35%);
-    border-color: hsl(38 92% 50% / 0.35);
-  }
-
-  :root[data-theme='light'] .hero-shell .status-completed {
-    color: hsl(46 65% 32%);
-    border-color: hsl(var(--primary) / 0.35);
-  }
-
-  :root[data-theme='light'] .hero-shell .status-inactive {
-    color: #1a1a1a;
-    border-color: rgba(0, 0, 0, 0.2);
-  }
-
-  :root[data-theme='light'] .site-header {
-    box-shadow: 0 2px 16px rgba(0,0,0,0.18);
-  }
-
-  :root[data-theme='light'] .site-nav-link,
-  :root[data-theme='light'] .site-header-actions a {
-    text-shadow: none;
-  }
-
-  :root[data-theme='light'] .site-header:not(.is-scrolled) .luxury-btn-outline {
-    border-color: rgba(0, 0, 0, 0.25);
-    color: #000000;
-    background: rgba(255, 255, 255, 0.65);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-  }
-
-  :root[data-theme='light'] .site-header:not(.is-scrolled) .luxury-btn-outline:hover {
-    border-color: rgba(0, 0, 0, 0.4);
-    background: rgba(255, 255, 255, 0.85);
-  }
 
   .hero-center {
     @apply text-center;
@@ -1034,21 +771,6 @@
     @apply relative z-[1];
   }
 
-  :root[data-theme='light'] .mobile-drawer-panel {
-    background:
-      linear-gradient(180deg, hsl(0 0% 100% / 0.34), hsl(0 0% 98% / 0.24)),
-      radial-gradient(circle at 16% 10%, hsl(var(--primary) / 0.16), transparent 36%),
-      radial-gradient(circle at 88% 88%, hsl(0 0% 100% / 0.18), transparent 28%);
-    box-shadow: -24px 0 90px hsl(0 0% 0% / 0.24), -1px 0 0 hsl(var(--primary) / 0.28);
-  }
-
-  :root[data-theme='dark'] .mobile-drawer-panel,
-  :root:not([data-theme='light']) .mobile-drawer-panel {
-    background:
-      linear-gradient(180deg, hsl(0 0% 4% / 0.54), hsl(0 0% 7% / 0.38)),
-      radial-gradient(circle at 12% 8%, hsl(var(--primary) / 0.13), transparent 34%),
-      radial-gradient(circle at 95% 92%, hsl(var(--primary) / 0.08), transparent 30%);
-  }
 
   .mobile-drawer-header {
     @apply flex items-center justify-between bg-background/10 backdrop-blur-xl;

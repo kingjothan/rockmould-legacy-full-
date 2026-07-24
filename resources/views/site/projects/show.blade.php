@@ -27,6 +27,89 @@
         </div>
     </section>
 
+    @php
+        $navTabs = [];
+        if (($publicMedia ?? collect())->isNotEmpty()) {
+            foreach ($gallerySections as $sectionKey => $sectionLabel) {
+                $sectionMediaCheck = $publicMediaSections[$sectionKey] ?? collect();
+                if ($sectionMediaCheck->isNotEmpty()) {
+                    $navTabs[$sectionKey] = $sectionLabel;
+                }
+            }
+        } elseif (!empty($project->gallery)) {
+            $navTabs['gallery'] = 'Gallery';
+        }
+        $hasLiveUpdates = $project->updates->where('visible_to_client', true)->isNotEmpty();
+    @endphp
+
+    @if (count($navTabs) > 0 || $hasLiveUpdates)
+        <div class="sticky top-[64px] z-40 border-b border-border bg-background/90 backdrop-blur-md">
+            <div class="container-luxury">
+                <div class="flex items-center gap-1 overflow-x-auto py-3 scrollbar-hide">
+                    @foreach ($navTabs as $key => $label)
+                        <button
+                            type="button"
+                            data-section-tab="{{ $key }}"
+                            onclick="scrollToSection('{{ $key }}')"
+                            class="section-tab-pill shrink-0 rounded-full border border-border px-4 py-1.5 text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground transition-all duration-200 hover:border-primary/40 hover:text-primary"
+                        >{{ $label }}</button>
+                    @endforeach
+                    @if ($hasLiveUpdates)
+                        <a
+                            href="{{ route('portal.login') }}"
+                            class="shrink-0 inline-flex items-center gap-1.5 rounded-full border border-primary/30 px-4 py-1.5 text-xs font-medium uppercase tracking-[0.16em] text-primary transition-all duration-200 hover:border-primary hover:bg-primary/10"
+                        >
+                            <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"/></svg>
+                            Live Updates
+                        </a>
+                    @endif
+                </div>
+            </div>
+        </div>
+        <script>
+        function scrollToSection(key) {
+            const el = document.getElementById('gallery-section-' + key);
+            if (!el) return;
+            const offset = 120;
+            const top = el.getBoundingClientRect().top + window.scrollY - offset;
+            window.scrollTo({ top, behavior: 'smooth' });
+        }
+
+        (function () {
+            const tabs = document.querySelectorAll('[data-section-tab]');
+            if (!tabs.length) return;
+
+            const sections = Array.from(tabs).map(t => ({
+                key: t.dataset.sectionTab,
+                el: document.getElementById('gallery-section-' + t.dataset.sectionTab),
+                tab: t,
+            })).filter(s => s.el);
+
+            const activate = (key) => {
+                tabs.forEach(t => {
+                    const active = t.dataset.sectionTab === key;
+                    t.classList.toggle('border-primary', active);
+                    t.classList.toggle('bg-primary/10', active);
+                    t.classList.toggle('text-primary', active);
+                    t.classList.toggle('border-border', !active);
+                    t.classList.toggle('text-muted-foreground', !active);
+                });
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) activate(entry.target.dataset.sectionId);
+                });
+            }, { rootMargin: '-30% 0px -60% 0px', threshold: 0 });
+
+            sections.forEach(s => {
+                s.el.dataset.sectionId = s.key;
+                observer.observe(s.el);
+            });
+        })();
+        </script>
+    @endif
+
     <section class="section-padding">
         <div class="container-luxury">
             <div class="grid grid-cols-1 gap-12 lg:grid-cols-3">
@@ -113,7 +196,7 @@
 
                                     @continue($sectionMedia->isEmpty())
 
-                                    <div class="space-y-4">
+                                    <div id="gallery-section-{{ $sectionKey }}" class="space-y-4 scroll-mt-32">
                                         <div class="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
                                             <div>
                                                 <span class="section-label mb-2">{{ $sectionLabel }}</span>
@@ -158,7 +241,7 @@
                             </div>
                         </div>
                     @elseif (!empty($project->gallery))
-                        <div>
+                        <div id="gallery-section-gallery" class="scroll-mt-32">
                             <h2 class="mb-6 font-display text-2xl font-semibold">Gallery</h2>
                             <div class="grid grid-cols-2 gap-3 md:grid-cols-4">
                                 @foreach ($project->gallery as $image)
