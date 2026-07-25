@@ -13,7 +13,10 @@ class AuthController extends Controller
 {
     public function showLogin(): View
     {
-        return view('admin.login', ['company' => SiteData::company()]);
+        return view('admin.login', [
+            'company' => SiteData::company(),
+            'loginContent' => SiteData::adminLoginContent(),
+        ]);
     }
 
     public function login(Request $request): RedirectResponse

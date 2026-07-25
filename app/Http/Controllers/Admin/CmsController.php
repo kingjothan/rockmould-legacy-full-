@@ -803,6 +803,44 @@ class CmsController extends Controller
         return view('admin.cms.careers', ['company' => SiteData::company(), 'roles' => CareerOpening::query()->latest('published_at')->get()]);
     }
 
+    public function adminLogin(): View
+    {
+        return view('admin.cms.admin-login', [
+            'company' => SiteData::company(),
+            'loginContent' => SiteData::adminLoginContent(),
+        ]);
+    }
+
+    public function updateAdminLogin(Request $request): RedirectResponse
+    {
+        $data = $request->validate([
+            'login_media_path' => ['nullable', 'string', 'max:2048'],
+            'login_media_upload' => ['nullable', 'file', 'max:204800'],
+            'login_title' => ['required', 'string', 'max:255'],
+            'login_description' => ['required', 'string', 'max:500'],
+        ]);
+
+        $current = SiteData::adminLoginContent();
+
+        $updated = [
+            'title' => $data['login_title'],
+            'description' => $data['login_description'],
+            'media_path' => $this->syncMediaInput(
+                $request,
+                'login_media_path',
+                'login_media_upload',
+                'cms/admin-login',
+                $current['media_path'] ?? null,
+                'remove_login_media'
+            ),
+        ];
+
+        $this->saveSetting('admin_login_content', $updated);
+        Activity::log('cms.admin-login.updated', 'Admin login page content updated.', $request->user());
+
+        return back()->with('success', 'Admin login page updated.');
+    }
+
     public function portal(): View
     {
         return view('admin.cms.portal', ['company' => SiteData::company(), 'portal' => SiteData::portalContent()]);

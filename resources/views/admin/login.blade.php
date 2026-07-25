@@ -1,10 +1,29 @@
 <x-layouts.base title="Admin Login | Rockmould Limited">
+    @php
+        $loginMediaPath = $loginContent['media_path'] ?? null;
+        $loginMediaUrl = $loginMediaPath ? \App\Support\AssetPath::url($loginMediaPath) : null;
+        $loginMediaExt = strtolower(pathinfo((string) parse_url((string) $loginMediaPath, PHP_URL_PATH), PATHINFO_EXTENSION));
+        $loginMediaIsVideo = in_array($loginMediaExt, ['mp4', 'webm', 'ogg', 'mov'], true);
+        $loginTitle = $loginContent['title'] ?? 'Rockmould Admin';
+        $loginDescription = $loginContent['description'] ?? 'Enterprise content management system for managing clients, projects, and website content.';
+    @endphp
     <div class="min-h-screen bg-background lg:flex">
-        <div class="hidden flex-1 items-center justify-center border-r border-border bg-card lg:flex">
-            <div class="max-w-md px-8 text-center">
+        <div class="relative hidden overflow-hidden border-r border-border bg-card lg:flex lg:flex-1 lg:items-center lg:justify-center">
+            @if ($loginMediaUrl)
+                @if ($loginMediaIsVideo)
+                    <video autoplay muted loop playsinline preload="auto" class="hero-media" aria-hidden="true">
+                        <source src="{{ $loginMediaUrl }}">
+                    </video>
+                @else
+                    <img src="{{ $loginMediaUrl }}" alt="Admin login background" class="hero-media">
+                @endif
+                <div class="hero-soft-overlay"></div>
+                <div class="hero-overlay"></div>
+            @endif
+            <div class="relative z-10 max-w-md px-8 text-center">
                 <x-brand-mark class="mx-auto mb-8 h-16 w-auto" />
-                <h1 class="mb-4 font-display text-3xl font-bold">Rockmould Admin</h1>
-                <p class="text-sm leading-relaxed text-muted-foreground">Enterprise content management system for managing clients, projects, and website content.</p>
+                <h1 class="mb-4 font-display text-3xl font-bold">{{ $loginTitle }}</h1>
+                <p class="text-sm leading-relaxed text-muted-foreground">{{ $loginDescription }}</p>
                 <div class="luxury-divider my-8"></div>
                 <p class="text-xs text-muted-foreground">Authorized personnel only</p>
             </div>

@@ -193,6 +193,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::match(['PUT', 'POST'], '/cms/homepage', [AdminCmsController::class, 'updateHomepage'])->name('cms.homepage.update');
             Route::get('/cms/pages', [AdminCmsController::class, 'pages'])->name('cms.pages');
             Route::match(['PUT', 'POST'], '/cms/pages', [AdminCmsController::class, 'updatePages'])->name('cms.pages.update');
+            Route::get('/cms/admin-login', [AdminCmsController::class, 'adminLogin'])->name('cms.admin-login');
+            Route::match(['PUT', 'POST'], '/cms/admin-login', [AdminCmsController::class, 'updateAdminLogin'])->name('cms.admin-login.update');
             Route::get('/cms/portal', [AdminCmsController::class, 'portal'])->name('cms.portal');
             Route::match(['PUT', 'POST'], '/cms/portal', [AdminCmsController::class, 'updatePortal'])->name('cms.portal.update');
             Route::get('/cms/about', [AdminCmsController::class, 'about'])->name('cms.about');

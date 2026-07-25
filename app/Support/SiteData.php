@@ -366,6 +366,15 @@ class SiteData
         return self::portalContent()[$key] ?? [];
     }
 
+    public static function adminLoginContent(): array
+    {
+        return self::setting('admin_login_content', [
+            'media_path' => null,
+            'title' => 'Rockmould Admin',
+            'description' => 'Enterprise content management system for managing clients, projects, and website content.',
+        ]);
+    }
+
     public static function about(): array
     {
         return self::setting('about', [
@@ -515,6 +524,7 @@ class SiteData
                 ['label' => 'Homepage',        'route' => 'admin.cms.homepage',       'icon' => 'home'],
                 ['label' => 'Public Pages',    'route' => 'admin.cms.pages',          'icon' => 'file-text'],
                 ['label' => 'Portal',          'route' => 'admin.cms.portal',         'icon' => 'layout-dashboard'],
+                ['label' => 'Admin Login',     'route' => 'admin.cms.admin-login',    'icon' => 'log-in'],
                 ['label' => 'About',           'route' => 'admin.cms.about',          'icon' => 'info'],
                 ['label' => 'Services',        'route' => 'admin.cms.services',       'icon' => 'layers'],
                 ['label' => 'Projects',        'route' => 'admin.cms.projects',       'icon' => 'building'],
