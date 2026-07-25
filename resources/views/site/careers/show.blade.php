@@ -1,5 +1,5 @@
 <x-layouts.public :company="$company" :title="$role->title.' | Careers | Rockmould Limited'">
-    <x-hero :title="$role->title" subtitle="Careers" :description="$role->summary" image="images/project-3.jpg" />
+    <x-hero :title="$role->title" subtitle="Careers" :description="$role->summary" :image="$role->hero_image ?: 'images/project-3.jpg'" />
 
     <section class="section-padding">
         <div class="container-luxury">

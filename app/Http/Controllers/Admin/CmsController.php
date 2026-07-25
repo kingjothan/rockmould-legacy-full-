@@ -1080,7 +1080,9 @@ class CmsController extends Controller
 
     public function storeCareer(Request $request): RedirectResponse
     {
-        $career = CareerOpening::query()->create($this->validatedCareer($request));
+        $data = $this->validatedCareer($request);
+        $data['hero_image'] = $this->syncMediaInput($request, 'hero_image_path', 'hero_image_upload', 'cms/careers', null, 'remove_hero_image');
+        $career = CareerOpening::query()->create($data);
         Activity::log('cms.career.created', 'Career role created.', $request->user(), $career);
 
         return back()->with('success', 'Career role saved.');
@@ -1088,7 +1090,9 @@ class CmsController extends Controller
 
     public function updateCareer(Request $request, CareerOpening $careerOpening): RedirectResponse
     {
-        $careerOpening->update($this->validatedCareer($request, $careerOpening));
+        $data = $this->validatedCareer($request, $careerOpening);
+        $data['hero_image'] = $this->syncMediaInput($request, 'hero_image_path', 'hero_image_upload', 'cms/careers', $careerOpening->hero_image, 'remove_hero_image');
+        $careerOpening->update($data);
         Activity::log('cms.career.updated', 'Career role updated.', $request->user(), $careerOpening);
 
         return back()->with('success', 'Career role updated.');
@@ -1262,6 +1266,8 @@ class CmsController extends Controller
             'description' => ['nullable', 'string'],
             'requirements_text' => ['nullable', 'string'],
             'benefits_text' => ['nullable', 'string'],
+            'hero_image_path' => ['nullable', 'string', 'max:2048'],
+            'hero_image_upload' => ['nullable', 'file', 'max:204800'],
         ]);
 
         return [

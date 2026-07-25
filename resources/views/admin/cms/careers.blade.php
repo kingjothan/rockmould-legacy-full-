@@ -12,7 +12,7 @@
                         </div>
                         <x-status-badge :value="$role->is_open ? 'open' : 'closed'" />
                     </div>
-                    <form action="{{ route('admin.cms.careers.update', $role) }}" method="POST" class="mt-5 space-y-4">
+                    <form action="{{ route('admin.cms.careers.update', $role) }}" method="POST" enctype="multipart/form-data" class="mt-5 space-y-4">
                         @csrf @method('PUT')
                         <div class="grid gap-4 md:grid-cols-2">
                             <div>
@@ -58,6 +58,27 @@
                                 <textarea name="benefits_text" rows="5" class="input-shell">{{ implode("\n", $role->benefits ?? []) }}</textarea>
                             </div>
                         </div>
+                        <div class="rounded-lg border border-border bg-background/40 p-4 space-y-3">
+                            <p class="text-xs uppercase tracking-[0.18em] text-primary/70">Hero Background Image</p>
+                            @php
+                                $heroUrl = $role->hero_image ? \App\Support\AssetPath::url($role->hero_image) : null;
+                            @endphp
+                            @if ($heroUrl)
+                                <img src="{{ $heroUrl }}" alt="Hero background" class="h-28 w-full rounded object-cover">
+                            @endif
+                            <div>
+                                <label class="admin-label">Image URL or Path</label>
+                                <input name="hero_image_path" value="{{ $role->hero_image }}" class="input-shell" placeholder="https://... or images/project-3.jpg">
+                            </div>
+                            <div>
+                                <label class="admin-label">Upload Image</label>
+                                <input type="file" name="hero_image_upload" accept="image/*" class="input-shell">
+                                <label class="mt-2 flex items-center gap-2 text-xs text-muted-foreground">
+                                    <input type="checkbox" name="remove_hero_image" value="1" class="h-4 w-4 rounded border-border bg-transparent text-primary focus:ring-primary">
+                                    Remove current hero image (reverts to default)
+                                </label>
+                            </div>
+                        </div>
                         <div class="flex flex-wrap gap-3">
                             <button class="luxury-btn-primary">Update Role</button>
                             <button formaction="{{ route('admin.cms.careers.destroy', $role) }}" formmethod="POST" name="_method" value="DELETE" onclick="return confirm('Delete this career role? This action cannot be undone.')" class="luxury-btn-outline border-red-500/30 text-red-300 hover:border-red-500/50 hover:text-red-200">
@@ -70,7 +91,7 @@
         </div>
         <div class="luxury-card">
             <h2 class="font-display text-3xl">Add Career Role</h2>
-            <form action="{{ route('admin.cms.careers.store') }}" method="POST" class="mt-6 space-y-4">
+            <form action="{{ route('admin.cms.careers.store') }}" method="POST" enctype="multipart/form-data" class="mt-6 space-y-4">
                 @csrf
                 <div>
                     <label class="admin-label">Role Title</label>
@@ -111,6 +132,14 @@
                         <label class="admin-label">Benefits</label>
                         <textarea name="benefits_text" rows="4" placeholder="Benefits, one per line" class="input-shell"></textarea>
                     </div>
+                </div>
+                <div>
+                    <label class="admin-label">Hero Background Image URL or Path</label>
+                    <input name="hero_image_path" class="input-shell" placeholder="https://... or images/project-3.jpg">
+                </div>
+                <div>
+                    <label class="admin-label">Upload Hero Image</label>
+                    <input type="file" name="hero_image_upload" accept="image/*" class="input-shell">
                 </div>
                 <label class="inline-flex items-center gap-3 rounded-lg border border-border bg-background/50 px-4 py-3 text-sm text-foreground">
                     <input type="checkbox" name="is_open" value="1" checked class="h-4 w-4 rounded border-border bg-background text-primary focus:ring-primary">
