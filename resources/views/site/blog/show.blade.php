@@ -21,7 +21,16 @@
                 @endif
                 @if ($post->author_name)
                     <span aria-hidden="true" class="text-primary/60">&middot;</span>
-                    <span>By {{ $post->author_name }}</span>
+                    <span class="flex items-center gap-2">
+                        @if ($post->author_image)
+                            <img src="{{ \App\Support\AssetPath::url($post->author_image) }}" alt="{{ $post->author_name }}" class="h-7 w-7 rounded-full object-cover border border-border">
+                        @else
+                            <span class="flex h-7 w-7 items-center justify-center rounded-full border border-border bg-muted text-[10px] font-semibold uppercase text-muted-foreground">
+                                {{ mb_substr($post->author_name, 0, 1) }}
+                            </span>
+                        @endif
+                        <span>{{ $post->author_name }}</span>
+                    </span>
                 @endif
             </div>
 

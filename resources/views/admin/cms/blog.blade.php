@@ -35,12 +35,34 @@
                                 <input name="category" value="{{ $post->category }}" class="input-shell w-full" required>
                             </div>
                             <div>
-                                <label class="admin-label">Author</label>
+                                <label class="admin-label">Author Name</label>
                                 <input name="author_name" value="{{ $post->author_name }}" class="input-shell w-full" required>
                             </div>
                             <div>
                                 <label class="admin-label">Read Time</label>
                                 <input name="read_time" value="{{ $post->read_time }}" class="input-shell w-full" placeholder="e.g. 5 min">
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-4 rounded-lg border border-border bg-background/40 p-4">
+                            @php $authorImgUrl = $post->author_image ? \App\Support\AssetPath::url($post->author_image) : null; @endphp
+                            @if ($authorImgUrl)
+                                <img src="{{ $authorImgUrl }}" alt="{{ $post->author_name }}" class="h-14 w-14 shrink-0 rounded-full object-cover border border-border">
+                            @else
+                                <div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-border bg-muted text-xs text-muted-foreground">No photo</div>
+                            @endif
+                            <div class="flex-1 space-y-3 min-w-0">
+                                <div>
+                                    <label class="admin-label">Author Photo URL or Path</label>
+                                    <input name="author_image_path" value="{{ $post->author_image }}" class="input-shell w-full" placeholder="https://... or paste a path">
+                                </div>
+                                <div>
+                                    <label class="admin-label">Upload Author Photo</label>
+                                    <input type="file" name="author_image_upload" accept="image/*" class="input-shell w-full">
+                                    <label class="mt-2 flex items-center gap-2 text-xs text-muted-foreground">
+                                        <input type="checkbox" name="remove_author_image" value="1" class="h-4 w-4 rounded border-border bg-transparent text-primary focus:ring-primary">
+                                        Remove current author photo
+                                    </label>
+                                </div>
                             </div>
                         </div>
                         <div>
@@ -111,9 +133,14 @@
                             <input name="category" required placeholder="e.g. Market Insights" class="input-shell w-full">
                         </div>
                         <div>
-                            <label class="admin-label">Author</label>
+                            <label class="admin-label">Author Name</label>
                             <input name="author_name" required placeholder="Author name" class="input-shell w-full">
                         </div>
+                    </div>
+                    <div>
+                        <label class="admin-label">Author Photo</label>
+                        <input name="author_image_path" placeholder="Paste URL or path" class="input-shell w-full">
+                        <input type="file" name="author_image_upload" accept="image/*" class="input-shell mt-2 w-full">
                     </div>
                     <div>
                         <label class="admin-label">Read Time</label>
