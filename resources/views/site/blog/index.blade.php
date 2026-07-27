@@ -43,11 +43,11 @@
                                 @endif
                                 @if ($featured->author_name)
                                     <span aria-hidden="true" class="text-primary/60">&middot;</span>
-                                    <span class="flex items-center gap-2">
+                                    <span class="flex items-center gap-2.5">
                                         @if ($featured->author_image)
-                                            <img src="{{ \App\Support\AssetPath::url($featured->author_image) }}" alt="{{ $featured->author_name }}" class="h-6 w-6 rounded-full object-cover border border-border">
+                                            <img src="{{ \App\Support\AssetPath::url($featured->author_image) }}" alt="{{ $featured->author_name }}" class="h-9 w-9 rounded-full object-cover border border-border">
                                         @else
-                                            <span class="flex h-6 w-6 items-center justify-center rounded-full border border-border bg-muted text-[9px] font-semibold uppercase text-muted-foreground">{{ mb_substr($featured->author_name, 0, 1) }}</span>
+                                            <span class="flex h-9 w-9 items-center justify-center rounded-full border border-border bg-muted text-xs font-semibold uppercase text-muted-foreground">{{ mb_substr($featured->author_name, 0, 1) }}</span>
                                         @endif
                                         <span>{{ $featured->author_name }}</span>
                                     </span>
