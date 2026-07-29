@@ -116,7 +116,7 @@
 
     <section class="border-y border-border bg-card py-20">
         <div class="container-luxury">
-            <div class="grid grid-cols-2 gap-8 place-items-center md:grid-cols-4">
+            <div class="grid grid-cols-2 gap-8 md:grid-cols-4" style="place-items:center">
                 @foreach ($homepage['stats'] as $stat)
                     <x-metric-card :value="$stat['value']" :label="$stat['label']" />
                 @endforeach

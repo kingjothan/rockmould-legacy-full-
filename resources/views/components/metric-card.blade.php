@@ -1,6 +1,6 @@
 @props(['value', 'label', 'suffix' => ''])
 
-<div class="flex w-full flex-col items-center justify-center p-6 text-center">
+<div class="p-6" style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;width:100%">
     <p class="font-display text-4xl font-bold text-foreground md:text-5xl">
         {{ $value }}@if($suffix)<span class="text-primary">{{ $suffix }}</span>@endif
     </p>
