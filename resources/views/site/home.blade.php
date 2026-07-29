@@ -114,9 +114,25 @@
         </div>
     </section>
 
-    <section class="border-y border-border bg-card py-20">
-        <div class="container-luxury">
-            <div class="grid grid-cols-2 gap-8 md:grid-cols-4" style="align-items:start">
+    <section class="relative border-y border-border bg-card py-20 overflow-hidden">
+        {{-- Dot-grid texture --}}
+        <div class="absolute inset-0 opacity-[0.025]" style="background-image:radial-gradient(circle,hsl(var(--primary)) 1px,transparent 0);background-size:28px 28px" aria-hidden="true"></div>
+
+        <style>
+            /* Vertical dividers between stat cards */
+            .stats-grid .stat-card { border-right: 1px solid hsl(var(--border)); }
+            .stats-grid .stat-card:last-child { border-right: none; }
+            /* Mobile: 2-col — remove right border on right column, add bottom border to top row */
+            @media (max-width: 767px) {
+                .stats-grid .stat-card:nth-child(2n) { border-right: none; }
+                .stats-grid .stat-card:nth-child(1),
+                .stats-grid .stat-card:nth-child(2) { border-bottom: 1px solid hsl(var(--border)); }
+            }
+        </style>
+
+        <div class="container-luxury relative">
+            <p class="section-label mb-10 text-center">By the numbers</p>
+            <div class="stats-grid grid grid-cols-2 md:grid-cols-4" style="align-items:start">
                 @foreach ($homepage['stats'] as $stat)
                     <x-metric-card :value="$stat['value']" :label="$stat['label']" />
                 @endforeach
