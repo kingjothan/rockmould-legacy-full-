@@ -1,3 +1,16 @@
+# Disable ModSecurity WAF for newsletter send (HTML body triggers false-positive XSS rules)
+<IfModule mod_security2.c>
+    <LocationMatch "^/admin/newsletter/send">
+        SecRuleEngine Off
+    </LocationMatch>
+</IfModule>
+<IfModule mod_security.c>
+    <LocationMatch "^/admin/newsletter/send">
+        SecFilterEngine Off
+        SecFilterScanPOST Off
+    </LocationMatch>
+</IfModule>
+
 <IfModule mod_rewrite.c>
     <IfModule mod_negotiation.c>
         Options -MultiViews -Indexes

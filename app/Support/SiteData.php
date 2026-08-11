@@ -101,6 +101,7 @@ class SiteData
                 'primary_cta' => 'Schedule Consultation',
                 'secondary_cta' => 'Browse Projects',
             ],
+            'stats_label' => 'By the Numbers',
             'stats' => [
                 ['label' => 'Projects Delivered', 'value' => '150+'],
                 ['label' => 'Years of Excellence', 'value' => '20+'],
@@ -405,6 +406,7 @@ class SiteData
             'team_title' => 'The Team Behind the Vision',
             'timeline_label' => 'Our Journey',
             'timeline_title' => 'Milestones of Excellence',
+            'metrics_label' => 'By the Numbers',
             'metrics' => [
                 ['label' => 'Projects', 'value' => '150+'],
                 ['label' => 'Years', 'value' => '20+'],

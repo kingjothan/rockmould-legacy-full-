@@ -101,14 +101,80 @@
         </div>
     </section>
 
-    <section class="border-y border-border bg-card py-20">
-        <div class="container-luxury">
-            <div class="grid grid-cols-2 gap-8 md:grid-cols-4">
+    {{-- Metrics Section --}}
+    <style>
+        .rk-stats-row { display:grid; grid-template-columns:repeat(4,1fr); }
+        .rk-stat + .rk-stat { border-left:1px solid hsl(var(--border)/0.8); }
+        .rk-stat:hover { background:radial-gradient(ellipse at 50% 100%,hsl(var(--primary)/0.06) 0%,transparent 70%) !important; }
+        .rk-stat:hover .rk-stat-number { color:hsl(var(--primary)) !important; }
+        @media(max-width:767px){
+            .rk-stats-row { grid-template-columns:repeat(2,1fr); }
+            .rk-stat:nth-child(2n+1) { border-left:none; }
+            .rk-stat:nth-child(n+3) { border-top:1px solid hsl(var(--border)/0.8); }
+        }
+    </style>
+    <section class="relative overflow-hidden" style="background:hsl(var(--card));padding:6rem 0">
+        <div class="absolute" style="top:-120px;left:-80px;width:500px;height:500px;background:radial-gradient(ellipse at center,hsl(var(--primary)/0.07) 0%,transparent 65%);pointer-events:none" aria-hidden="true"></div>
+        <div class="absolute" style="bottom:-120px;right:-80px;width:500px;height:500px;background:radial-gradient(ellipse at center,hsl(var(--primary)/0.06) 0%,transparent 65%);pointer-events:none" aria-hidden="true"></div>
+        <div class="absolute top-0 inset-x-0" style="height:1px;background:linear-gradient(90deg,transparent 0%,hsl(var(--primary)/0.5) 25%,hsl(var(--primary)/0.5) 75%,transparent 100%)" aria-hidden="true"></div>
+        <div class="absolute bottom-0 inset-x-0" style="height:1px;background:linear-gradient(90deg,transparent 0%,hsl(var(--primary)/0.5) 25%,hsl(var(--primary)/0.5) 75%,transparent 100%)" aria-hidden="true"></div>
+
+        <div class="container-luxury relative">
+            <div style="display:flex;align-items:center;justify-content:center;gap:1.25rem;margin-bottom:4.5rem">
+                <div style="flex:1;max-width:100px;height:1px;background:linear-gradient(to right,transparent,hsl(var(--primary)/0.65))"></div>
+                <span style="font-size:0.5875rem;letter-spacing:0.38em;text-transform:uppercase;color:hsl(var(--primary));font-weight:700;white-space:nowrap">{{ $about['metrics_label'] ?? 'By the Numbers' }}</span>
+                <div style="flex:1;max-width:100px;height:1px;background:linear-gradient(to left,transparent,hsl(var(--primary)/0.65))"></div>
+            </div>
+
+            <div class="rk-stats-row" id="rk-stats-about">
                 @foreach (($about['metrics'] ?? $metrics) as $metric)
                     <x-metric-card :value="$metric['value']" :label="$metric['label']" />
                 @endforeach
             </div>
         </div>
+
+        <script>
+        (function(){
+            function rkAnimateStats(rowId) {
+                var row = document.getElementById(rowId);
+                if (!row) return;
+                var stats = row.querySelectorAll('[data-rk-stat]');
+                var done = false;
+                function parseVal(str) {
+                    var m = str.match(/^([^\d]*)([0-9][0-9,]*)([^]*)$/);
+                    if (!m) return null;
+                    return { pre: m[1], num: parseInt(m[2].replace(/,/g,'')), suf: m[3] };
+                }
+                function fmtNum(n) { return n >= 1000 ? n.toLocaleString('en') : String(n); }
+                function countUp(el, parsed, delay) {
+                    var duration = 1400, start = null;
+                    setTimeout(function(){
+                        requestAnimationFrame(function tick(ts){
+                            if (!start) start = ts;
+                            var prog = Math.min((ts - start) / duration, 1);
+                            var ease = 1 - Math.pow(1 - prog, 3);
+                            el.textContent = parsed.pre + fmtNum(Math.round(ease * parsed.num)) + parsed.suf;
+                            if (prog < 1) requestAnimationFrame(tick);
+                        });
+                    }, delay);
+                }
+                function run() {
+                    if (done) return; done = true;
+                    stats.forEach(function(stat, i) {
+                        var delay = i * 120;
+                        setTimeout(function(){ stat.style.opacity='1'; stat.style.transform='translateY(0)'; stat.style.transition='opacity 0.55s ease,transform 0.55s cubic-bezier(0.16,1,0.3,1),background 0.4s ease'; }, delay);
+                        var line = stat.querySelector('.rk-stat-line');
+                        if (line) setTimeout(function(){ line.style.width='2.5rem'; }, delay + 300);
+                        var numEl = stat.querySelector('.rk-stat-number');
+                        if (numEl) { var p = parseVal(numEl.getAttribute('data-val')||numEl.textContent.trim()); if(p) countUp(numEl, p, delay+200); }
+                    });
+                }
+                var io = new IntersectionObserver(function(e){ if(e[0].isIntersecting){run();io.disconnect();} },{threshold:0.25});
+                io.observe(row);
+            }
+            document.addEventListener('DOMContentLoaded', function(){ rkAnimateStats('rk-stats-about'); });
+        })();
+        </script>
     </section>
 
     <section class="section-padding">

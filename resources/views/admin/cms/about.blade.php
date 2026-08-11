@@ -201,6 +201,10 @@
                             </div>
                         </div>
                         <div>
+                            <label class="admin-label">Metrics Section Label</label>
+                            <input name="metrics_label" class="input-shell" value="{{ old('metrics_label', $about['metrics_label'] ?? 'By the Numbers') }}" placeholder="By the Numbers">
+                        </div>
+                        <div>
                             <label class="admin-label">About Metrics</label>
                             <textarea name="metrics_text" rows="5" class="input-shell">{{ old('metrics_text', $aboutMetricsText) }}</textarea>
                             <p class="mt-2 text-xs text-muted-foreground">Use Label|Value per line.</p>

@@ -400,6 +400,11 @@
                     </div>
 
                     <div>
+                        <label class="admin-label">Stats Section Label</label>
+                        <input name="stats_label" class="input-shell" value="{{ old('stats_label', $homepage['stats_label'] ?? 'By the Numbers') }}" placeholder="By the Numbers">
+                        <p class="mt-1 text-xs text-muted-foreground">The heading text shown above the stats row.</p>
+                    </div>
+                    <div>
                         <label class="admin-label">Homepage Stats</label>
                         <textarea name="stats_text" rows="6" class="input-shell">{{ old('stats_text', $homepageStatsText) }}</textarea>
                         <p class="mt-2 text-xs text-muted-foreground">Use <code>Label|Value</code> per line. Example: <code>Projects Delivered|150+</code></p>

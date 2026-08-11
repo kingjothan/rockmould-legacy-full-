@@ -136,10 +136,12 @@
 
   html {
     scroll-behavior: smooth;
+    overflow-x: hidden;
   }
 
   body {
     @apply bg-background text-foreground antialiased;
+    overflow-x: hidden;
     font-family: var(--font-body);
     font-weight: 500;
     background-image:
@@ -210,7 +212,7 @@
   }
 
   .public-site-shell {
-    @apply relative isolate overflow-x-clip;
+    @apply relative isolate overflow-x-hidden;
     --public-copy-scale: 1;
     --public-heading-scale: 1;
   }
@@ -749,14 +751,15 @@
   }
 
   .mobile-drawer-panel {
-    @apply absolute bottom-0 right-0 top-0 flex w-[31rem] max-w-[92vw] translate-x-full flex-col overflow-hidden border-l border-border transition-transform duration-500;
+    @apply absolute bottom-0 right-0 top-0 flex w-[31rem] max-w-[92vw] translate-x-full flex-col border-l border-border transition-transform duration-500;
+    overflow-x: hidden;
+    overflow-y: auto;
     background:
-      linear-gradient(180deg, hsl(var(--background) / 0.52), hsl(var(--card) / 0.36)),
+      linear-gradient(180deg, hsl(var(--background) / 0.95), hsl(var(--card) / 0.98)),
       radial-gradient(circle at 12% 8%, hsl(var(--primary) / 0.13), transparent 34%),
       radial-gradient(circle at 95% 92%, hsl(var(--primary) / 0.08), transparent 30%);
     box-shadow: -24px 0 80px hsl(0 0% 0% / 0.45), -1px 0 0 hsl(var(--primary) / 0.18);
-    backdrop-filter: blur(34px) saturate(145%);
-    -webkit-backdrop-filter: blur(34px) saturate(145%);
+    will-change: transform;
   }
 
   .mobile-drawer-panel::before {
@@ -782,19 +785,12 @@
 
   .mobile-drawer[data-open="true"] .mobile-drawer-panel {
     transform: translateX(0);
+    backdrop-filter: blur(20px) saturate(130%);
+    -webkit-backdrop-filter: blur(20px) saturate(130%);
   }
 
   [data-mobile-stagger] {
-    opacity: 0;
-    transform: translateY(16px);
-    transition:
-      opacity 0.2s ease,
-      transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
-  }
-
-  .mobile-drawer[data-open="true"] [data-mobile-stagger] {
     opacity: 1;
-    transform: translateY(0);
   }
 
   .mobile-drawer-title {

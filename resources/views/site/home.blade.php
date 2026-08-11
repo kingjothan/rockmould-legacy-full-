@@ -28,13 +28,13 @@
                     @endif
                 </h1>
                 <p class="reveal mt-8 max-w-2xl {{ $homepage['hero_description_size'] ?? 'text-lg' }} leading-relaxed text-muted-foreground">{{ $homepage['hero_description'] }}</p>
-                <div class="reveal mt-10 flex flex-wrap gap-4">
-                    <a href="{{ route('projects.index') }}" class="luxury-btn-primary">
+                <div class="reveal mt-10 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                    <a href="{{ route('projects.index') }}" class="luxury-btn-primary" style="width:220px;justify-content:center">
                         {{ $homepage['hero_primary_cta'] }}
-                        <svg class="ml-1.5 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+                        <svg class="ml-1.5 h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
                     </a>
-                    <a href="{{ route('consultations.create') }}" class="luxury-btn-outline">{{ $homepage['hero_secondary_cta'] }}</a>
-                    <a href="{{ route('portal.login') }}" class="luxury-btn-ghost text-primary">{{ $homepage['hero_portal_cta'] }} &rsaquo;</a>
+                    <a href="{{ route('consultations.create') }}" class="luxury-btn-outline" style="width:220px;justify-content:center">{{ $homepage['hero_secondary_cta'] }}</a>
+                    <a href="{{ route('portal.login') }}" class="luxury-btn-ghost text-primary" style="width:220px;justify-content:center">{{ $homepage['hero_portal_cta'] }} &rsaquo;</a>
                 </div>
             </div>
         </div>
@@ -114,30 +114,109 @@
         </div>
     </section>
 
-    <section class="relative border-y border-border bg-card py-20 overflow-hidden">
-        {{-- Dot-grid texture --}}
-        <div class="absolute inset-0 opacity-[0.025]" style="background-image:radial-gradient(circle,hsl(var(--primary)) 1px,transparent 0);background-size:28px 28px" aria-hidden="true"></div>
+    {{-- Stats Section --}}
+    <section class="relative overflow-hidden" style="background:hsl(var(--card));padding:6rem 0">
+        {{-- Radial glow top-left --}}
+        <div class="absolute" style="top:-120px;left:-80px;width:500px;height:500px;background:radial-gradient(ellipse at center,hsl(var(--primary)/0.07) 0%,transparent 65%);pointer-events:none" aria-hidden="true"></div>
+        {{-- Radial glow bottom-right --}}
+        <div class="absolute" style="bottom:-120px;right:-80px;width:500px;height:500px;background:radial-gradient(ellipse at center,hsl(var(--primary)/0.06) 0%,transparent 65%);pointer-events:none" aria-hidden="true"></div>
+        {{-- Top border accent --}}
+        <div class="absolute top-0 inset-x-0" style="height:1px;background:linear-gradient(90deg,transparent 0%,hsl(var(--primary)/0.5) 25%,hsl(var(--primary)/0.5) 75%,transparent 100%)" aria-hidden="true"></div>
+        {{-- Bottom border accent --}}
+        <div class="absolute bottom-0 inset-x-0" style="height:1px;background:linear-gradient(90deg,transparent 0%,hsl(var(--primary)/0.5) 25%,hsl(var(--primary)/0.5) 75%,transparent 100%)" aria-hidden="true"></div>
 
         <style>
-            /* Vertical dividers between stat cards */
-            .stats-grid .stat-card { border-right: 1px solid hsl(var(--border)); }
-            .stats-grid .stat-card:last-child { border-right: none; }
-            /* Mobile: 2-col — remove right border on right column, add bottom border to top row */
-            @media (max-width: 767px) {
-                .stats-grid .stat-card:nth-child(2n) { border-right: none; }
-                .stats-grid .stat-card:nth-child(1),
-                .stats-grid .stat-card:nth-child(2) { border-bottom: 1px solid hsl(var(--border)); }
+            .rk-stats-row { display:grid; grid-template-columns:repeat(4,1fr); }
+            .rk-stat + .rk-stat { border-left:1px solid hsl(var(--border)/0.8); }
+            .rk-stat:hover { background:radial-gradient(ellipse at 50% 100%,hsl(var(--primary)/0.06) 0%,transparent 70%) !important; }
+            .rk-stat:hover .rk-stat-number { color:hsl(var(--primary)) !important; }
+            @media(max-width:767px){
+                .rk-stats-row { grid-template-columns:repeat(2,1fr); }
+                .rk-stat:nth-child(2n+1) { border-left:none; }
+                .rk-stat:nth-child(n+3) { border-top:1px solid hsl(var(--border)/0.8); }
             }
         </style>
 
         <div class="container-luxury relative">
-            <p class="section-label mb-10 text-center">By the numbers</p>
-            <div class="stats-grid grid grid-cols-2 md:grid-cols-4" style="align-items:start">
+            <div style="display:flex;align-items:center;justify-content:center;gap:1.25rem;margin-bottom:4.5rem">
+                <div style="flex:1;max-width:100px;height:1px;background:linear-gradient(to right,transparent,hsl(var(--primary)/0.65))"></div>
+                <span style="font-size:0.5875rem;letter-spacing:0.38em;text-transform:uppercase;color:hsl(var(--primary));font-weight:700;white-space:nowrap">{{ $homepage['stats_label'] ?? 'By the Numbers' }}</span>
+                <div style="flex:1;max-width:100px;height:1px;background:linear-gradient(to left,transparent,hsl(var(--primary)/0.65))"></div>
+            </div>
+
+            <div class="rk-stats-row" id="rk-stats-home">
                 @foreach ($homepage['stats'] as $stat)
                     <x-metric-card :value="$stat['value']" :label="$stat['label']" />
                 @endforeach
             </div>
         </div>
+
+        <script>
+        (function(){
+            function rkAnimateStats(rowId) {
+                var row = document.getElementById(rowId);
+                if (!row) return;
+                var stats = row.querySelectorAll('[data-rk-stat]');
+                var done = false;
+
+                function parseVal(str) {
+                    var m = str.match(/^([^\d]*)([0-9][0-9,]*)([^]*)$/);
+                    if (!m) return null;
+                    return { pre: m[1], num: parseInt(m[2].replace(/,/g,'')), suf: m[3] };
+                }
+
+                function fmtNum(n) {
+                    return n >= 1000 ? n.toLocaleString('en') : String(n);
+                }
+
+                function countUp(el, parsed, delay) {
+                    var duration = 1400;
+                    var start = null;
+                    setTimeout(function(){
+                        requestAnimationFrame(function tick(ts){
+                            if (!start) start = ts;
+                            var prog = Math.min((ts - start) / duration, 1);
+                            var ease = 1 - Math.pow(1 - prog, 3);
+                            var cur = Math.round(ease * parsed.num);
+                            el.textContent = parsed.pre + fmtNum(cur) + parsed.suf;
+                            if (prog < 1) requestAnimationFrame(tick);
+                        });
+                    }, delay);
+                }
+
+                function run() {
+                    if (done) return;
+                    done = true;
+                    stats.forEach(function(stat, i) {
+                        var delay = i * 120;
+                        setTimeout(function(){
+                            stat.style.opacity = '1';
+                            stat.style.transform = 'translateY(0)';
+                            stat.style.transition = 'opacity 0.55s ease, transform 0.55s cubic-bezier(0.16,1,0.3,1), background 0.4s ease';
+                        }, delay);
+
+                        var line = stat.querySelector('.rk-stat-line');
+                        if (line) setTimeout(function(){ line.style.width = '2.5rem'; }, delay + 300);
+
+                        var numEl = stat.querySelector('.rk-stat-number');
+                        if (numEl) {
+                            var parsed = parseVal(numEl.getAttribute('data-val') || numEl.textContent.trim());
+                            if (parsed) countUp(numEl, parsed, delay + 200);
+                        }
+                    });
+                }
+
+                var io = new IntersectionObserver(function(entries){
+                    if (entries[0].isIntersecting) { run(); io.disconnect(); }
+                }, { threshold: 0.25 });
+                io.observe(row);
+            }
+
+            document.addEventListener('DOMContentLoaded', function(){
+                rkAnimateStats('rk-stats-home');
+            });
+        })();
+        </script>
     </section>
 
     <section class="section-padding">
@@ -248,15 +327,15 @@
     <section class="section-padding">
         <div class="container-luxury">
             <div class="luxury-card bg-gradient-to-br from-card to-secondary p-12 text-center md:p-16">
-                <h2 class="font-display text-4xl md:text-5xl">{{ $finalCta['title'] ?? 'Ready to Build Your Legacy?' }}</h2>
+                <h2 class="font-display text-2xl md:text-3xl">{{ $finalCta['title'] ?? 'Ready to Build Your Legacy?' }}</h2>
                 <p class="mx-auto mt-4 max-w-xl text-lg text-muted-foreground">
                     {{ $finalCta['description'] ?? "Let's discuss your next premium development or investment opportunity." }}
                 </p>
-                <div class="mt-10 flex flex-wrap justify-center gap-4">
-                    <a href="{{ route('consultations.create') }}" class="luxury-btn-primary">{{ $finalCta['primary_cta'] ?? 'Schedule Consultation' }}
-                        <svg class="ml-1.5 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+                <div class="mt-10 flex flex-col items-center gap-4 sm:flex-row" style="justify-content:center">
+                    <a href="{{ route('consultations.create') }}" class="luxury-btn-primary" style="width:260px;justify-content:center">{{ $finalCta['primary_cta'] ?? 'Schedule Consultation' }}
+                        <svg class="ml-1.5 h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
                     </a>
-                    <a href="{{ route('projects.index') }}" class="luxury-btn-outline">{{ $finalCta['secondary_cta'] ?? 'Browse Projects' }}</a>
+                    <a href="{{ route('projects.index') }}" class="luxury-btn-outline" style="width:260px;justify-content:center">{{ $finalCta['secondary_cta'] ?? 'Browse Projects' }}</a>
                 </div>
             </div>
         </div>

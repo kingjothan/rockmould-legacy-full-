@@ -54,7 +54,7 @@
                         <p><span class="text-muted-foreground">Phone:</span> <a href="tel:{{ preg_replace('/\s+/', '', $company['phone']) }}" class="text-primary hover:text-primary/80">{{ $company['phone'] }}</a></p>
                         <p><span class="text-muted-foreground">Email:</span> <a href="mailto:{{ $company['email'] }}" class="text-primary hover:text-primary/80">{{ $company['email'] }}</a></p>
                         @if (! empty($company['address']))
-                            <p><span class="text-muted-foreground">Office:</span> {{ $company['address'] }}</p>
+                            <p><span class="text-muted-foreground">Office:</span> <a href="https://maps.google.com/?q={{ urlencode($company['address']) }}" target="_blank" rel="noopener noreferrer" class="text-primary hover:text-primary/80">{{ $company['address'] }}</a></p>
                         @endif
                     </div>
                 </div>

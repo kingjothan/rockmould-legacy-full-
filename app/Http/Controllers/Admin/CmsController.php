@@ -66,6 +66,7 @@ class CmsController extends Controller
             'final_cta_primary' => ['required', 'string', 'max:255'],
             'final_cta_secondary' => ['required', 'string', 'max:255'],
             'why_choose_text' => ['nullable', 'string'],
+            'stats_label' => ['nullable', 'string', 'max:100'],
             'stats_text' => ['nullable', 'string'],
             'process_text' => ['nullable', 'string'],
             'hero_media' => ['nullable', 'file', 'max:204800'],
@@ -128,6 +129,7 @@ class CmsController extends Controller
                 'secondary_cta' => $data['final_cta_secondary'],
             ],
             'why_choose' => $this->lines($data['why_choose_text'] ?? ''),
+            'stats_label' => $data['stats_label'] ?? 'By the Numbers',
             'stats' => $this->statPairs($data['stats_text'] ?? ''),
             'process' => $this->processSteps($data['process_text'] ?? ''),
         ]);
@@ -411,6 +413,7 @@ class CmsController extends Controller
             'cta_primary' => ['required', 'string', 'max:255'],
             'cta_secondary' => ['required', 'string', 'max:255'],
             'values_text' => ['nullable', 'string'],
+            'metrics_label' => ['nullable', 'string', 'max:100'],
             'metrics_text' => ['nullable', 'string'],
             'hero_media_path' => ['nullable', 'string', 'max:2048'],
             'story_image_path' => ['nullable', 'string', 'max:2048'],
@@ -435,6 +438,7 @@ class CmsController extends Controller
         $current['values_label'] = $data['values_label'];
         $current['values_title'] = $data['values_title'];
         $current['values'] = $this->valueCards($data['values_text'] ?? '');
+        $current['metrics_label'] = $data['metrics_label'] ?? 'By the Numbers';
         $current['metrics'] = $this->statPairs($data['metrics_text'] ?? '');
         $current['team_label'] = $data['team_label'];
         $current['team_title'] = $data['team_title'];
