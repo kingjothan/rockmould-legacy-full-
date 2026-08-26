@@ -47,12 +47,33 @@
                                         <span class="text-xs text-muted-foreground">{{ $progress }}%</span>
                                     </div>
                                     @if ($hasMedia)
-                                        <span class="flex items-center gap-1 text-[10px] text-muted-foreground">
+                                        <button type="button"
+                                            onclick="this.closest('.luxury-card').querySelector('.update-media').classList.toggle('hidden')"
+                                            class="flex items-center gap-1 text-[10px] text-primary hover:text-primary/80 transition-colors">
                                             <x-portal-icon name="image" class="h-3 w-3" />
-                                            Photos
-                                        </span>
+                                            {{ count($update->attachments) }} {{ count($update->attachments) === 1 ? 'Photo' : 'Photos/Videos' }}
+                                        </button>
                                     @endif
                                 </div>
+
+                                @if ($hasMedia)
+                                    <div class="update-media hidden mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3">
+                                        @foreach ($update->attachments as $attachment)
+                                            @php
+                                                $url = str_starts_with($attachment, 'http') ? $attachment : asset('storage/'.$attachment);
+                                                $ext = strtolower(pathinfo($attachment, PATHINFO_EXTENSION));
+                                                $isVideo = in_array($ext, ['mp4','webm','mov','ogg']);
+                                            @endphp
+                                            @if ($isVideo)
+                                                <video src="{{ $url }}" controls class="w-full rounded-lg aspect-square object-cover bg-muted"></video>
+                                            @else
+                                                <a href="{{ $url }}" target="_blank" rel="noopener noreferrer">
+                                                    <img src="{{ $url }}" alt="Update attachment" class="w-full rounded-lg aspect-square object-cover bg-muted hover:opacity-90 transition-opacity">
+                                                </a>
+                                            @endif
+                                        @endforeach
+                                    </div>
+                                @endif
                             </div>
                         </div>
                     @endforeach
