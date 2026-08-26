@@ -229,7 +229,7 @@ class AuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('portal.login');
+        return redirect()->route('home');
     }
 
     private function maskedEmail(?string $email): string

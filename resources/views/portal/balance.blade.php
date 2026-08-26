@@ -1,3 +1,12 @@
+@php
+    $fmt = function (float $n): string {
+        if ($n >= 1_000_000_000) return 'NGN ' . rtrim(rtrim(number_format($n / 1_000_000_000, 2), '0'), '.') . 'B';
+        if ($n >= 1_000_000)     return 'NGN ' . rtrim(rtrim(number_format($n / 1_000_000, 2), '0'), '.') . 'M';
+        if ($n >= 1_000)         return 'NGN ' . rtrim(rtrim(number_format($n / 1_000, 1), '0'), '.') . 'K';
+        return 'NGN ' . number_format($n);
+    };
+    $fmtFull = fn (float $n): string => 'NGN ' . number_format($n);
+@endphp
 <x-layouts.portal :company="$company" :page-heading="$content['title'] ?? 'Balance Sheet'">
     <div class="space-y-8">
         <div>
@@ -9,17 +18,18 @@
         </div>
 
         <div class="grid gap-4 md:grid-cols-3">
+            @php $contract = (float) $totals['contract']; $paid = (float) $totals['paid']; $outstanding = (float) $totals['outstanding']; @endphp
             <div class="luxury-card">
                 <p class="text-[10px] uppercase tracking-[0.24em] text-muted-foreground">{{ $content['contract_label'] ?? 'Total Project Value' }}</p>
-                <p class="mt-2 font-display text-4xl">NGN {{ number_format((float) $totals['contract']) }}</p>
+                <p class="mt-2 font-display text-3xl leading-tight" title="{{ $fmtFull($contract) }}">{{ $fmt($contract) }}</p>
             </div>
             <div class="luxury-card">
                 <p class="text-[10px] uppercase tracking-[0.24em] text-muted-foreground">{{ $content['paid_label'] ?? 'Total Paid' }}</p>
-                <p class="mt-2 font-display text-4xl text-primary">NGN {{ number_format((float) $totals['paid']) }}</p>
+                <p class="mt-2 font-display text-3xl leading-tight text-primary" title="{{ $fmtFull($paid) }}">{{ $fmt($paid) }}</p>
             </div>
             <div class="luxury-card">
                 <p class="text-[10px] uppercase tracking-[0.24em] text-muted-foreground">{{ $content['outstanding_label'] ?? 'Outstanding Balance' }}</p>
-                <p class="mt-2 font-display text-4xl">NGN {{ number_format((float) $totals['outstanding']) }}</p>
+                <p class="mt-2 font-display text-3xl leading-tight" title="{{ $fmtFull($outstanding) }}">{{ $fmt($outstanding) }}</p>
             </div>
         </div>
 
@@ -43,18 +53,23 @@
                         </div>
                     </div>
 
+                    @php
+                        $aContract = (float) $assignment->contract_amount;
+                        $aPaid     = (float) $assignment->amount_paid;
+                        $aOutst    = (float) $assignment->outstanding_balance;
+                    @endphp
                     <div class="mt-6 grid gap-4 md:grid-cols-3">
                         <div class="rounded-sm border border-border bg-muted/20 p-4">
                             <p class="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Contract Amount</p>
-                            <p class="mt-2 font-display text-2xl">NGN {{ number_format((float) $assignment->contract_amount) }}</p>
+                            <p class="mt-2 font-display text-xl leading-tight" title="{{ $fmtFull($aContract) }}">{{ $fmt($aContract) }}</p>
                         </div>
                         <div class="rounded-sm border border-border bg-muted/20 p-4">
                             <p class="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Amount Paid</p>
-                            <p class="mt-2 font-display text-2xl text-primary">NGN {{ number_format((float) $assignment->amount_paid) }}</p>
+                            <p class="mt-2 font-display text-xl leading-tight text-primary" title="{{ $fmtFull($aPaid) }}">{{ $fmt($aPaid) }}</p>
                         </div>
                         <div class="rounded-sm border border-border bg-muted/20 p-4">
                             <p class="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Outstanding</p>
-                            <p class="mt-2 font-display text-2xl">NGN {{ number_format((float) $assignment->outstanding_balance) }}</p>
+                            <p class="mt-2 font-display text-xl leading-tight" title="{{ $fmtFull($aOutst) }}">{{ $fmt($aOutst) }}</p>
                         </div>
                     </div>
 

@@ -1,3 +1,12 @@
+@php
+    $fmt = function (float $n): string {
+        if ($n >= 1_000_000_000) return 'NGN ' . rtrim(rtrim(number_format($n / 1_000_000_000, 2), '0'), '.') . 'B';
+        if ($n >= 1_000_000)     return 'NGN ' . rtrim(rtrim(number_format($n / 1_000_000, 2), '0'), '.') . 'M';
+        if ($n >= 1_000)         return 'NGN ' . rtrim(rtrim(number_format($n / 1_000, 1), '0'), '.') . 'K';
+        return 'NGN ' . number_format($n);
+    };
+    $fmtFull = fn (float $n): string => 'NGN ' . number_format($n);
+@endphp
 <x-layouts.portal :company="$company" page-heading="My Projects">
     <div class="space-y-8">
         <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
@@ -23,22 +32,24 @@
         <div class="grid gap-4 md:grid-cols-4">
             <div class="luxury-card">
                 <p class="text-[10px] uppercase tracking-[0.24em] text-muted-foreground">{{ $content['assigned_label'] ?? 'Assigned Projects' }}</p>
-                <p class="mt-2 font-display text-4xl">{{ $projectCount ?? $assignments->pluck('project_id')->filter()->unique()->count() }}</p>
+                <p class="mt-2 font-display text-3xl leading-tight">{{ $projectCount ?? $assignments->pluck('project_id')->filter()->unique()->count() }}</p>
                 <p class="mt-2 text-sm text-muted-foreground">{{ $content['assigned_description'] ?? 'Unique developments assigned to your account.' }}</p>
             </div>
             <div class="luxury-card">
                 <p class="text-[10px] uppercase tracking-[0.24em] text-muted-foreground">Owned Units</p>
-                <p class="mt-2 font-display text-4xl">{{ $unitCount ?? $assignments->count() }}</p>
+                <p class="mt-2 font-display text-3xl leading-tight">{{ $unitCount ?? $assignments->count() }}</p>
                 <p class="mt-2 text-sm text-muted-foreground">Individual properties linked to your portfolio.</p>
             </div>
+            @php $paid = (float) $assignments->sum('amount_paid'); @endphp
             <div class="luxury-card">
                 <p class="text-[10px] uppercase tracking-[0.24em] text-muted-foreground">{{ $content['paid_label'] ?? 'Amount Paid' }}</p>
-                <p class="mt-2 font-display text-4xl">NGN {{ number_format((float) $assignments->sum('amount_paid')) }}</p>
+                <p class="mt-2 font-display text-3xl leading-tight" title="{{ $fmtFull($paid) }}">{{ $fmt($paid) }}</p>
                 <p class="mt-2 text-sm text-muted-foreground">{{ $content['paid_description'] ?? 'Captured across all linked projects.' }}</p>
             </div>
+            @php $outstanding = (float) $assignments->sum('outstanding_balance'); @endphp
             <div class="luxury-card">
                 <p class="text-[10px] uppercase tracking-[0.24em] text-muted-foreground">{{ $content['outstanding_label'] ?? 'Outstanding' }}</p>
-                <p class="mt-2 font-display text-4xl text-primary">NGN {{ number_format((float) $assignments->sum('outstanding_balance')) }}</p>
+                <p class="mt-2 font-display text-3xl leading-tight text-primary" title="{{ $fmtFull($outstanding) }}">{{ $fmt($outstanding) }}</p>
                 <p class="mt-2 text-sm text-muted-foreground">{{ $content['outstanding_description'] ?? 'Current balance still open for settlement.' }}</p>
             </div>
         </div>

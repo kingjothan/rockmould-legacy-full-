@@ -45,7 +45,7 @@ class AuthController extends Controller
     {
         $this->logoutFromAllGuards($request);
 
-        return redirect()->route('admin.login');
+        return redirect()->route('home');
     }
 
     private function logoutFromAllGuards(Request $request): void

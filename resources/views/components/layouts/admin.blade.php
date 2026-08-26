@@ -65,7 +65,7 @@
             </div>
         </aside>
 
-        <div class="flex min-w-0 flex-1 flex-col">
+        <div class="flex min-w-0 flex-1 flex-col md:overflow-hidden">
             <header class="sticky top-0 z-30 flex h-16 items-center gap-4 border-b border-border bg-card/80 px-4 backdrop-blur-sm md:px-6">
                 <button class="text-muted-foreground md:hidden" type="button" aria-label="Open admin navigation" data-sidebar-open>
                     <x-portal-icon name="menu" class="h-5 w-5" />

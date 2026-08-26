@@ -896,7 +896,13 @@
 
   /* ── Portal shell ───────────────────────────────────── */
   .portal-shell {
-    @apply min-h-screen w-full bg-background md:flex;
+    @apply w-full bg-background md:flex;
+  }
+  @media (min-width: 768px) {
+    .portal-shell {
+      height: 100vh;
+      overflow: hidden;
+    }
   }
 
   .portal-sidebar {
@@ -961,7 +967,13 @@
   }
 
   .admin-shell {
-    @apply min-h-screen w-full bg-background md:flex;
+    @apply w-full bg-background md:flex;
+  }
+  @media (min-width: 768px) {
+    .admin-shell {
+      height: 100vh;
+      overflow: hidden;
+    }
   }
 
   .admin-sidebar {

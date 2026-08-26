@@ -461,6 +461,24 @@
                             <input name="support_manager_role" value="{{ old('support_manager_role', data_get($portal, 'support.manager_role')) }}" class="input-shell">
                         </div>
                     </div>
+                    <div>
+                        <p class="mb-3 text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">Account Manager Contact</p>
+                        <div class="grid gap-4 md:grid-cols-3">
+                            <div>
+                                <label class="admin-label">Full Name</label>
+                                <input name="support_manager_name" value="{{ old('support_manager_name', data_get($portal, 'support.manager_name')) }}" class="input-shell" placeholder="e.g. Amaka Obi">
+                            </div>
+                            <div>
+                                <label class="admin-label">Email Address</label>
+                                <input type="email" name="support_manager_email" value="{{ old('support_manager_email', data_get($portal, 'support.manager_email')) }}" class="input-shell" placeholder="e.g. amaka@rockmould.com">
+                            </div>
+                            <div>
+                                <label class="admin-label">Phone Number</label>
+                                <input name="support_manager_phone" value="{{ old('support_manager_phone', data_get($portal, 'support.manager_phone')) }}" class="input-shell" placeholder="e.g. +234 800 000 0000">
+                            </div>
+                        </div>
+                        <p class="mt-1.5 text-[11px] text-muted-foreground">Shown to all portal clients as their dedicated account manager. Leave blank to fall back to the company contact.</p>
+                    </div>
                     <div class="grid gap-4 md:grid-cols-2">
                         <div>
                             <label class="admin-label">Phone Tile Label</label>

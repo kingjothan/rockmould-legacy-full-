@@ -41,9 +41,14 @@
         <div class="luxury-card">
             <h3 class="mb-3 font-display text-lg font-semibold">{{ $content['support_title'] ?? 'Support Contact' }}</h3>
             @if ($supportAssignment)
-                <p class="text-sm text-muted-foreground">Your Account Manager: <span class="font-medium text-foreground">{{ $supportAssignment->account_manager_name ?: 'Rockmould Client Relations' }}</span></p>
-                <p class="mt-1 text-sm text-muted-foreground">Email: <a href="mailto:{{ $supportAssignment->account_manager_email ?: $company['email'] }}" class="text-primary">{{ $supportAssignment->account_manager_email ?: $company['email'] }}</a></p>
-                <p class="mt-1 text-sm text-muted-foreground">Phone: <a href="tel:{{ preg_replace('/\s+/', '', (string) ($supportAssignment->account_manager_phone ?: $company['phone'])) }}" class="text-primary">{{ $supportAssignment->account_manager_phone ?: $company['phone'] }}</a></p>
+                @php
+                    $mgrName  = data_get($content, 'manager_name')  ?: ($supportAssignment->account_manager_name  ?: 'Rockmould Client Relations');
+                    $mgrEmail = data_get($content, 'manager_email') ?: ($supportAssignment->account_manager_email ?: $company['email']);
+                    $mgrPhone = data_get($content, 'manager_phone') ?: ($supportAssignment->account_manager_phone ?: $company['phone']);
+                @endphp
+                <p class="text-sm text-muted-foreground">Your Account Manager: <span class="font-medium text-foreground">{{ $mgrName }}</span></p>
+                <p class="mt-1 text-sm text-muted-foreground">Email: <a href="mailto:{{ $mgrEmail }}" class="text-primary">{{ $mgrEmail }}</a></p>
+                <p class="mt-1 text-sm text-muted-foreground">Phone: <a href="tel:{{ preg_replace('/\s+/', '', $mgrPhone) }}" class="text-primary">{{ $mgrPhone }}</a></p>
             @else
                 <p class="text-sm text-muted-foreground">{{ $content['support_empty'] ?? 'A dedicated account manager will appear here once a project has been assigned to your portal.' }}</p>
             @endif

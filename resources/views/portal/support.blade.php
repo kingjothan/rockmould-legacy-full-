@@ -1,17 +1,14 @@
 <x-layouts.portal :company="$company" :page-heading="$content['title'] ?? 'Support'">
     @php
         $primaryAssignment = $assignments->first();
-        $primaryManager = $primaryAssignment
-            ? [
-                'name' => $primaryAssignment->account_manager_name ?: 'Rockmould Client Relations',
-                'email' => $primaryAssignment->account_manager_email ?: $company['email'],
-                'phone' => $primaryAssignment->account_manager_phone ?: $company['phone'],
-            ]
-            : [
-                'name' => 'Rockmould Client Relations',
-                'email' => $company['email'],
-                'phone' => $company['phone'],
-            ];
+        $cmsName  = data_get($content, 'manager_name');
+        $cmsEmail = data_get($content, 'manager_email');
+        $cmsPhone = data_get($content, 'manager_phone');
+        $primaryManager = [
+            'name'  => $cmsName  ?: ($primaryAssignment->account_manager_name  ?? null) ?: 'Rockmould Client Relations',
+            'email' => $cmsEmail ?: ($primaryAssignment->account_manager_email ?? null) ?: $company['email'],
+            'phone' => $cmsPhone ?: ($primaryAssignment->account_manager_phone ?? null) ?: $company['phone'],
+        ];
         $initials = collect(explode(' ', $primaryManager['name']))->filter()->map(fn ($part) => strtoupper(substr($part, 0, 1)))->take(2)->implode('');
         $faqs = $content['faqs'] ?? [];
     @endphp
