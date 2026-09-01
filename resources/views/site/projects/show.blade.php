@@ -245,22 +245,21 @@
                                 </div>
 
                                 {{-- Lightbox --}}
-                                <div id="public-lightbox" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/90 p-4" onclick="closePublicLightbox()">
-                                    <button class="absolute right-4 top-4 text-white/60 transition-colors hover:text-white" onclick="closePublicLightbox()">
-                                        <svg class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                                <div id="public-lightbox" style="display:none;position:fixed;inset:0;z-index:9999;align-items:center;justify-content:center;background:rgba(0,0,0,0.92);padding:1rem;" onclick="closePublicLightbox()">
+                                    <button style="position:absolute;top:1rem;right:1rem;background:none;border:none;cursor:pointer;color:rgba(255,255,255,0.7);line-height:1;" onclick="closePublicLightbox()">
+                                        <svg width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
                                     </button>
-                                    <img id="public-lightbox-img" src="" alt="" class="max-h-full max-w-full rounded-sm object-contain shadow-2xl" onclick="event.stopPropagation()">
+                                    <img id="public-lightbox-img" src="" alt="" style="max-height:90vh;max-width:90vw;object-fit:contain;border-radius:4px;box-shadow:0 25px 50px rgba(0,0,0,0.6);" onclick="event.stopPropagation()">
                                 </div>
                                 <script>
                                     function openPublicLightbox(src) {
                                         const lb = document.getElementById('public-lightbox');
                                         document.getElementById('public-lightbox-img').src = src;
-                                        lb.classList.remove('hidden'); lb.classList.add('flex');
+                                        lb.style.display = 'flex';
                                         document.body.style.overflow = 'hidden';
                                     }
                                     function closePublicLightbox() {
-                                        const lb = document.getElementById('public-lightbox');
-                                        lb.classList.add('hidden'); lb.classList.remove('flex');
+                                        document.getElementById('public-lightbox').style.display = 'none';
                                         document.body.style.overflow = '';
                                     }
                                     document.addEventListener('keydown', e => { if (e.key === 'Escape') closePublicLightbox(); });
