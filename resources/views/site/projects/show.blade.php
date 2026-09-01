@@ -228,9 +228,7 @@
                                                                 @if ($attIsVid)
                                                                     <video src="{{ $attUrl }}" controls playsinline class="w-full rounded-md aspect-video bg-muted"></video>
                                                                 @else
-                                                                    <a href="{{ $attUrl }}" target="_blank" rel="noopener noreferrer">
-                                                                        <img src="{{ $attUrl }}" alt="Update photo" class="w-full rounded-md aspect-square object-cover hover:opacity-90 transition-opacity">
-                                                                    </a>
+                                                                    <img src="{{ $attUrl }}" alt="Update photo" class="w-full cursor-zoom-in rounded-md aspect-square object-cover hover:opacity-90 transition-opacity" onclick="openPublicLightbox(this.src)">
                                                                 @endif
                                                             @endforeach
                                                         </div>
@@ -245,6 +243,28 @@
                                         <a href="{{ route('portal.updates') }}" class="luxury-btn-primary mt-3 inline-flex">View in Portal</a>
                                     </div>
                                 </div>
+
+                                {{-- Lightbox --}}
+                                <div id="public-lightbox" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/90 p-4" onclick="closePublicLightbox()">
+                                    <button class="absolute right-4 top-4 text-white/60 transition-colors hover:text-white" onclick="closePublicLightbox()">
+                                        <svg class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                                    </button>
+                                    <img id="public-lightbox-img" src="" alt="" class="max-h-full max-w-full rounded-sm object-contain shadow-2xl" onclick="event.stopPropagation()">
+                                </div>
+                                <script>
+                                    function openPublicLightbox(src) {
+                                        const lb = document.getElementById('public-lightbox');
+                                        document.getElementById('public-lightbox-img').src = src;
+                                        lb.classList.remove('hidden'); lb.classList.add('flex');
+                                        document.body.style.overflow = 'hidden';
+                                    }
+                                    function closePublicLightbox() {
+                                        const lb = document.getElementById('public-lightbox');
+                                        lb.classList.add('hidden'); lb.classList.remove('flex');
+                                        document.body.style.overflow = '';
+                                    }
+                                    document.addEventListener('keydown', e => { if (e.key === 'Escape') closePublicLightbox(); });
+                                </script>
                             @endif
 
                             <script>
