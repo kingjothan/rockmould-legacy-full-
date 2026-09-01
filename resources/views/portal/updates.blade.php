@@ -116,9 +116,7 @@
                                                             @if ($isVideo)
                                                                 <video src="{{ $url }}" controls playsinline class="aspect-video w-full rounded-md bg-muted"></video>
                                                             @else
-                                                                <a href="{{ $url }}" target="_blank" rel="noopener noreferrer">
-                                                                    <img src="{{ $url }}" alt="Update attachment" class="aspect-square w-full rounded-md bg-muted object-cover transition-opacity hover:opacity-90">
-                                                                </a>
+                                                                <img src="{{ $url }}" alt="Update attachment" class="aspect-square w-full rounded-md bg-muted object-cover">
                                                             @endif
                                                         @endforeach
                                                     </div>
