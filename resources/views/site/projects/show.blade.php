@@ -244,25 +244,28 @@
                                     </div>
                                 </div>
 
-                                {{-- Lightbox --}}
-                                <div id="public-lightbox" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:9999;background:rgba(0,0,0,0.92);" onclick="closePublicLightbox()">
-                                    <button style="position:absolute;top:1rem;right:1rem;background:none;border:none;cursor:pointer;color:rgba(255,255,255,0.7);line-height:1;z-index:10001;" onclick="closePublicLightbox()">
-                                        <svg width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
-                                    </button>
-                                    <img id="public-lightbox-img" src="" alt="" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);max-height:90vh;max-width:90vw;object-fit:contain;border-radius:4px;box-shadow:0 25px 50px rgba(0,0,0,0.6);" onclick="event.stopPropagation()">
-                                </div>
                                 <script>
+                                    (function () {
+                                        var lb = document.createElement('div');
+                                        lb.id = 'public-lightbox';
+                                        lb.style.cssText = 'display:none;position:fixed;top:0;left:0;width:100%;height:100%;z-index:99999;background:rgba(0,0,0,0.92);cursor:pointer;';
+                                        lb.innerHTML = '<button style="position:absolute;top:1rem;right:1rem;background:none;border:none;cursor:pointer;color:rgba(255,255,255,0.8);font-size:2rem;line-height:1;z-index:100001;" id="public-lb-close">&times;</button><img id="public-lightbox-img" src="" alt="" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);max-height:90vh;max-width:90vw;object-fit:contain;border-radius:4px;box-shadow:0 25px 50px rgba(0,0,0,0.6);cursor:default;">';
+                                        document.body.appendChild(lb);
+                                        lb.addEventListener('click', function () { closePublicLightbox(); });
+                                        document.getElementById('public-lightbox-img').addEventListener('click', function (e) { e.stopPropagation(); });
+                                        document.getElementById('public-lb-close').addEventListener('click', function (e) { e.stopPropagation(); closePublicLightbox(); });
+                                    })();
                                     function openPublicLightbox(src) {
-                                        const lb = document.getElementById('public-lightbox');
+                                        var lb = document.getElementById('public-lightbox');
                                         document.getElementById('public-lightbox-img').src = src;
-                                        lb.style.display = 'flex';
+                                        lb.style.display = 'block';
                                         document.body.style.overflow = 'hidden';
                                     }
                                     function closePublicLightbox() {
                                         document.getElementById('public-lightbox').style.display = 'none';
                                         document.body.style.overflow = '';
                                     }
-                                    document.addEventListener('keydown', e => { if (e.key === 'Escape') closePublicLightbox(); });
+                                    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closePublicLightbox(); });
                                 </script>
                             @endif
 
