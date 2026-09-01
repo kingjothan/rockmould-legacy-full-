@@ -26,21 +26,32 @@
 
                     <div class="luxury-card overflow-hidden p-0">
 
-                        {{-- Project header / trigger --}}
-                        <button
-                            type="button"
-                            class="update-accordion-trigger flex w-full items-center justify-between gap-4 px-5 py-4 text-left transition-colors hover:bg-muted/30"
-                            onclick="toggleUpdateAccordion(this)"
-                        >
-                            <div class="min-w-0 flex-1">
-                                <p class="truncate text-sm font-semibold">{{ $project?->title ?? 'Project' }}</p>
-                                <p class="mt-0.5 text-[11px] text-muted-foreground">
+                        {{-- Project thumbnail --}}
+                        <div class="relative h-36 w-full overflow-hidden">
+                            <img
+                                src="{{ $project?->cover_image_url ?? asset('images/project-1.jpg') }}"
+                                alt="{{ $project?->title }}"
+                                class="h-full w-full object-cover"
+                            >
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
+                            <div class="absolute bottom-0 left-0 right-0 px-4 pb-3">
+                                <p class="truncate text-sm font-semibold text-white">{{ $project?->title ?? 'Project' }}</p>
+                                <p class="text-[11px] text-white/70">
                                     {{ $count }} {{ Str::plural('update', $count) }}
                                     @if ($latest->update_date)
                                         &middot; Last: {{ $latest->update_date->format('M j, Y') }}
                                     @endif
                                 </p>
                             </div>
+                        </div>
+
+                        {{-- Project header / trigger --}}
+                        <button
+                            type="button"
+                            class="update-accordion-trigger flex w-full items-center justify-between gap-3 px-5 py-3 text-left transition-colors hover:bg-muted/30"
+                            onclick="toggleUpdateAccordion(this)"
+                        >
+                            <span class="text-xs text-muted-foreground">View updates</span>
 
                             @if ($overallProgress)
                                 <span class="shrink-0 rounded-full bg-primary/10 px-2.5 py-0.5 text-[10px] font-medium text-primary">{{ $overallProgress }}%</span>
