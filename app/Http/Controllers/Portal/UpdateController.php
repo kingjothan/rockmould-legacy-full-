@@ -17,7 +17,7 @@ class UpdateController extends Controller
         return view('portal.updates', [
             'company' => SiteData::company(),
             'content' => SiteData::portalPage('updates'),
-            'updates' => ProjectUpdate::query()->whereIn('project_id', $projectIds)->where('visible_to_client', true)->with('project')->latest('update_date')->get(),
+            'updates' => ProjectUpdate::query()->whereIn('project_id', $projectIds)->where('visible_to_client', true)->with('project')->orderByRaw('ISNULL(update_date), update_date ASC')->orderBy('created_at', 'asc')->get(),
         ]);
     }
 }

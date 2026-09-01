@@ -180,13 +180,13 @@
                                     </select>
                                     <input name="unit_label" value="{{ $assignment->unit?->label ?? $assignment->unit_label }}" class="input-shell">
                                     <select name="status" class="input-shell">
-                                        @foreach (['active' => 'Active', 'completed' => 'Completed', 'upcoming' => 'Upcoming', 'inactive' => 'Inactive'] as $value => $label)
+                                        @foreach (['active' => 'Active', 'ongoing' => 'Ongoing', 'completed' => 'Completed', 'upcoming' => 'Upcoming', 'inactive' => 'Inactive', 'pending' => 'Pending'] as $value => $label)
                                             <option value="{{ $value }}" @selected($assignment->status === $value)>{{ $label }}</option>
                                         @endforeach
                                     </select>
-                                    <input type="number" name="progress_percentage" value="{{ $assignment->progress_percentage }}" min="0" max="100" class="input-shell">
-                                    <input type="number" name="contract_amount" value="{{ $assignment->contract_amount }}" class="input-shell">
-                                    <input type="number" name="amount_paid" value="{{ $assignment->amount_paid }}" class="input-shell">
+                                    <input type="number" name="progress_percentage" value="{{ $assignment->progress_percentage }}" min="0" max="100" placeholder="Progress % (0–100)" class="input-shell">
+                                    <input type="number" name="contract_amount" value="{{ $assignment->contract_amount }}" placeholder="Contract amount (NGN)" class="input-shell">
+                                    <input type="number" name="amount_paid" value="{{ $assignment->amount_paid }}" placeholder="Amount paid (NGN)" class="input-shell">
                                     <input type="number" name="next_payment_amount" value="{{ $assignment->next_payment_amount }}" placeholder="Next payment amount" class="input-shell">
                                     <input type="date" name="next_payment_due_at" value="{{ optional($assignment->next_payment_due_at)->format('Y-m-d') }}" class="input-shell">
                                     <textarea name="client_notes" rows="2" placeholder="Client-facing notes" class="input-shell md:col-span-2">{{ $assignment->client_notes }}</textarea>
@@ -282,28 +282,149 @@
                         <input name="unit_label" placeholder="Single unit or allocation label" class="input-shell">
                         <textarea name="unit_labels" rows="3" placeholder="Or paste multiple unit labels, one per line" class="input-shell"></textarea>
                         <select name="status" class="input-shell"><option value="active">Active</option><option value="completed">Completed</option><option value="upcoming">Upcoming</option></select>
-                        <input type="number" name="progress_percentage" value="0" min="0" max="100" class="input-shell">
-                        <input type="number" name="contract_amount" required placeholder="Contract amount" class="input-shell">
-                        <input type="number" name="amount_paid" required placeholder="Amount paid" class="input-shell">
-                        <input type="number" name="next_payment_amount" placeholder="Next payment amount" class="input-shell">
-                        <input type="date" name="next_payment_due_at" class="input-shell">
+                        <input type="number" name="progress_percentage" value="0" min="0" max="100" placeholder="Progress % (0–100)" class="input-shell">
+                        <input type="number" name="contract_amount" required placeholder="Contract amount (NGN)" class="input-shell">
+                        <input type="number" name="amount_paid" required placeholder="Amount paid (NGN)" class="input-shell">
+                        <input type="number" name="next_payment_amount" placeholder="Next payment amount (NGN)" class="input-shell">
+                        <input type="date" name="next_payment_due_at" placeholder="Next payment due date" class="input-shell">
                         <button class="luxury-btn-primary w-full">Assign Client</button>
                     </form>
                 </div>
 
+                {{-- Live Updates --}}
                 <div class="luxury-card">
                     <div class="flex items-center justify-between gap-4">
-                        <h2 class="font-display text-3xl">Recent Updates</h2>
-                        <p class="text-xs uppercase tracking-[0.18em] text-muted-foreground">{{ $project->updates->count() }} updates</p>
+                        <h2 class="font-display text-3xl">Live Updates</h2>
+                        <p class="text-xs uppercase tracking-[0.18em] text-muted-foreground">{{ $project->updates->count() }} {{ Str::plural('update', $project->updates->count()) }}</p>
                     </div>
-                    <div class="mt-5 space-y-4">
-                        @forelse ($project->updates as $update)
-                            <div class="rounded-sm border border-border bg-muted/20 p-4">
-                                <p class="font-medium">{{ $update->title }}</p>
-                                <p class="mt-2 text-sm text-muted-foreground">{{ $update->body }}</p>
+
+                    {{-- Add new update --}}
+                    <form action="{{ route('admin.updates.store') }}" method="POST" enctype="multipart/form-data" class="mt-6 space-y-4 rounded-sm border border-dashed border-primary/30 bg-primary/5 p-4">
+                        @csrf
+                        <input type="hidden" name="project_id" value="{{ $project->id }}">
+                        <p class="text-xs font-semibold uppercase tracking-[0.16em] text-primary">Publish New Update</p>
+                        <div class="grid gap-4 sm:grid-cols-2">
+                            <div class="sm:col-span-2">
+                                <label class="admin-label">Title</label>
+                                <input name="title" required placeholder="Update title" class="input-shell w-full">
                             </div>
+                            <div class="sm:col-span-2">
+                                <label class="admin-label">Details</label>
+                                <textarea name="body" rows="3" required placeholder="Update details" class="input-shell w-full"></textarea>
+                            </div>
+                            <div>
+                                <label class="admin-label">Date</label>
+                                <input type="date" name="update_date" value="{{ now()->toDateString() }}" class="input-shell w-full">
+                            </div>
+                            <div>
+                                <label class="admin-label">Progress %</label>
+                                <input type="number" name="progress" min="0" max="100" placeholder="e.g. 75" class="input-shell w-full">
+                            </div>
+                            <div class="sm:col-span-2">
+                                <label class="admin-label">Photos & Videos (optional)</label>
+                                <input type="file" name="attachment_uploads[]" accept="image/*,video/*" multiple class="input-shell w-full">
+                            </div>
+                            <div class="sm:col-span-2">
+                                <label class="admin-label">Media URLs (optional)</label>
+                                <textarea name="attachment_urls" rows="2" placeholder="Paste URLs, one per line" class="input-shell w-full"></textarea>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between gap-4">
+                            <label class="flex items-center gap-2 text-sm text-muted-foreground">
+                                <input type="checkbox" name="visible_to_client" value="1" checked class="h-4 w-4 rounded border-border bg-transparent text-primary">
+                                Visible to client
+                            </label>
+                            <button class="luxury-btn-primary">Publish Update</button>
+                        </div>
+                    </form>
+
+                    {{-- Existing updates --}}
+                    <div class="mt-6 space-y-3">
+                        @forelse ($project->updates()->orderByRaw('ISNULL(update_date), update_date ASC')->get() as $update)
+                            @php($attachments = is_array($update->attachments) ? $update->attachments : [])
+                            <details class="group rounded-sm border border-border bg-muted/20">
+                                <summary class="cursor-pointer list-none p-4">
+                                    <div class="flex items-center justify-between gap-4">
+                                        <div class="min-w-0">
+                                            <p class="truncate font-medium">{{ $update->title }}</p>
+                                            <p class="mt-0.5 text-xs text-muted-foreground">
+                                                {{ $update->update_date?->format('M j, Y') ?? 'No date' }}
+                                                @if ($update->progress) &middot; {{ $update->progress }}% @endif
+                                            </p>
+                                        </div>
+                                        <div class="flex shrink-0 items-center gap-2">
+                                            <x-status-badge :value="$update->visible_to_client ? 'published' : 'internal'" />
+                                            <x-portal-icon name="chevron-down" class="h-4 w-4 transition-transform group-open:rotate-180 text-muted-foreground" />
+                                        </div>
+                                    </div>
+                                </summary>
+
+                                <div class="border-t border-border px-4 pb-4 pt-4">
+                                    <p class="text-sm text-muted-foreground">{{ $update->body }}</p>
+
+                                    @if (count($attachments) > 0)
+                                        <div class="mt-3 grid grid-cols-3 gap-2">
+                                            @foreach ($attachments as $att)
+                                                @php($isVid = preg_match('/\.(mp4|webm|mov|ogg|m4v)(\?|$)/i', $att))
+                                                <div class="overflow-hidden rounded-md border border-border bg-muted">
+                                                    @if ($isVid)
+                                                        <video controls class="aspect-video w-full object-cover"><source src="{{ str_starts_with($att, 'http') ? $att : asset('storage/'.$att) }}"></video>
+                                                    @else
+                                                        <img src="{{ str_starts_with($att, 'http') ? $att : asset('storage/'.$att) }}" alt="{{ $update->title }}" class="aspect-video w-full object-cover">
+                                                    @endif
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    @endif
+
+                                    <form action="{{ route('admin.updates.update', $update) }}" method="POST" enctype="multipart/form-data" class="mt-4 space-y-4 border-t border-border pt-4">
+                                        @csrf
+                                        @method('PUT')
+                                        <div class="grid gap-4 sm:grid-cols-2">
+                                            <div class="sm:col-span-2">
+                                                <label class="admin-label">Title</label>
+                                                <input name="title" value="{{ $update->title }}" required class="input-shell w-full">
+                                            </div>
+                                            <div class="sm:col-span-2">
+                                                <label class="admin-label">Details</label>
+                                                <textarea name="body" rows="3" required class="input-shell w-full">{{ $update->body }}</textarea>
+                                            </div>
+                                            <div>
+                                                <label class="admin-label">Date</label>
+                                                <input type="date" name="update_date" value="{{ $update->update_date?->format('Y-m-d') }}" class="input-shell w-full">
+                                            </div>
+                                            <div>
+                                                <label class="admin-label">Progress %</label>
+                                                <input type="number" name="progress" min="0" max="100" value="{{ $update->progress }}" class="input-shell w-full">
+                                            </div>
+                                            <div class="sm:col-span-2">
+                                                <label class="admin-label">Add More Photos & Videos</label>
+                                                <input type="file" name="attachment_uploads[]" accept="image/*,video/*" multiple class="input-shell w-full">
+                                            </div>
+                                            <div class="sm:col-span-2">
+                                                <label class="admin-label">Add Media URLs (one per line)</label>
+                                                <textarea name="attachment_urls" rows="2" placeholder="Paste URLs, one per line" class="input-shell w-full"></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center justify-between gap-4">
+                                            <label class="flex items-center gap-2 text-sm text-muted-foreground">
+                                                <input type="checkbox" name="visible_to_client" value="1" @checked($update->visible_to_client) class="h-4 w-4 rounded border-border bg-transparent text-primary">
+                                                Visible to client
+                                            </label>
+                                            <div class="flex items-center gap-3">
+                                                <form action="{{ route('admin.updates.destroy', $update) }}" method="POST" onsubmit="return confirm('Delete this update?')">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="text-xs text-destructive hover:underline">Delete</button>
+                                                </form>
+                                                <button class="luxury-btn-primary text-xs">Save Changes</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </details>
                         @empty
-                            <p class="text-sm text-muted-foreground">No updates have been published for this project yet.</p>
+                            <p class="py-4 text-sm text-muted-foreground">No updates published yet. Use the form above to add the first one.</p>
                         @endforelse
                     </div>
                 </div>

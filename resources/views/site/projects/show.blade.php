@@ -135,10 +135,9 @@
                                     <button type="button" data-media-tab="legacy" class="media-tab-pill rounded-full border border-border px-4 py-1.5 text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground transition-all duration-200 hover:border-primary/40 hover:text-primary">Gallery</button>
                                 @endif
                                 @if ($hasLiveUpdates)
-                                    <a href="{{ route('portal.updates') }}" class="inline-flex items-center gap-1.5 rounded-full border border-primary/30 px-4 py-1.5 text-xs font-medium uppercase tracking-[0.16em] text-primary transition-all duration-200 hover:border-primary hover:bg-primary/10">
-                                        <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"/></svg>
+                                    <button type="button" data-media-tab="live-updates" class="media-tab-pill rounded-full border border-border px-4 py-1.5 text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground transition-all duration-200 hover:border-primary/40 hover:text-primary">
                                         Live Updates
-                                    </a>
+                                    </button>
                                 @endif
                             </div>
 
@@ -181,6 +180,69 @@
                                                 <div class="gallery-item-overlay"></div>
                                             </div>
                                         @endforeach
+                                    </div>
+                                </div>
+                            @endif
+
+                            @if ($hasLiveUpdates)
+                                @php $liveUpdates = $project->updates->where('visible_to_client', true)->sortBy('update_date'); @endphp
+                                <div data-media-panel="live-updates" class="hidden">
+                                    <div class="relative">
+                                        {{-- vertical line --}}
+                                        <div class="absolute bottom-0 left-5 top-0 w-px bg-border"></div>
+                                        <div class="space-y-6">
+                                        @foreach ($liveUpdates as $liveUpdate)
+                                            @php
+                                                $luAttachments = is_array($liveUpdate->attachments) ? $liveUpdate->attachments : [];
+                                                $luProgress = (int) ($liveUpdate->progress_percentage ?? $liveUpdate->progress ?? 0);
+                                            @endphp
+                                            <div class="relative flex gap-4">
+                                                {{-- circle dot --}}
+                                                <div class="z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 border-background bg-card">
+                                                    <div class="h-3 w-3 rounded-full border border-muted-foreground/40"></div>
+                                                </div>
+                                                <div class="flex-1 rounded-sm border border-border bg-card p-5">
+                                                    <div class="flex items-start justify-between gap-4">
+                                                        <div>
+                                                            <p class="text-[10px] uppercase tracking-[0.18em] text-primary">{{ $liveUpdate->update_date?->format('F j, Y') }}</p>
+                                                            <h3 class="mt-1 font-display text-lg font-semibold">{{ $liveUpdate->title }}</h3>
+                                                        </div>
+                                                        @if ($luProgress)
+                                                            <span class="shrink-0 text-xs text-muted-foreground">{{ $luProgress }}%</span>
+                                                        @endif
+                                                    </div>
+                                                    <p class="mt-2 text-sm leading-relaxed text-muted-foreground">{{ $liveUpdate->body }}</p>
+                                                    @if ($luProgress)
+                                                        <div class="mt-3 h-1 w-full rounded-full bg-muted">
+                                                            <div class="h-full rounded-full bg-primary" style="width:{{ $luProgress }}%"></div>
+                                                        </div>
+                                                    @endif
+                                                    @if (count($luAttachments) > 0)
+                                                        <div class="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3">
+                                                            @foreach ($luAttachments as $att)
+                                                                @php
+                                                                    $attUrl = str_starts_with($att, 'http') ? $att : asset('storage/'.$att);
+                                                                    $attExt = strtolower(pathinfo(strtok($att,'?'), PATHINFO_EXTENSION));
+                                                                    $attIsVid = in_array($attExt, ['mp4','webm','mov','ogg','m4v']);
+                                                                @endphp
+                                                                @if ($attIsVid)
+                                                                    <video src="{{ $attUrl }}" controls playsinline class="w-full rounded-md aspect-video bg-muted"></video>
+                                                                @else
+                                                                    <a href="{{ $attUrl }}" target="_blank" rel="noopener noreferrer">
+                                                                        <img src="{{ $attUrl }}" alt="Update photo" class="w-full rounded-md aspect-square object-cover hover:opacity-90 transition-opacity">
+                                                                    </a>
+                                                                @endif
+                                                            @endforeach
+                                                        </div>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                        </div>
+                                    </div>
+                                    <div class="mt-6 rounded-sm border border-primary/20 bg-primary/5 p-4 text-center">
+                                        <p class="text-sm text-muted-foreground">Log in to your client portal to see all updates and receive notifications.</p>
+                                        <a href="{{ route('portal.updates') }}" class="luxury-btn-primary mt-3 inline-flex">View in Portal</a>
                                     </div>
                                 </div>
                             @endif

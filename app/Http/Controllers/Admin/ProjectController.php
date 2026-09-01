@@ -142,7 +142,7 @@ class ProjectController extends Controller
         $data = $request->validate([
             'user_id' => ['required', 'integer', Rule::exists('users', 'id')->where(fn ($query) => $query->where('role', 'client'))],
             'unit_label' => ['required', 'string', 'max:255'],
-            'status' => ['required', Rule::in(['ongoing', 'completed', 'upcoming'])],
+            'status' => ['required', Rule::in(['active', 'ongoing', 'completed', 'upcoming', 'inactive', 'pending'])],
             'progress_percentage' => ['required', 'integer', 'min:0', 'max:100'],
             'contract_amount' => ['required', 'numeric', 'min:0'],
             'amount_paid' => ['required', 'numeric', 'min:0'],

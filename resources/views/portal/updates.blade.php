@@ -61,11 +61,14 @@
                                         @foreach ($update->attachments as $attachment)
                                             @php
                                                 $url = str_starts_with($attachment, 'http') ? $attachment : asset('storage/'.$attachment);
-                                                $ext = strtolower(pathinfo($attachment, PATHINFO_EXTENSION));
-                                                $isVideo = in_array($ext, ['mp4','webm','mov','ogg']);
+                                                // Strip query string before checking extension
+                                                $cleanPath = strtok($attachment, '?');
+                                                $ext = strtolower(pathinfo($cleanPath, PATHINFO_EXTENSION));
+                                                $isVideo = in_array($ext, ['mp4','webm','mov','ogg','avi','mkv','m4v'])
+                                                    || str_contains(strtolower($attachment), 'video');
                                             @endphp
                                             @if ($isVideo)
-                                                <video src="{{ $url }}" controls class="w-full rounded-lg aspect-square object-cover bg-muted"></video>
+                                                <video src="{{ $url }}" controls playsinline class="w-full rounded-lg aspect-video bg-muted"></video>
                                             @else
                                                 <a href="{{ $url }}" target="_blank" rel="noopener noreferrer">
                                                     <img src="{{ $url }}" alt="Update attachment" class="w-full rounded-lg aspect-square object-cover bg-muted hover:opacity-90 transition-opacity">
