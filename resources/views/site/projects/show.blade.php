@@ -245,11 +245,11 @@
                                 </div>
 
                                 {{-- Lightbox --}}
-                                <div id="public-lightbox" style="display:none;position:fixed;inset:0;z-index:9999;align-items:center;justify-content:center;background:rgba(0,0,0,0.92);padding:1rem;" onclick="closePublicLightbox()">
-                                    <button style="position:absolute;top:1rem;right:1rem;background:none;border:none;cursor:pointer;color:rgba(255,255,255,0.7);line-height:1;" onclick="closePublicLightbox()">
+                                <div id="public-lightbox" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:9999;background:rgba(0,0,0,0.92);" onclick="closePublicLightbox()">
+                                    <button style="position:absolute;top:1rem;right:1rem;background:none;border:none;cursor:pointer;color:rgba(255,255,255,0.7);line-height:1;z-index:10001;" onclick="closePublicLightbox()">
                                         <svg width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
                                     </button>
-                                    <img id="public-lightbox-img" src="" alt="" style="max-height:90vh;max-width:90vw;object-fit:contain;border-radius:4px;box-shadow:0 25px 50px rgba(0,0,0,0.6);" onclick="event.stopPropagation()">
+                                    <img id="public-lightbox-img" src="" alt="" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);max-height:90vh;max-width:90vw;object-fit:contain;border-radius:4px;box-shadow:0 25px 50px rgba(0,0,0,0.6);" onclick="event.stopPropagation()">
                                 </div>
                                 <script>
                                     function openPublicLightbox(src) {
