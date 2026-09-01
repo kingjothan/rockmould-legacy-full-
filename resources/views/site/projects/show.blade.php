@@ -189,7 +189,7 @@
                                 <div data-media-panel="live-updates" class="hidden">
                                     <div style="position:relative;">
                                         {{-- vertical line --}}
-                                        <div style="position:absolute;top:0;bottom:0;left:20px;width:1px;background:var(--border,#e5e7eb);"></div>
+                                        <div style="position:absolute;top:0;bottom:0;left:20px;width:1px;background:hsl(var(--border));"></div>
                                         <div class="space-y-6">
                                         @foreach ($liveUpdates as $liveUpdate)
                                             @php
@@ -198,8 +198,8 @@
                                             @endphp
                                             <div style="position:relative;display:flex;gap:1rem;align-items:flex-start;">
                                                 {{-- circle dot --}}
-                                                <div style="position:relative;z-index:10;flex-shrink:0;width:2.5rem;height:2.5rem;display:flex;align-items:center;justify-content:center;border-radius:9999px;background:var(--card,#fff);border:2px solid var(--background,#f9fafb);">
-                                                    <div style="width:10px;height:10px;border-radius:9999px;border:1.5px solid var(--primary,#b8933f);"></div>
+                                                <div style="position:relative;z-index:10;flex-shrink:0;width:2.5rem;height:2.5rem;display:flex;align-items:center;justify-content:center;border-radius:9999px;background:hsl(var(--card));border:2px solid hsl(var(--background));">
+                                                    <div style="width:10px;height:10px;border-radius:9999px;border:1.5px solid hsl(var(--primary));"></div>
                                                 </div>
                                                 <div class="flex-1 rounded-sm border border-border bg-card p-5" style="min-width:0;">
                                                     <div class="flex items-start justify-between gap-4">
