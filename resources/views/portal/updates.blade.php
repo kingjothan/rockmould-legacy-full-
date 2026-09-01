@@ -116,7 +116,7 @@
                                                             @if ($isVideo)
                                                                 <video src="{{ $url }}" controls playsinline class="aspect-video w-full rounded-md bg-muted"></video>
                                                             @else
-                                                                <img src="{{ $url }}" alt="Update attachment" class="aspect-square w-full rounded-md bg-muted object-cover">
+                                                                <img src="{{ $url }}" alt="Update attachment" class="aspect-square w-full cursor-zoom-in rounded-md bg-muted object-cover transition-opacity hover:opacity-90" onclick="openLightbox(this.src)">
                                                             @endif
                                                         @endforeach
                                                     </div>
@@ -134,7 +134,30 @@
         @endif
     </div>
 
+    {{-- Lightbox --}}
+    <div id="update-lightbox" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/90 p-4" onclick="closeLightbox()">
+        <button class="absolute right-4 top-4 text-white/60 transition-colors hover:text-white" onclick="closeLightbox()">
+            <svg class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+        <img id="update-lightbox-img" src="" alt="" class="max-h-full max-w-full rounded-sm object-contain shadow-2xl" onclick="event.stopPropagation()">
+    </div>
+
     <script>
+        function openLightbox(src) {
+            const lb = document.getElementById('update-lightbox');
+            document.getElementById('update-lightbox-img').src = src;
+            lb.classList.remove('hidden');
+            lb.classList.add('flex');
+            document.body.style.overflow = 'hidden';
+        }
+        function closeLightbox() {
+            const lb = document.getElementById('update-lightbox');
+            lb.classList.add('hidden');
+            lb.classList.remove('flex');
+            document.body.style.overflow = '';
+        }
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+
         function toggleUpdateAccordion(btn) {
             const card    = btn.closest('.luxury-card');
             const panel   = card.querySelector('.update-accordion-panel');
