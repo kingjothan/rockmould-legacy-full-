@@ -1,5 +1,5 @@
 <x-layouts.portal :company="$company" :page-heading="$content['title'] ?? 'Project Updates'">
-    <div class="mx-auto max-w-5xl space-y-6">
+    <div class="mx-auto max-w-3xl space-y-6">
         <div>
             <h1 class="font-display text-2xl font-semibold">{{ $content['title'] ?? 'Project Updates' }}</h1>
             <p class="mt-1 text-sm text-muted-foreground">{{ $content['description'] ?? 'Chronological updates across all your projects' }}</p>
@@ -11,11 +11,9 @@
                 <p class="mx-auto mt-3 max-w-xl text-sm text-muted-foreground">{{ $content['empty_description'] ?? 'Project updates will appear here as soon as the Rockmould team publishes them to your account.' }}</p>
             </div>
         @else
-            @php
-                $grouped = $updates->groupBy(fn($u) => $u->project_id);
-            @endphp
+            @php $grouped = $updates->groupBy(fn($u) => $u->project_id); @endphp
 
-            <div class="grid gap-4 md:grid-cols-2">
+            <div class="space-y-3">
                 @foreach ($grouped as $projectId => $projectUpdates)
                     @php
                         $project         = $projectUpdates->first()->project;
@@ -26,48 +24,45 @@
 
                     <div class="luxury-card overflow-hidden p-0">
 
-                        {{-- Project thumbnail --}}
-                        <div class="relative h-36 w-full overflow-hidden">
-                            <img
-                                src="{{ $project?->cover_image_url ?? asset('images/project-1.jpg') }}"
-                                alt="{{ $project?->title }}"
-                                class="h-full w-full object-cover"
-                            >
-                            <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
-                            <div class="absolute bottom-0 left-0 right-0 px-4 pb-3">
-                                <p class="truncate text-sm font-semibold text-white">{{ $project?->title ?? 'Project' }}</p>
-                                <p class="text-[11px] text-white/70">
-                                    {{ $count }} {{ Str::plural('update', $count) }}
-                                    @if ($latest->update_date)
-                                        &middot; Last: {{ $latest->update_date->format('M j, Y') }}
-                                    @endif
-                                </p>
-                            </div>
-                        </div>
-
-                        {{-- Project header / trigger --}}
+                        {{-- Trigger row --}}
                         <button
                             type="button"
-                            class="update-accordion-trigger flex w-full items-center justify-between gap-3 px-5 py-3 text-left transition-colors hover:bg-muted/30"
+                            class="flex w-full items-center gap-4 p-3 text-left transition-colors hover:bg-muted/20"
                             onclick="toggleUpdateAccordion(this)"
                         >
-                            <span class="text-xs text-muted-foreground">View updates</span>
+                            {{-- Thumbnail --}}
+                            <div class="h-14 w-20 shrink-0 overflow-hidden rounded-sm">
+                                <img
+                                    src="{{ $project?->cover_image_url ?? asset('images/project-1.jpg') }}"
+                                    alt="{{ $project?->title }}"
+                                    class="h-full w-full object-cover"
+                                >
+                            </div>
 
-                            @if ($overallProgress)
-                                <span class="shrink-0 rounded-full bg-primary/10 px-2.5 py-0.5 text-[10px] font-medium text-primary">{{ $overallProgress }}%</span>
-                            @endif
+                            {{-- Info --}}
+                            <div class="min-w-0 flex-1">
+                                <p class="truncate text-sm font-semibold">{{ $project?->title ?? 'Project' }}</p>
+                                <p class="mt-0.5 text-[11px] text-muted-foreground">
+                                    {{ $count }} {{ Str::plural('update', $count) }}
+                                    @if ($latest->update_date)
+                                        &middot; {{ $latest->update_date->format('M j, Y') }}
+                                    @endif
+                                </p>
+                                @if ($overallProgress)
+                                    <div class="mt-1.5 flex items-center gap-2">
+                                        <div class="h-1 w-20 rounded-full bg-muted">
+                                            <div class="h-full rounded-full bg-primary" style="width:{{ $overallProgress }}%"></div>
+                                        </div>
+                                        <span class="text-[10px] text-muted-foreground">{{ $overallProgress }}%</span>
+                                    </div>
+                                @endif
+                            </div>
 
-                            <svg class="update-chevron h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            {{-- Chevron --}}
+                            <svg class="update-chevron mr-1 h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
                             </svg>
                         </button>
-
-                        {{-- Progress bar --}}
-                        @if ($overallProgress)
-                            <div class="h-0.5 w-full bg-muted">
-                                <div class="h-full bg-primary" style="width:{{ $overallProgress }}%"></div>
-                            </div>
-                        @endif
 
                         {{-- Updates panel --}}
                         <div class="update-accordion-panel hidden border-t border-border">
@@ -149,8 +144,8 @@
 
     <script>
         function toggleUpdateAccordion(btn) {
-            const card   = btn.closest('.luxury-card');
-            const panel  = card.querySelector('.update-accordion-panel');
+            const card    = btn.closest('.luxury-card');
+            const panel   = card.querySelector('.update-accordion-panel');
             const chevron = btn.querySelector('.update-chevron');
             const isOpen  = !panel.classList.contains('hidden');
             panel.classList.toggle('hidden', isOpen);
