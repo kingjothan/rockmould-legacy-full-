@@ -187,21 +187,21 @@
                             @if ($hasLiveUpdates)
                                 @php $liveUpdates = $project->updates->where('visible_to_client', true)->sortBy('update_date'); @endphp
                                 <div data-media-panel="live-updates" class="hidden">
-                                    <div class="relative">
+                                    <div style="position:relative;">
                                         {{-- vertical line --}}
-                                        <div class="absolute bottom-0 left-5 top-0 w-px bg-border"></div>
+                                        <div style="position:absolute;top:0;bottom:0;left:20px;width:1px;background:var(--border,#e5e7eb);"></div>
                                         <div class="space-y-6">
                                         @foreach ($liveUpdates as $liveUpdate)
                                             @php
                                                 $luAttachments = is_array($liveUpdate->attachments) ? $liveUpdate->attachments : [];
                                                 $luProgress = (int) ($liveUpdate->progress_percentage ?? $liveUpdate->progress ?? 0);
                                             @endphp
-                                            <div class="relative flex gap-4">
+                                            <div style="position:relative;display:flex;gap:1rem;align-items:flex-start;">
                                                 {{-- circle dot --}}
-                                                <div class="z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 border-background bg-card">
-                                                    <div class="h-3 w-3 rounded-full border border-muted-foreground/40"></div>
+                                                <div style="position:relative;z-index:10;flex-shrink:0;width:2.5rem;height:2.5rem;display:flex;align-items:center;justify-content:center;border-radius:9999px;background:var(--card,#fff);border:2px solid var(--background,#f9fafb);">
+                                                    <div style="width:10px;height:10px;border-radius:9999px;border:1.5px solid var(--primary,#b8933f);"></div>
                                                 </div>
-                                                <div class="flex-1 rounded-sm border border-border bg-card p-5">
+                                                <div class="flex-1 rounded-sm border border-border bg-card p-5" style="min-width:0;">
                                                     <div class="flex items-start justify-between gap-4">
                                                         <div>
                                                             <p class="text-[10px] uppercase tracking-[0.18em] text-primary">{{ $liveUpdate->update_date?->format('F j, Y') }}</p>
