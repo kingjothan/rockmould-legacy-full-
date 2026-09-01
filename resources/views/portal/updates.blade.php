@@ -104,13 +104,7 @@
                                                 @endif
 
                                                 @if ($hasMedia)
-                                                    <button type="button"
-                                                        onclick="this.closest('.update-entry').querySelector('.update-media').classList.toggle('hidden')"
-                                                        class="mt-2 flex items-center gap-1 text-[10px] text-primary transition-colors hover:text-primary/80">
-                                                        <x-portal-icon name="image" class="h-3 w-3" />
-                                                        {{ count($update->attachments) }} {{ count($update->attachments) === 1 ? 'Photo' : 'Photos/Videos' }}
-                                                    </button>
-                                                    <div class="update-media hidden mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3">
+                                                    <div class="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3">
                                                         @foreach ($update->attachments as $attachment)
                                                             @php
                                                                 $url       = str_starts_with($attachment, 'http') ? $attachment : asset('storage/'.$attachment);
