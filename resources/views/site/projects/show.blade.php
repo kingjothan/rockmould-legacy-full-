@@ -188,7 +188,7 @@
                                 @php
                                     $liveUpdates = $project->updates->where('visible_to_client', true)->sortBy('update_date');
                                     $updatesLocked = $project->live_updates_locked ?? true;
-                                    $isClient = auth()->check();
+                                    $isClient = auth()->check() && auth()->user()?->role === 'client';
                                 @endphp
                                 <div data-media-panel="live-updates" class="hidden">
                                     @if ($updatesLocked && ! $isClient)
@@ -217,7 +217,11 @@
                                                     <p class="font-display text-base font-semibold">Live Updates — Clients Only</p>
                                                     <p class="mt-1 text-sm text-muted-foreground">These updates are reserved for clients of this project.</p>
                                                 </div>
-                                                <a href="{{ route('portal.login', ['redirect' => url()->current()]) }}" class="luxury-btn-primary inline-flex">Log In to View</a>
+                                                @if (auth()->check())
+                                                    <a href="{{ route('portal.updates') }}" class="luxury-btn-primary inline-flex">View in Client Portal</a>
+                                                @else
+                                                    <a href="{{ route('portal.login') }}" class="luxury-btn-primary inline-flex">Log In to View</a>
+                                                @endif
                                             </div>
                                         </div>
                                     @else
