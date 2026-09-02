@@ -136,6 +136,7 @@
                         <label class="flex items-center gap-3 text-sm text-muted-foreground"><input type="checkbox" name="is_featured" value="1" @checked($project->is_featured)> Feature on website</label>
                         <label class="flex items-center gap-3 text-sm text-muted-foreground"><input type="checkbox" name="is_portfolio" value="1" @checked($project->is_portfolio)> Include in portfolio</label>
                         <label class="flex items-center gap-3 text-sm text-muted-foreground"><input type="checkbox" name="is_published" value="1" @checked($project->is_published)> Published</label>
+                        <label class="flex items-center gap-3 text-sm text-muted-foreground"><input type="checkbox" name="live_updates_locked" value="1" @checked($project->live_updates_locked ?? true)> Lock Live Updates (clients only)</label>
                         <button class="luxury-btn-primary">Save Project</button>
                     </form>
                 </div>

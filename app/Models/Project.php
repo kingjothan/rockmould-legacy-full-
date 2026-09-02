@@ -28,6 +28,7 @@ class Project extends Model
             'is_featured' => 'boolean',
             'is_portfolio' => 'boolean',
             'is_published' => 'boolean',
+            'live_updates_locked' => 'boolean',
         ];
     }
 

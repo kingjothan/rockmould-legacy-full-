@@ -334,6 +334,7 @@ class ProjectController extends Controller
             'is_featured' => $request->boolean('is_featured'),
             'is_portfolio' => $request->boolean('is_portfolio'),
             'is_published' => $request->boolean('is_published', true),
+            'live_updates_locked' => $request->boolean('live_updates_locked'),
         ];
     }
 
