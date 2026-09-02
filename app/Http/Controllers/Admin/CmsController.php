@@ -603,6 +603,7 @@ class CmsController extends Controller
             'is_featured' => $request->boolean('is_featured'),
             'is_portfolio' => $request->boolean('is_portfolio'),
             'is_published' => $request->boolean('is_published'),
+            'live_updates_locked' => $request->boolean('live_updates_locked'),
         ];
 
         if ($request->has('total_units_highlight') || $request->has('available_units_highlight') || $request->has('highlight_labels') || $request->has('highlight_values')) {
