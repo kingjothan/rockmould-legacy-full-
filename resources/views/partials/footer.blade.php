@@ -64,7 +64,7 @@
         <div class="luxury-divider my-12"></div>
         <div class="flex flex-col items-center justify-between gap-4 md:flex-row">
             <p class="text-xs text-muted-foreground">
-                Copyright {{ now()->year }} All rights reserved.
+                &copy; {{ now()->year }} Rockmould Limited. All rights reserved.
             </p>
             <div class="flex items-center gap-6">
                 <a href="{{ route('privacy') }}" class="text-xs text-muted-foreground hover:text-primary">Privacy Policy</a>

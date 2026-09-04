@@ -1,6 +1,6 @@
 @props(['project'])
 
-<a href="{{ route('projects.show', $project->slug) }}" class="group flex h-full flex-col overflow-hidden rounded-lg border border-border bg-card transition-all duration-500 hover:border-primary/30 hover:shadow-[0_0_40px_rgba(193,162,104,0.12)]">
+<a href="{{ route('projects.show', ['project' => $project->slug]) }}" class="group flex h-full flex-col overflow-hidden rounded-lg border border-border bg-card transition-all duration-500 hover:border-primary/30 hover:shadow-[0_0_40px_rgba(193,162,104,0.12)]">
     <div class="img-zoom relative aspect-[4/3] overflow-hidden">
         <x-media :path="$project->cover_image" fallback="images/project-1.jpg" alt="{{ $project->title }}" class="h-full w-full object-cover" />
         <div class="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent"></div>
