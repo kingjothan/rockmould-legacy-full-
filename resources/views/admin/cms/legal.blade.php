@@ -138,8 +138,8 @@
                                 <input class="input-shell w-full section-title" value="{{ $section['title'] }}" placeholder="Section heading">
                             </div>
                             <div>
-                                <label class="admin-label">Body</label>
-                                <textarea class="input-shell w-full section-body" rows="3" placeholder="Section body text">{{ $section['body'] }}</textarea>
+                                <label class="admin-label">Body <span class="text-muted-foreground font-normal">(HTML supported)</span></label>
+                                <textarea class="input-shell w-full section-body" rows="5" placeholder="Section body text or HTML (p, ul, li, strong, a, table…)">{{ $section['body'] }}</textarea>
                             </div>
                         </div>
                     </div>
@@ -243,8 +243,8 @@
                                 <input class="input-shell w-full section-title" value="{{ $section['title'] }}" placeholder="Section heading">
                             </div>
                             <div>
-                                <label class="admin-label">Body</label>
-                                <textarea class="input-shell w-full section-body" rows="3" placeholder="Section body text">{{ $section['body'] }}</textarea>
+                                <label class="admin-label">Body <span class="text-muted-foreground font-normal">(HTML supported)</span></label>
+                                <textarea class="input-shell w-full section-body" rows="5" placeholder="Section body text or HTML (p, ul, li, strong, a, table…)">{{ $section['body'] }}</textarea>
                             </div>
                         </div>
                     </div>
@@ -294,10 +294,10 @@
         var col2 = document.createElement('div');
         var lbl2 = document.createElement('label');
         lbl2.className = 'admin-label';
-        lbl2.textContent = 'Body';
+        lbl2.innerHTML = 'Body <span style="font-weight:normal;opacity:.6;">(HTML supported)</span>';
         var ta = document.createElement('textarea');
         ta.className = 'input-shell w-full section-body';
-        ta.rows = 3;
+        ta.rows = 5;
         ta.placeholder = 'Section body text';
         col2.appendChild(lbl2);
         col2.appendChild(ta);

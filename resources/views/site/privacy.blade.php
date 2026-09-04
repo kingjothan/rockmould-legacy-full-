@@ -1,37 +1,71 @@
 <x-layouts.public :company="$company" title="Privacy Policy | Rockmould Limited">
     @php
-        $sections = $legal['privacy_sections'] ?? [
-            ['title' => 'Data Collection', 'body' => 'Rockmould Limited collects contact details, project inquiry information, client portal records, uploaded documents, and support communications to deliver services and maintain operational records.'],
-            ['title' => 'How We Use Your Data', 'body' => 'Information provided through contact forms, partnerships, newsletters, KYC requests, or the client portal may be used for relationship management, project reporting, account review, and compliance workflows.'],
-            ['title' => 'Data Protection', 'body' => 'We do not sell personal information. Access to sensitive records is restricted to authorized Rockmould personnel who require it for legitimate operational, finance, project, or support purposes.'],
-            ['title' => 'Contact & Corrections', 'body' => 'If you need corrections, account review, or record clarification, contact us or use the portal support channel.'],
-        ];
+        $sections = $legal['privacy_sections'] ?? [];
         $heroMedia = $legal['privacy_hero_media_path'] ?? 'images/project-1.jpg';
     @endphp
 
     <x-hero
         title="{{ $legal['privacy_hero_title'] ?? 'Privacy Policy' }}"
         subtitle="{{ $legal['privacy_hero_subtitle'] ?? 'Legal' }}"
-        description="{{ $legal['privacy_hero_description'] ?? 'How Rockmould collects, uses, and protects information shared across the website, portal, and client interactions.' }}"
+        description="{{ $legal['privacy_hero_description'] ?? 'How Rockmould Limited collects, uses and protects your personal data, in line with the Nigeria Data Protection Act 2023.' }}"
         :image="$heroMedia"
         :titleSize="$legal['privacy_title_size'] ?? null"
         :descriptionSize="$legal['privacy_description_size'] ?? null" />
 
     <section class="section-padding">
         <div class="container-luxury">
-            <div class="mx-auto max-w-3xl">
-                <div class="luxury-card space-y-8">
+            <div class="mx-auto max-w-3xl space-y-10">
+
+                {{-- Table of Contents --}}
+                @if (count($sections) > 0)
+                <div class="rounded-lg border border-border bg-card p-6">
+                    <p class="mb-4 text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">On this page</p>
+                    <ol class="grid gap-x-6 gap-y-1 sm:grid-cols-2" style="list-style:none;padding:0;margin:0;">
+                        @foreach ($sections as $i => $section)
+                        <li class="text-sm">
+                            <a href="#privacy-section-{{ $i + 1 }}" class="text-foreground/70 hover:text-primary transition-colors">
+                                <span class="mr-1 font-semibold" style="color:hsl(var(--primary));">{{ $i + 1 }}.</span>{{ $section['title'] }}
+                            </a>
+                        </li>
+                        @endforeach
+                    </ol>
+                </div>
+                @endif
+
+                {{-- Sections --}}
+                <div class="luxury-card space-y-10">
                     @foreach ($sections as $i => $section)
-                    <div @if($i > 0) class="border-t border-border pt-6" @endif>
-                        <h2 class="mb-3 font-display text-xl font-semibold">{{ $section['title'] }}</h2>
-                        <p class="text-sm leading-relaxed text-muted-foreground">{{ $section['body'] }}</p>
+                    <div id="privacy-section-{{ $i + 1 }}" @if($i > 0) class="border-t border-border pt-8" @endif style="scroll-margin-top:1.5rem;">
+                        <h2 class="mb-4 flex items-baseline gap-3 font-display text-lg font-semibold">
+                            <span class="shrink-0 font-bold text-sm tabular-nums" style="color:hsl(var(--primary));">{{ $i + 1 }}</span>
+                            {{ $section['title'] }}
+                        </h2>
+                        <div class="prose-legal text-sm leading-relaxed text-muted-foreground">
+                            {!! $section['body'] !!}
+                        </div>
                     </div>
                     @endforeach
                 </div>
-                <div class="mt-6 flex justify-center">
+
+                <div class="flex justify-center">
                     <a href="{{ route('contact') }}" class="luxury-btn-outline">Contact Us</a>
                 </div>
             </div>
         </div>
     </section>
+
+    <style>
+        .prose-legal p { margin: 0 0 0.85rem; }
+        .prose-legal p:last-child { margin-bottom: 0; }
+        .prose-legal ul { margin: 0 0 0.85rem; padding-left: 1.25rem; }
+        .prose-legal li { margin: 0.35rem 0; }
+        .prose-legal strong { color: hsl(var(--foreground)); }
+        .prose-legal a { color: hsl(var(--primary)); text-underline-offset: 2px; }
+        .prose-legal a:hover { text-decoration: underline; }
+        .prose-legal table { width: 100%; border-collapse: collapse; font-size: 0.82rem; margin-bottom: 0.85rem; }
+        .prose-legal thead th { background: hsl(var(--secondary)); color: hsl(var(--foreground)); text-align: left; font-weight: 600; padding: 0.6rem 0.85rem; }
+        .prose-legal tbody td { padding: 0.55rem 0.85rem; border-top: 1px solid hsl(var(--border)); vertical-align: top; }
+        .prose-legal tbody tr:nth-child(even) { background: hsl(var(--muted)/0.4); }
+        .prose-legal .tbl-wrap { overflow-x: auto; border: 1px solid hsl(var(--border)); border-radius: 0.375rem; margin-bottom: 0.85rem; }
+    </style>
 </x-layouts.public>
