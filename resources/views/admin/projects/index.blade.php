@@ -39,16 +39,14 @@
                     </form>
                 </div>
 
-                <div class="overflow-x-auto">
-                    <table class="table-shell" style="min-width:680px">
+                <div>
+                    <table class="table-shell w-full">
                         <thead>
                             <tr>
                                 <th>Project</th>
                                 <th>Status</th>
-                                <th>Clients</th>
-                                <th>Units</th>
+                                <th class="text-center">Clients&nbsp;/&nbsp;Units</th>
                                 <th>Progress</th>
-                                <th>Budget</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -56,23 +54,23 @@
                             @forelse ($projects as $project)
                                 <tr class="table-row-shell">
                                     <td>
-                                        <div class="font-medium">{{ $project->title }}</div>
+                                        <div class="font-medium leading-snug">{{ $project->title }}</div>
                                         <div class="text-xs text-muted-foreground">{{ $project->location }}</div>
                                     </td>
                                     <td><x-status-badge :value="$project->status" /></td>
-                                    <td>{{ $project->assignments_count }}</td>
-                                    <td>{{ $project->units_count }}</td>
+                                    <td class="text-center text-sm">
+                                        {{ $project->assignments_count }}&nbsp;/&nbsp;{{ $project->units_count }}
+                                    </td>
                                     <td>
-                                        <div class="flex items-center gap-3">
-                                            <div class="h-1.5 w-24 overflow-hidden rounded-full bg-muted">
+                                        <div class="flex items-center gap-2">
+                                            <div class="h-1.5 flex-1 overflow-hidden rounded-full bg-muted">
                                                 <div class="h-full rounded-full bg-primary" style="width: {{ $project->progress }}%"></div>
                                             </div>
-                                            <span class="text-xs text-muted-foreground">{{ $project->progress }}%</span>
+                                            <span class="shrink-0 text-xs text-muted-foreground">{{ $project->progress }}%</span>
                                         </div>
                                     </td>
-                                    <td>{{ $project->budget ? 'NGN '.number_format((float) $project->budget) : 'Pending' }}</td>
                                     <td>
-                                        <div class="flex flex-wrap items-center gap-3">
+                                        <div class="flex items-center gap-3">
                                             <a href="{{ route('admin.projects.show', $project) }}" class="text-primary transition hover:text-primary/80">Open</a>
                                             <form action="{{ route('admin.projects.destroy', $project) }}" method="POST" onsubmit="return confirm('Delete {{ addslashes($project->title) }} permanently?');">
                                                 @csrf
@@ -85,7 +83,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="7" class="px-4 py-12 text-center text-sm text-muted-foreground">No projects matched the current search.</td>
+                                    <td colspan="5" class="px-4 py-12 text-center text-sm text-muted-foreground">No projects matched the current search.</td>
                                 </tr>
                             @endforelse
                         </tbody>
