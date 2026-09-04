@@ -45,33 +45,30 @@
             </div>
         </div>
 
-        <div class="grid gap-8 lg:grid-cols-[1.24fr_0.76fr]">
+        <div class="grid gap-8 xl:grid-cols-[1fr_360px]">
             <div class="min-w-0 space-y-8">
-                <div class="luxury-card overflow-hidden p-0">
+                <div class="luxury-card min-w-0 p-0">
                     <div class="border-b border-border px-6 py-5">
-                        <div class="flex flex-col gap-4 lg:flex-row">
-                            <form method="GET" class="grid flex-1 gap-3 md:grid-cols-[1fr_180px_auto]">
-                                <input type="search" name="q" value="{{ request('q') }}" placeholder="Search by client, email, phone, type, or subject..." class="input-shell">
-                                <select name="status" class="input-shell">
-                                    <option value="">All statuses</option>
-                                    @foreach ($statuses as $value => $label)
-                                        <option value="{{ $value }}" @selected(request('status') === $value)>{{ $label }}</option>
-                                    @endforeach
-                                </select>
-                                <button class="luxury-btn-outline min-w-max">Filter</button>
-                            </form>
-                        </div>
+                        <form method="GET" class="flex flex-wrap gap-3">
+                            <input type="search" name="q" value="{{ request('q') }}" placeholder="Search by client, email, phone, type..." class="input-shell min-w-[180px] flex-1">
+                            <select name="status" class="input-shell w-auto min-w-[150px]">
+                                <option value="">All statuses</option>
+                                @foreach ($statuses as $value => $label)
+                                    <option value="{{ $value }}" @selected(request('status') === $value)>{{ $label }}</option>
+                                @endforeach
+                            </select>
+                            <button class="luxury-btn-outline shrink-0">Filter</button>
+                        </form>
                     </div>
 
-                    <div class="overflow-x-auto">
-                        <table class="table-shell">
+                    <div>
+                        <table class="table-shell w-full">
                             <thead>
                                 <tr>
                                     <th>Client</th>
                                     <th>Type</th>
                                     <th>Schedule</th>
                                     <th>Status</th>
-                                    <th>Assigned</th>
                                     <th></th>
                                 </tr>
                             </thead>
@@ -79,24 +76,23 @@
                                 @forelse ($bookings as $booking)
                                     <tr class="table-row-shell">
                                         <td>
-                                            <div class="font-medium">{{ $booking->full_name }}</div>
-                                            <div class="text-xs text-muted-foreground">{{ $booking->email }} | {{ $booking->phone }}</div>
+                                            <div class="font-medium leading-snug">{{ $booking->full_name }}</div>
+                                            <div class="text-xs text-muted-foreground">{{ $booking->email }}</div>
                                         </td>
                                         <td>
                                             <div class="text-sm">{{ $booking->consultation_type_label }}</div>
-                                            <div class="text-xs text-muted-foreground">{{ $booking->subject }}</div>
+                                            <div class="text-xs text-muted-foreground">{{ $booking->assignedStaff?->name ?? 'Unassigned' }}</div>
                                         </td>
                                         <td>
                                             <div class="text-sm">{{ $booking->formattedDate('M j, Y') }}</div>
                                             <div class="text-xs text-muted-foreground">{{ $booking->formattedTimeRange() }}</div>
                                         </td>
                                         <td><x-status-badge :value="$booking->status" /></td>
-                                        <td class="text-sm text-muted-foreground">{{ $booking->assignedStaff?->name ?? 'Unassigned' }}</td>
                                         <td><a href="{{ route('admin.consultations.show', $booking) }}" class="text-primary transition hover:text-primary/80">Open</a></td>
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="6" class="px-4 py-12 text-center text-sm text-muted-foreground">No consultation bookings matched the current filters.</td>
+                                        <td colspan="5" class="px-4 py-12 text-center text-sm text-muted-foreground">No consultation bookings matched the current filters.</td>
                                     </tr>
                                 @endforelse
                             </tbody>
