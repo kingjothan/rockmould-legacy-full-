@@ -31,11 +31,11 @@
         </div>
 
         <div class="grid gap-8 lg:grid-cols-[1.2fr_0.8fr]">
-            <div class="luxury-card overflow-hidden p-0">
+            <div class="luxury-card min-w-0 overflow-hidden p-0">
                 <div class="border-b border-border p-5">
-                    <form method="GET" class="flex flex-col gap-3 md:flex-row">
-                        <input type="search" name="q" value="{{ request('q') }}" placeholder="Search projects..." class="input-shell">
-                        <button class="luxury-btn-outline">Search</button>
+                    <form method="GET" class="flex gap-3">
+                        <input type="search" name="q" value="{{ request('q') }}" placeholder="Search projects..." class="input-shell flex-1">
+                        <button class="luxury-btn-outline shrink-0">Search</button>
                     </form>
                 </div>
 
