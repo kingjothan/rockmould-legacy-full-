@@ -17,6 +17,20 @@
             ['title' => 'Acceptance of Terms', 'body' => 'By using this website or portal, you agree to engage with Rockmould lawfully and in good faith. For questions about these terms, contact us.'],
         ];
 
+        $sizeOptions = [
+            'text-xs'  => 'XS',
+            'text-sm'  => 'SM',
+            'text-base'=> 'Base',
+            'text-lg'  => 'LG',
+            'text-xl'  => 'XL',
+            'text-2xl' => '2XL',
+            'text-3xl' => '3XL',
+            'text-4xl' => '4XL',
+            'text-5xl' => '5XL',
+            'text-6xl' => '6XL',
+            'text-7xl' => '7XL',
+        ];
+
         $privacyMediaPath = $legal['privacy_hero_media_path'] ?? null;
         $privacyMediaUrl  = $privacyMediaPath ? \App\Support\AssetPath::url($privacyMediaPath) : null;
         $privacyIsVideo   = \App\Support\AssetPath::isVideo($privacyMediaPath);
@@ -43,8 +57,24 @@
             <div class="grid gap-6 lg:grid-cols-[1fr_0.9fr]">
                 <div class="space-y-4">
                     <div>
-                        <label class="admin-label">Page Description (shown under the hero)</label>
-                        <textarea name="privacy_hero_description" rows="2" class="input-shell w-full">{{ $legal['privacy_hero_description'] ?? 'How Rockmould collects, uses, and protects information shared across the website, portal, and client interactions.' }}</textarea>
+                        <label class="admin-label">Hero Title Size</label>
+                        <select name="privacy_title_size" class="input-shell w-full">
+                            @foreach ($sizeOptions as $val => $label)
+                                <option value="{{ $val }}" @selected(($legal['privacy_title_size'] ?? 'text-4xl md:text-5xl lg:text-7xl') === $val)>{{ $label }}</option>
+                            @endforeach
+                        </select>
+                        <p class="mt-1 text-xs text-muted-foreground">Controls the size of "Privacy Policy" on the hero.</p>
+                    </div>
+                    <div>
+                        <label class="admin-label">Hero Description Size</label>
+                        <div class="flex gap-2">
+                            <textarea name="privacy_hero_description" rows="2" class="input-shell flex-1">{{ $legal['privacy_hero_description'] ?? 'How Rockmould collects, uses, and protects information shared across the website, portal, and client interactions.' }}</textarea>
+                            <select name="privacy_description_size" class="input-shell w-20 self-start" title="Description font size">
+                                @foreach ($sizeOptions as $val => $label)
+                                    <option value="{{ $val }}" @selected(($legal['privacy_description_size'] ?? 'text-lg md:text-xl') === $val)>{{ $label }}</option>
+                                @endforeach
+                            </select>
+                        </div>
                     </div>
                     <div>
                         <label class="admin-label">Hero Background Link or Path</label>
@@ -123,8 +153,24 @@
             <div class="grid gap-6 lg:grid-cols-[1fr_0.9fr]">
                 <div class="space-y-4">
                     <div>
-                        <label class="admin-label">Page Description (shown under the hero)</label>
-                        <textarea name="terms_hero_description" rows="2" class="input-shell w-full">{{ $legal['terms_hero_description'] ?? 'The core terms governing the use of the Rockmould website, portal, and client-facing digital services.' }}</textarea>
+                        <label class="admin-label">Hero Title Size</label>
+                        <select name="terms_title_size" class="input-shell w-full">
+                            @foreach ($sizeOptions as $val => $label)
+                                <option value="{{ $val }}" @selected(($legal['terms_title_size'] ?? 'text-4xl md:text-5xl lg:text-7xl') === $val)>{{ $label }}</option>
+                            @endforeach
+                        </select>
+                        <p class="mt-1 text-xs text-muted-foreground">Controls the size of "Terms of Service" on the hero.</p>
+                    </div>
+                    <div>
+                        <label class="admin-label">Hero Description Size</label>
+                        <div class="flex gap-2">
+                            <textarea name="terms_hero_description" rows="2" class="input-shell flex-1">{{ $legal['terms_hero_description'] ?? 'The core terms governing the use of the Rockmould website, portal, and client-facing digital services.' }}</textarea>
+                            <select name="terms_description_size" class="input-shell w-20 self-start" title="Description font size">
+                                @foreach ($sizeOptions as $val => $label)
+                                    <option value="{{ $val }}" @selected(($legal['terms_description_size'] ?? 'text-lg md:text-xl') === $val)>{{ $label }}</option>
+                                @endforeach
+                            </select>
+                        </div>
                     </div>
                     <div>
                         <label class="admin-label">Hero Background Link or Path</label>

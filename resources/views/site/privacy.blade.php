@@ -11,7 +11,9 @@
 
     <x-hero title="Privacy Policy" subtitle="Legal"
         description="{{ $legal['privacy_hero_description'] ?? 'How Rockmould collects, uses, and protects information shared across the website, portal, and client interactions.' }}"
-        :image="$heroMedia" />
+        :image="$heroMedia"
+        :titleSize="$legal['privacy_title_size'] ?? null"
+        :descriptionSize="$legal['privacy_description_size'] ?? null" />
 
     <section class="section-padding">
         <div class="container-luxury">

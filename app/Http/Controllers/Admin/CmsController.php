@@ -729,10 +729,14 @@ class CmsController extends Controller
     {
         $data = $request->validate([
             'privacy_hero_description'  => ['nullable', 'string'],
+            'privacy_title_size'        => ['nullable', 'string', 'max:64'],
+            'privacy_description_size'  => ['nullable', 'string', 'max:64'],
             'privacy_hero_media_path'   => ['nullable', 'string', 'max:2048'],
             'privacy_hero_media_upload' => ['nullable', 'file', 'max:204800'],
             'privacy_sections_json'     => ['nullable', 'json'],
             'terms_hero_description'    => ['nullable', 'string'],
+            'terms_title_size'          => ['nullable', 'string', 'max:64'],
+            'terms_description_size'    => ['nullable', 'string', 'max:64'],
             'terms_hero_media_path'     => ['nullable', 'string', 'max:2048'],
             'terms_hero_media_upload'   => ['nullable', 'file', 'max:204800'],
             'terms_sections_json'       => ['nullable', 'json'],
@@ -750,9 +754,13 @@ class CmsController extends Controller
 
         $updated = array_merge($current, [
             'privacy_hero_description'  => $data['privacy_hero_description'] ?? '',
+            'privacy_title_size'        => $data['privacy_title_size'] ?? 'text-4xl md:text-5xl lg:text-7xl',
+            'privacy_description_size'  => $data['privacy_description_size'] ?? 'text-lg md:text-xl',
             'privacy_hero_media_path'   => $this->syncMediaInput($request, 'privacy_hero_media_path', 'privacy_hero_media_upload', 'cms/legal', $current['privacy_hero_media_path'] ?? null, 'remove_privacy_hero_media'),
             'privacy_sections'          => $parseSection($data['privacy_sections_json'] ?? null, $current['privacy_sections'] ?? []),
             'terms_hero_description'    => $data['terms_hero_description'] ?? '',
+            'terms_title_size'          => $data['terms_title_size'] ?? 'text-4xl md:text-5xl lg:text-7xl',
+            'terms_description_size'    => $data['terms_description_size'] ?? 'text-lg md:text-xl',
             'terms_hero_media_path'     => $this->syncMediaInput($request, 'terms_hero_media_path', 'terms_hero_media_upload', 'cms/legal', $current['terms_hero_media_path'] ?? null, 'remove_terms_hero_media'),
             'terms_sections'            => $parseSection($data['terms_sections_json'] ?? null, $current['terms_sections'] ?? []),
         ]);

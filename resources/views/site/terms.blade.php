@@ -11,7 +11,9 @@
 
     <x-hero title="Terms of Service" subtitle="Legal"
         description="{{ $legal['terms_hero_description'] ?? 'The core terms governing the use of the Rockmould website, portal, and client-facing digital services.' }}"
-        :image="$heroMedia" />
+        :image="$heroMedia"
+        :titleSize="$legal['terms_title_size'] ?? null"
+        :descriptionSize="$legal['terms_description_size'] ?? null" />
 
     <section class="section-padding">
         <div class="container-luxury">
