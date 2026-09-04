@@ -29,31 +29,30 @@
             </div>
         </div>
 
-        <div class="grid gap-8 lg:grid-cols-[1.25fr_0.75fr]">
-            <div class="luxury-card overflow-hidden p-0">
+        <div class="grid gap-8 xl:grid-cols-[1fr_360px]">
+            <div class="luxury-card min-w-0 p-0">
                 <div class="border-b border-border p-5">
-                    <form method="GET" class="grid gap-4 md:grid-cols-[1fr_220px_140px]">
-                        <input type="search" name="q" value="{{ request('q') }}" placeholder="Search clients..." class="input-shell">
-                        <select name="status" class="input-shell">
+                    <form method="GET" class="flex flex-wrap gap-3">
+                        <input type="search" name="q" value="{{ request('q') }}" placeholder="Search clients..." class="input-shell min-w-[180px] flex-1">
+                        <select name="status" class="input-shell w-auto min-w-[150px]">
                             <option value="">All statuses</option>
                             @foreach (['active' => 'Active', 'inactive' => 'Inactive'] as $value => $label)
                                 <option value="{{ $value }}" @selected(request('status') === $value)>{{ $label }}</option>
                             @endforeach
                         </select>
-                        <button class="luxury-btn-outline">Filter</button>
+                        <button class="luxury-btn-outline shrink-0">Filter</button>
                     </form>
                 </div>
 
-                <div class="overflow-x-auto">
-                    <table class="table-shell">
+                <div>
+                    <table class="table-shell w-full">
                         <thead>
                             <tr>
                                 <th>Name</th>
                                 <th>Phone</th>
                                 <th>Status</th>
-                                <th>Projects</th>
-                                <th>Paid</th>
-                                <th>Outstanding</th>
+                                <th class="text-center">Projects</th>
+                                <th>Paid / Outstanding</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -61,21 +60,23 @@
                             @forelse ($clients as $client)
                                 <tr class="table-row-shell">
                                     <td>
-                                        <div class="font-medium">{{ $client->name }}</div>
+                                        <div class="font-medium leading-snug">{{ $client->name }}</div>
                                         <div class="text-xs text-muted-foreground">{{ $client->email ?: 'No email on file' }}</div>
                                     </td>
-                                    <td>{{ $client->phone }}</td>
+                                    <td class="text-sm">{{ $client->phone }}</td>
                                     <td><x-status-badge :value="$client->status" /></td>
-                                    <td>{{ $client->assignments->count() }}</td>
-                                    <td>NGN {{ number_format((float) $client->assignments->sum('amount_paid')) }}</td>
-                                    <td>NGN {{ number_format((float) $client->assignments->sum('outstanding_balance')) }}</td>
+                                    <td class="text-center text-sm">{{ $client->assignments->count() }}</td>
+                                    <td class="text-sm">
+                                        <div>{{ number_format((float) $client->assignments->sum('amount_paid') / 1000) }}K</div>
+                                        <div class="text-xs text-primary">{{ number_format((float) $client->assignments->sum('outstanding_balance') / 1000) }}K out</div>
+                                    </td>
                                     <td>
                                         <a href="{{ route('admin.clients.show', $client) }}" class="text-primary transition hover:text-primary/80">Open</a>
                                     </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="7" class="px-4 py-12 text-center text-sm text-muted-foreground">No client records matched the current filters.</td>
+                                    <td colspan="6" class="px-4 py-12 text-center text-sm text-muted-foreground">No client records matched the current filters.</td>
                                 </tr>
                             @endforelse
                         </tbody>
