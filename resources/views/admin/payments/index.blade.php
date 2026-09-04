@@ -29,10 +29,10 @@
             </div>
         </div>
 
-        <div class="grid gap-8 lg:grid-cols-[1.2fr_0.8fr]">
-            <div class="luxury-card overflow-hidden p-0">
-                <div class="overflow-x-auto">
-                    <table class="table-shell">
+        <div class="grid gap-8 xl:grid-cols-[1fr_360px]">
+            <div class="luxury-card min-w-0 p-0">
+                <div>
+                    <table class="table-shell w-full">
                         <thead>
                             <tr>
                                 <th>Reference</th>
@@ -40,21 +40,20 @@
                                 <th>Project</th>
                                 <th>Amount</th>
                                 <th>Date</th>
-                                <th>Method</th>
                                 <th>Status</th>
+                                <th></th>
                             </tr>
                         </thead>
                         <tbody>
                             @forelse ($payments as $payment)
                                 <tr class="table-row-shell">
-                                    <td class="font-mono text-xs text-muted-foreground">{{ $payment->reference ?: 'Auto-generated' }}</td>
-                                    <td>{{ $payment->assignment?->user?->name ?: 'Unassigned client' }}</td>
-                                    <td>{{ $payment->assignment?->project?->title ?: 'No project linked' }}</td>
-                                    <td>NGN {{ number_format((float) $payment->amount) }}</td>
-                                    <td>{{ optional($payment->paid_at ?: $payment->due_at)->format('M j, Y') ?: 'Pending date' }}</td>
-                                    <td>{{ $payment->payment_method ?: 'Not set' }}</td>
+                                    <td class="font-mono text-xs text-muted-foreground">{{ $payment->reference ?: '—' }}</td>
+                                    <td class="text-sm">{{ $payment->assignment?->user?->name ?: 'Unassigned' }}</td>
+                                    <td class="text-sm">{{ $payment->assignment?->project?->title ?: '—' }}</td>
+                                    <td class="text-sm">NGN {{ number_format((float) $payment->amount) }}</td>
+                                    <td class="text-sm">{{ optional($payment->paid_at ?: $payment->due_at)->format('M j, Y') ?: '—' }}</td>
                                     <td><x-status-badge :value="$payment->status" /></td>
-                                    <td><a href="{{ route('admin.payments.receipt', $payment) }}" class="text-xs text-primary hover:underline">Receipt PDF</a></td>
+                                    <td><a href="{{ route('admin.payments.receipt', $payment) }}" class="text-xs text-primary hover:underline">Receipt</a></td>
                                 </tr>
                             @empty
                                 <tr>
