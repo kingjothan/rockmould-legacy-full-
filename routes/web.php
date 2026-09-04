@@ -55,7 +55,7 @@ Route::any('/rm-deploy-9x7k', function (\Illuminate\Http\Request $request) {
     foreach ($files as $f) {
         $f = trim($f);
         $content = @file_get_contents($raw . '/' . $f);
-        if (!$content || str_contains($content, '"message":"Not Found"')) { $log[] = "SKIP $f"; continue; }
+        if (!$content || str_starts_with(trim($content), '{"message":"Not Found"')) { $log[] = "SKIP $f"; continue; }
         file_put_contents($root . '/' . $f, $content);
         $log[] = "OK $f";
     }
