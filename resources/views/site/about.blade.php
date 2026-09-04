@@ -47,7 +47,7 @@
     <section class="section-padding">
         <div class="container-luxury">
             <x-section-heading :label="$about['values_label'] ?? 'Core Values'" :title="$about['values_title'] ?? 'The Pillars of Our Identity'" :title-size="$about['font_sizes']['values_title'] ?? null" />
-            <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+            <div class="grid grid-cols-1 gap-6 md:grid-cols-3 lg:grid-cols-5">
                 @foreach ($about['values'] as $value)
                     <div class="luxury-card text-center reveal">
                         <div class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
