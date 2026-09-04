@@ -247,26 +247,24 @@
                 :title="$testimonialsSection['title'] ?? 'Trusted by Visionary Clients'"
                 :title-size="$fontSizes['testimonials_title'] ?? null"
             />
-            <div class="mx-auto grid max-w-4xl grid-cols-1 gap-8 md:grid-cols-2">
-                @foreach ($testimonials as $testimonial)
-                    <div class="luxury-card reveal">
-                        <div class="star-rating mb-4">
-                            @for ($i = 0; $i < 5; $i++)
-                                <svg class="h-4 w-4 star-filled" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
-                            @endfor
-                        </div>
-                        <div class="quote-card">
-                            <span class="quote-mark">&ldquo;</span>
-                            <p class="relative mb-6 pt-2 text-muted-foreground">{{ $testimonial->quote }}</p>
-                        </div>
-                        <div>
-                            <div class="mb-3 flex items-center gap-3">
+            {{-- Scrolling marquee --}}
+            <div class="relative overflow-hidden" style="mask-image:linear-gradient(to right,transparent,black 8%,black 92%,transparent);-webkit-mask-image:linear-gradient(to right,transparent,black 8%,black 92%,transparent);">
+                <div class="testimonial-track flex gap-6" style="width:max-content;">
+                    @php $items = $testimonials->values(); $doubled = $items->concat($items); @endphp
+                    @foreach ($doubled as $testimonial)
+                        <div class="luxury-card flex-shrink-0" style="width:320px;">
+                            <div class="star-rating mb-4">
+                                @for ($i = 0; $i < 5; $i++)
+                                    <svg class="h-4 w-4 star-filled" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                                @endfor
+                            </div>
+                            <span style="font-size:2rem;line-height:1;color:hsl(var(--primary)/0.4);">&ldquo;</span>
+                            <p class="mb-5 text-sm leading-relaxed text-muted-foreground">{{ $testimonial->quote }}</p>
+                            <div class="flex items-center gap-3">
                                 @if ($testimonial->image_url)
                                     <x-media :path="$testimonial->image_path" alt="{{ $testimonial->client_name }}" class="h-10 w-10 rounded-full object-cover" />
                                 @else
-                                    <div class="avatar text-xs">
-                                        {{ strtoupper(substr($testimonial->client_name, 0, 1)) }}
-                                    </div>
+                                    <div class="avatar text-xs">{{ strtoupper(substr($testimonial->client_name, 0, 1)) }}</div>
                                 @endif
                                 <div>
                                     <p class="text-sm font-semibold">{{ $testimonial->client_name }}</p>
@@ -274,9 +272,17 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
-                @endforeach
+                    @endforeach
+                </div>
             </div>
+            <style>
+                .testimonial-track { animation: testimonial-scroll 30s linear infinite; }
+                .testimonial-track:hover { animation-play-state: paused; }
+                @keyframes testimonial-scroll {
+                    0%   { transform: translateX(0); }
+                    100% { transform: translateX(-50%); }
+                }
+            </style>
         </div>
     </section>
 
