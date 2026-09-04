@@ -82,29 +82,29 @@
             <div class="min-w-0 space-y-6">
                 <div class="luxury-card-flat overflow-hidden p-0">
                     <div class="border-b border-border p-5">
-                        <form method="GET" class="grid gap-4 md:grid-cols-[1fr_170px_200px_200px_120px]">
-                            <div class="portal-search-shell">
+                        <form method="GET" class="flex flex-wrap gap-3">
+                            <div class="portal-search-shell min-w-[200px] flex-1">
                                 <x-portal-icon name="search" class="h-4 w-4" />
                                 <input type="search" name="q" value="{{ request('q') }}" placeholder="Search media title or project..." class="input-shell py-3">
                             </div>
-                            <select name="type" class="input-shell">
+                            <select name="type" class="input-shell w-auto min-w-[130px]">
                                 <option value="">All types</option>
                                 <option value="image" @selected(request('type') === 'image')>Images</option>
                                 <option value="video" @selected(request('type') === 'video')>Videos</option>
                             </select>
-                            <select name="project_id" class="input-shell">
+                            <select name="project_id" class="input-shell w-auto min-w-[160px]">
                                 <option value="">All projects</option>
                                 @foreach ($projects as $project)
                                     <option value="{{ $project->id }}" @selected((string) request('project_id') === (string) $project->id)>{{ $project->title }}</option>
                                 @endforeach
                             </select>
-                            <select name="gallery_section" class="input-shell">
-                                <option value="">All gallery sections</option>
+                            <select name="gallery_section" class="input-shell w-auto min-w-[160px]">
+                                <option value="">All sections</option>
                                 @foreach ($gallerySections as $value => $label)
                                     <option value="{{ $value }}" @selected(request('gallery_section') === $value)>{{ $label }}</option>
                                 @endforeach
                             </select>
-                            <button class="luxury-btn-outline">Filter</button>
+                            <button class="luxury-btn-outline shrink-0">Filter</button>
                         </form>
                     </div>
 
