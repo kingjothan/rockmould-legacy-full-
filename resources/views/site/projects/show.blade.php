@@ -158,7 +158,8 @@
                                             @else
                                                 <a href="#" aria-label="{{ $asset->title }}" class="group gallery-item aspect-square border border-border bg-card">
                                             @endif
-                                                <x-media :path="$previewPath" fallback="images/project-1.jpg" alt="{{ $asset->title }}" class="h-full w-full object-cover" :loop="false" />
+                                                @php $assetAlt = (strlen($asset->title ?? '') > 4) ? $asset->title : $project->title.' – '.($tab['label'] ?? ucfirst($key)).' photo'; @endphp
+                                <x-media :path="$previewPath" fallback="images/project-1.jpg" alt="{{ $assetAlt }}" class="h-full w-full object-cover" :loop="false" />
                                                 <div class="gallery-item-overlay">
                                                     <div class="flex h-10 w-10 items-center justify-center rounded-full bg-black/55 opacity-0 transition duration-300 group-hover:opacity-100">
                                                         <x-portal-icon :name="$asset->media_type === 'video' ? 'video' : 'eye'" class="h-4 w-4 text-white" />

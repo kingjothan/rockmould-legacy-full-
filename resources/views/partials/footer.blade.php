@@ -31,7 +31,8 @@
                     </a>
                     <div class="flex items-start gap-3 text-sm text-muted-foreground">
                         <span class="mt-0.5 text-primary">&bull;</span>
-                        <a href="https://maps.google.com/?q={{ urlencode($company['address']) }}" target="_blank" rel="noopener noreferrer" class="hover:text-primary transition-colors">{{ $company['address'] }}</a>
+                        @php $cleanAddress = rtrim(preg_replace('/[\x{2028}\x{2029}\x{200B}]/u', '', $company['address'] ?? ''), '. '); @endphp
+                        <a href="https://maps.google.com/?q={{ urlencode($cleanAddress) }}" target="_blank" rel="noopener noreferrer" class="hover:text-primary transition-colors">{{ $cleanAddress }}</a>
                     </div>
                 </div>
             </div>
