@@ -9,7 +9,9 @@
         $heroMedia = $legal['terms_hero_media_path'] ?? 'images/project-4.jpg';
     @endphp
 
-    <x-hero title="Terms of Service" subtitle="Legal"
+    <x-hero
+        title="{{ $legal['terms_hero_title'] ?? 'Terms of Service' }}"
+        subtitle="{{ $legal['terms_hero_subtitle'] ?? 'Legal' }}"
         description="{{ $legal['terms_hero_description'] ?? 'The core terms governing the use of the Rockmould website, portal, and client-facing digital services.' }}"
         :image="$heroMedia"
         :titleSize="$legal['terms_title_size'] ?? null"

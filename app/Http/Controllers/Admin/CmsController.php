@@ -728,12 +728,16 @@ class CmsController extends Controller
     public function updateLegal(Request $request): RedirectResponse
     {
         $data = $request->validate([
+            'privacy_hero_subtitle'     => ['nullable', 'string', 'max:255'],
+            'privacy_hero_title'        => ['nullable', 'string', 'max:255'],
             'privacy_hero_description'  => ['nullable', 'string'],
             'privacy_title_size'        => ['nullable', 'string', 'max:64'],
             'privacy_description_size'  => ['nullable', 'string', 'max:64'],
             'privacy_hero_media_path'   => ['nullable', 'string', 'max:2048'],
             'privacy_hero_media_upload' => ['nullable', 'file', 'max:204800'],
             'privacy_sections_json'     => ['nullable', 'json'],
+            'terms_hero_subtitle'       => ['nullable', 'string', 'max:255'],
+            'terms_hero_title'          => ['nullable', 'string', 'max:255'],
             'terms_hero_description'    => ['nullable', 'string'],
             'terms_title_size'          => ['nullable', 'string', 'max:64'],
             'terms_description_size'    => ['nullable', 'string', 'max:64'],
@@ -753,14 +757,18 @@ class CmsController extends Controller
         $current = SiteData::legalPages();
 
         $updated = array_merge($current, [
+            'privacy_hero_subtitle'     => $data['privacy_hero_subtitle'] ?? 'Legal',
+            'privacy_hero_title'        => $data['privacy_hero_title'] ?? 'Privacy Policy',
             'privacy_hero_description'  => $data['privacy_hero_description'] ?? '',
-            'privacy_title_size'        => $data['privacy_title_size'] ?? 'text-4xl md:text-5xl lg:text-7xl',
-            'privacy_description_size'  => $data['privacy_description_size'] ?? 'text-lg md:text-xl',
+            'privacy_title_size'        => $data['privacy_title_size'] ?? 'text-4xl',
+            'privacy_description_size'  => $data['privacy_description_size'] ?? 'text-base',
             'privacy_hero_media_path'   => $this->syncMediaInput($request, 'privacy_hero_media_path', 'privacy_hero_media_upload', 'cms/legal', $current['privacy_hero_media_path'] ?? null, 'remove_privacy_hero_media'),
             'privacy_sections'          => $parseSection($data['privacy_sections_json'] ?? null, $current['privacy_sections'] ?? []),
+            'terms_hero_subtitle'       => $data['terms_hero_subtitle'] ?? 'Legal',
+            'terms_hero_title'          => $data['terms_hero_title'] ?? 'Terms of Service',
             'terms_hero_description'    => $data['terms_hero_description'] ?? '',
-            'terms_title_size'          => $data['terms_title_size'] ?? 'text-4xl md:text-5xl lg:text-7xl',
-            'terms_description_size'    => $data['terms_description_size'] ?? 'text-lg md:text-xl',
+            'terms_title_size'          => $data['terms_title_size'] ?? 'text-4xl',
+            'terms_description_size'    => $data['terms_description_size'] ?? 'text-base',
             'terms_hero_media_path'     => $this->syncMediaInput($request, 'terms_hero_media_path', 'terms_hero_media_upload', 'cms/legal', $current['terms_hero_media_path'] ?? null, 'remove_terms_hero_media'),
             'terms_sections'            => $parseSection($data['terms_sections_json'] ?? null, $current['terms_sections'] ?? []),
         ]);

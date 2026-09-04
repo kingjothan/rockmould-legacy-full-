@@ -4,6 +4,20 @@
     @endif
 
     @php
+        $sizeOptions = [
+            'text-xs'   => 'XS',
+            'text-sm'   => 'SM',
+            'text-base' => 'Base',
+            'text-lg'   => 'LG',
+            'text-xl'   => 'XL',
+            'text-2xl'  => '2XL',
+            'text-3xl'  => '3XL',
+            'text-4xl'  => '4XL',
+            'text-5xl'  => '5XL',
+            'text-6xl'  => '6XL',
+            'text-7xl'  => '7XL',
+        ];
+
         $privacySections = $legal['privacy_sections'] ?? [
             ['title' => 'Data Collection', 'body' => 'Rockmould Limited collects contact details, project inquiry information, client portal records, uploaded documents, and support communications to deliver services and maintain operational records.'],
             ['title' => 'How We Use Your Data', 'body' => 'Information provided through contact forms, partnerships, newsletters, KYC requests, or the client portal may be used for relationship management, project reporting, account review, and compliance workflows.'],
@@ -15,20 +29,6 @@
             ['title' => 'Client Portal Access', 'body' => 'Client portal access is intended only for recognized clients and approved users. Misuse of project data, documents, media, or support channels is prohibited.'],
             ['title' => 'Project Information', 'body' => 'Project timelines, visuals, payment schedules, and availability may change. Official transaction documents, agreements, and internal approvals govern final commercial terms.'],
             ['title' => 'Acceptance of Terms', 'body' => 'By using this website or portal, you agree to engage with Rockmould lawfully and in good faith. For questions about these terms, contact us.'],
-        ];
-
-        $sizeOptions = [
-            'text-xs'  => 'XS',
-            'text-sm'  => 'SM',
-            'text-base'=> 'Base',
-            'text-lg'  => 'LG',
-            'text-xl'  => 'XL',
-            'text-2xl' => '2XL',
-            'text-3xl' => '3XL',
-            'text-4xl' => '4XL',
-            'text-5xl' => '5XL',
-            'text-6xl' => '6XL',
-            'text-7xl' => '7XL',
         ];
 
         $privacyMediaPath = $legal['privacy_hero_media_path'] ?? null;
@@ -46,32 +46,37 @@
 
         {{-- ═══ Privacy Policy ═══ --}}
         <div class="luxury-card space-y-6">
-            <div class="flex items-center justify-between border-b border-border pb-4">
-                <div>
-                    <h2 class="text-base font-semibold">Privacy Policy</h2>
-                    <p class="mt-1 text-xs text-muted-foreground">Edits appear live at <a href="{{ route('privacy') }}" target="_blank" class="text-primary hover:underline">/privacy</a></p>
-                </div>
+            <div class="border-b border-border pb-4">
+                <p class="section-label">Legal</p>
+                <h2 class="font-display text-3xl">Privacy Policy</h2>
+                <p class="mt-2 text-sm text-muted-foreground">Edit the hero copy, font sizes, background image, and page sections. Edits appear live at <a href="{{ route('privacy') }}" target="_blank" class="text-primary hover:underline">/privacy</a></p>
             </div>
 
-            {{-- Hero media --}}
-            <div class="grid gap-6 lg:grid-cols-[1fr_0.9fr]">
-                <div class="space-y-4">
+            <div class="grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
+                {{-- Left: copy + media fields --}}
+                <div class="min-w-0 space-y-4">
                     <div>
-                        <label class="admin-label">Hero Title Size</label>
-                        <select name="privacy_title_size" class="input-shell w-full">
-                            @foreach ($sizeOptions as $val => $label)
-                                <option value="{{ $val }}" @selected(($legal['privacy_title_size'] ?? 'text-4xl md:text-5xl lg:text-7xl') === $val)>{{ $label }}</option>
-                            @endforeach
-                        </select>
-                        <p class="mt-1 text-xs text-muted-foreground">Controls the size of "Privacy Policy" on the hero.</p>
+                        <label class="admin-label">Hero Subtitle</label>
+                        <input name="privacy_hero_subtitle" value="{{ $legal['privacy_hero_subtitle'] ?? 'Legal' }}" class="input-shell w-full">
                     </div>
                     <div>
-                        <label class="admin-label">Hero Description Size</label>
+                        <label class="admin-label">Hero Title</label>
                         <div class="flex gap-2">
-                            <textarea name="privacy_hero_description" rows="2" class="input-shell flex-1">{{ $legal['privacy_hero_description'] ?? 'How Rockmould collects, uses, and protects information shared across the website, portal, and client interactions.' }}</textarea>
-                            <select name="privacy_description_size" class="input-shell w-20 self-start" title="Description font size">
-                                @foreach ($sizeOptions as $val => $label)
-                                    <option value="{{ $val }}" @selected(($legal['privacy_description_size'] ?? 'text-lg md:text-xl') === $val)>{{ $label }}</option>
+                            <input name="privacy_hero_title" value="{{ $legal['privacy_hero_title'] ?? 'Privacy Policy' }}" class="input-shell flex-1">
+                            <select name="privacy_title_size" class="input-shell w-24" title="Title font size">
+                                @foreach ($sizeOptions as $val => $lbl)
+                                    <option value="{{ $val }}" @selected(($legal['privacy_title_size'] ?? 'text-4xl') === $val)>{{ $lbl }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="admin-label">Hero Description</label>
+                        <div class="flex gap-2">
+                            <textarea name="privacy_hero_description" rows="4" class="input-shell flex-1">{{ $legal['privacy_hero_description'] ?? 'How Rockmould collects, uses, and protects information shared across the website, portal, and client interactions.' }}</textarea>
+                            <select name="privacy_description_size" class="input-shell w-24 self-start" title="Description font size">
+                                @foreach ($sizeOptions as $val => $lbl)
+                                    <option value="{{ $val }}" @selected(($legal['privacy_description_size'] ?? 'text-base') === $val)>{{ $lbl }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -91,29 +96,33 @@
                         </label>
                     </div>
                 </div>
-                <div class="overflow-hidden rounded-lg border border-border">
-                    <div class="relative h-40 bg-muted">
-                        @if ($privacyMediaUrl)
-                            @if ($privacyIsVideo)
-                                <video src="{{ $privacyMediaUrl }}" class="h-full w-full object-cover" muted autoplay loop playsinline></video>
+
+                {{-- Right: media preview --}}
+                <div class="min-w-0 space-y-4">
+                    <div class="overflow-hidden rounded-lg border border-border bg-card">
+                        <div class="aspect-[16/10] bg-muted">
+                            @if ($privacyMediaUrl)
+                                @if ($privacyIsVideo)
+                                    <video src="{{ $privacyMediaUrl }}" class="h-full w-full object-cover" muted autoplay loop playsinline></video>
+                                @else
+                                    <img src="{{ $privacyMediaUrl }}" alt="Privacy hero" class="h-full w-full object-cover">
+                                @endif
                             @else
-                                <img src="{{ $privacyMediaUrl }}" alt="Privacy hero" class="h-full w-full object-cover">
+                                <div class="flex h-full items-center justify-center text-sm text-muted-foreground">No hero media set</div>
                             @endif
-                        @else
-                            <div class="flex h-full items-center justify-center text-sm text-muted-foreground">No hero media set</div>
-                        @endif
-                    </div>
-                    <div class="border-t border-border px-4 py-3">
-                        <p class="text-xs uppercase tracking-[0.18em] text-primary/70">Current Hero Media</p>
-                        <p class="mt-1 truncate text-xs text-muted-foreground">{{ $privacyMediaPath ?: 'Not set — using default image' }}</p>
+                        </div>
+                        <div class="border-t border-border px-4 py-4">
+                            <p class="text-xs uppercase tracking-[0.18em] text-primary/70">Current Hero Media</p>
+                            <p class="mt-1 truncate text-sm text-muted-foreground">{{ $privacyMediaPath ?: 'Not set — using default image' }}</p>
+                        </div>
                     </div>
                 </div>
             </div>
 
             {{-- Sections --}}
-            <div>
+            <div class="border-t border-border pt-6">
                 <div class="mb-3 flex items-center justify-between">
-                    <label class="admin-label mb-0">Sections</label>
+                    <label class="admin-label mb-0">Page Sections</label>
                     <button type="button" data-add-section="privacy" class="text-xs text-primary hover:underline">+ Add Section</button>
                 </div>
                 <div id="privacy-sections" class="space-y-3">
@@ -142,32 +151,37 @@
 
         {{-- ═══ Terms of Service ═══ --}}
         <div class="luxury-card space-y-6">
-            <div class="flex items-center justify-between border-b border-border pb-4">
-                <div>
-                    <h2 class="text-base font-semibold">Terms of Service</h2>
-                    <p class="mt-1 text-xs text-muted-foreground">Edits appear live at <a href="{{ route('terms') }}" target="_blank" class="text-primary hover:underline">/terms</a></p>
-                </div>
+            <div class="border-b border-border pb-4">
+                <p class="section-label">Legal</p>
+                <h2 class="font-display text-3xl">Terms of Service</h2>
+                <p class="mt-2 text-sm text-muted-foreground">Edit the hero copy, font sizes, background image, and page sections. Edits appear live at <a href="{{ route('terms') }}" target="_blank" class="text-primary hover:underline">/terms</a></p>
             </div>
 
-            {{-- Hero media --}}
-            <div class="grid gap-6 lg:grid-cols-[1fr_0.9fr]">
-                <div class="space-y-4">
+            <div class="grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
+                {{-- Left: copy + media fields --}}
+                <div class="min-w-0 space-y-4">
                     <div>
-                        <label class="admin-label">Hero Title Size</label>
-                        <select name="terms_title_size" class="input-shell w-full">
-                            @foreach ($sizeOptions as $val => $label)
-                                <option value="{{ $val }}" @selected(($legal['terms_title_size'] ?? 'text-4xl md:text-5xl lg:text-7xl') === $val)>{{ $label }}</option>
-                            @endforeach
-                        </select>
-                        <p class="mt-1 text-xs text-muted-foreground">Controls the size of "Terms of Service" on the hero.</p>
+                        <label class="admin-label">Hero Subtitle</label>
+                        <input name="terms_hero_subtitle" value="{{ $legal['terms_hero_subtitle'] ?? 'Legal' }}" class="input-shell w-full">
                     </div>
                     <div>
-                        <label class="admin-label">Hero Description Size</label>
+                        <label class="admin-label">Hero Title</label>
                         <div class="flex gap-2">
-                            <textarea name="terms_hero_description" rows="2" class="input-shell flex-1">{{ $legal['terms_hero_description'] ?? 'The core terms governing the use of the Rockmould website, portal, and client-facing digital services.' }}</textarea>
-                            <select name="terms_description_size" class="input-shell w-20 self-start" title="Description font size">
-                                @foreach ($sizeOptions as $val => $label)
-                                    <option value="{{ $val }}" @selected(($legal['terms_description_size'] ?? 'text-lg md:text-xl') === $val)>{{ $label }}</option>
+                            <input name="terms_hero_title" value="{{ $legal['terms_hero_title'] ?? 'Terms of Service' }}" class="input-shell flex-1">
+                            <select name="terms_title_size" class="input-shell w-24" title="Title font size">
+                                @foreach ($sizeOptions as $val => $lbl)
+                                    <option value="{{ $val }}" @selected(($legal['terms_title_size'] ?? 'text-4xl') === $val)>{{ $lbl }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="admin-label">Hero Description</label>
+                        <div class="flex gap-2">
+                            <textarea name="terms_hero_description" rows="4" class="input-shell flex-1">{{ $legal['terms_hero_description'] ?? 'The core terms governing the use of the Rockmould website, portal, and client-facing digital services.' }}</textarea>
+                            <select name="terms_description_size" class="input-shell w-24 self-start" title="Description font size">
+                                @foreach ($sizeOptions as $val => $lbl)
+                                    <option value="{{ $val }}" @selected(($legal['terms_description_size'] ?? 'text-base') === $val)>{{ $lbl }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -187,29 +201,33 @@
                         </label>
                     </div>
                 </div>
-                <div class="overflow-hidden rounded-lg border border-border">
-                    <div class="relative h-40 bg-muted">
-                        @if ($termsMediaUrl)
-                            @if ($termsIsVideo)
-                                <video src="{{ $termsMediaUrl }}" class="h-full w-full object-cover" muted autoplay loop playsinline></video>
+
+                {{-- Right: media preview --}}
+                <div class="min-w-0 space-y-4">
+                    <div class="overflow-hidden rounded-lg border border-border bg-card">
+                        <div class="aspect-[16/10] bg-muted">
+                            @if ($termsMediaUrl)
+                                @if ($termsIsVideo)
+                                    <video src="{{ $termsMediaUrl }}" class="h-full w-full object-cover" muted autoplay loop playsinline></video>
+                                @else
+                                    <img src="{{ $termsMediaUrl }}" alt="Terms hero" class="h-full w-full object-cover">
+                                @endif
                             @else
-                                <img src="{{ $termsMediaUrl }}" alt="Terms hero" class="h-full w-full object-cover">
+                                <div class="flex h-full items-center justify-center text-sm text-muted-foreground">No hero media set</div>
                             @endif
-                        @else
-                            <div class="flex h-full items-center justify-center text-sm text-muted-foreground">No hero media set</div>
-                        @endif
-                    </div>
-                    <div class="border-t border-border px-4 py-3">
-                        <p class="text-xs uppercase tracking-[0.18em] text-primary/70">Current Hero Media</p>
-                        <p class="mt-1 truncate text-xs text-muted-foreground">{{ $termsMediaPath ?: 'Not set — using default image' }}</p>
+                        </div>
+                        <div class="border-t border-border px-4 py-4">
+                            <p class="text-xs uppercase tracking-[0.18em] text-primary/70">Current Hero Media</p>
+                            <p class="mt-1 truncate text-sm text-muted-foreground">{{ $termsMediaPath ?: 'Not set — using default image' }}</p>
+                        </div>
                     </div>
                 </div>
             </div>
 
             {{-- Sections --}}
-            <div>
+            <div class="border-t border-border pt-6">
                 <div class="mb-3 flex items-center justify-between">
-                    <label class="admin-label mb-0">Sections</label>
+                    <label class="admin-label mb-0">Page Sections</label>
                     <button type="button" data-add-section="terms" class="text-xs text-primary hover:underline">+ Add Section</button>
                 </div>
                 <div id="terms-sections" class="space-y-3">
@@ -243,24 +261,21 @@
 
 <script>
 (function () {
-    function makeRow(page, number) {
+    function makeRow(number) {
         var wrap = document.createElement('div');
         wrap.className = 'legal-section-row rounded-lg border border-border bg-background/40 p-4';
 
         var header = document.createElement('div');
         header.className = 'mb-3 flex items-center justify-between';
-
-        var label = document.createElement('span');
-        label.className = 'section-number text-xs font-medium text-muted-foreground';
-        label.textContent = 'Section ' + number;
-
+        var numLabel = document.createElement('span');
+        numLabel.className = 'section-number text-xs font-medium text-muted-foreground';
+        numLabel.textContent = 'Section ' + number;
         var removeBtn = document.createElement('button');
         removeBtn.type = 'button';
         removeBtn.setAttribute('data-remove-section', '');
         removeBtn.className = 'text-xs text-destructive hover:underline';
         removeBtn.textContent = 'Remove';
-
-        header.appendChild(label);
+        header.appendChild(numLabel);
         header.appendChild(removeBtn);
 
         var grid = document.createElement('div');
@@ -315,12 +330,10 @@
         if (addBtn) {
             var page = addBtn.getAttribute('data-add-section');
             var container = document.getElementById(page + '-sections');
-            var count = container.querySelectorAll('.legal-section-row').length + 1;
-            container.appendChild(makeRow(page, count));
+            container.appendChild(makeRow(container.querySelectorAll('.legal-section-row').length + 1));
             renumber(container);
             return;
         }
-
         var removeBtn = e.target.closest('[data-remove-section]');
         if (removeBtn) {
             var row = removeBtn.closest('.legal-section-row');

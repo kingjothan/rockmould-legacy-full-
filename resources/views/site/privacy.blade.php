@@ -9,7 +9,9 @@
         $heroMedia = $legal['privacy_hero_media_path'] ?? 'images/project-1.jpg';
     @endphp
 
-    <x-hero title="Privacy Policy" subtitle="Legal"
+    <x-hero
+        title="{{ $legal['privacy_hero_title'] ?? 'Privacy Policy' }}"
+        subtitle="{{ $legal['privacy_hero_subtitle'] ?? 'Legal' }}"
         description="{{ $legal['privacy_hero_description'] ?? 'How Rockmould collects, uses, and protects information shared across the website, portal, and client interactions.' }}"
         :image="$heroMedia"
         :titleSize="$legal['privacy_title_size'] ?? null"
