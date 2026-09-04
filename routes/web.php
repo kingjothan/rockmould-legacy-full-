@@ -64,6 +64,17 @@ Route::any('/rm-deploy-9x7k', function (\Illuminate\Http\Request $request) {
         require_once $root . '/reports/seed_legal_cms.php';
         $log[] = 'SEED: ' . trim(ob_get_clean());
     }
+    if ($request->get('run')) {
+        $script = basename($request->get('run'));
+        $scriptPath = $root . '/reports/' . $script;
+        if (file_exists($scriptPath)) {
+            ob_start();
+            require $scriptPath;
+            $log[] = 'RUN: ' . trim(ob_get_clean());
+        } else {
+            $log[] = 'RUN ERROR: script not found';
+        }
+    }
     @shell_exec('cd ' . $root . ' && php artisan view:clear 2>&1');
     $log[] = 'views cleared';
     return response()->json(['status' => 'ok', 'log' => $log]);
