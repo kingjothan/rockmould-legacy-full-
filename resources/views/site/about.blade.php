@@ -77,8 +77,7 @@
                             </div>
                         @endif
                         <h3 class="font-display text-lg font-semibold">{{ $member->name }}</h3>
-                        <p class="mb-3 mt-1 text-xs uppercase tracking-[0.15em] text-primary">{{ $member->role }}</p>
-                        <p class="text-sm text-muted-foreground">{{ $member->bio }}</p>
+                        <p class="mt-1 text-xs uppercase tracking-[0.15em] text-primary">{{ $member->role }}</p>
                     </div>
                 @endforeach
             </div>
