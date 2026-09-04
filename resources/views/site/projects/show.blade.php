@@ -392,10 +392,90 @@
                         </a>
                         <div class="mt-3 flex gap-3">
                             @if ($project->brochure_path)
-                                <a href="{{ asset('storage/'.$project->brochure_path) }}" target="_blank" download class="luxury-btn-outline flex-1 justify-center py-2 text-xs">
+                                <button type="button" onclick="openBrochureModal()" class="luxury-btn-outline flex-1 justify-center py-2 text-xs">
                                     <svg class="mr-1.5 h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg>
                                     Brochure
-                                </a>
+                                </button>
+
+                                {{-- Brochure gate modal --}}
+                                <div id="brochure-modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;z-index:99999;background:rgba(0,0,0,0.75);" onclick="closeBrochureModal(event)">
+                                    <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:min(420px,92vw);background:hsl(var(--card));border:1px solid hsl(var(--border));border-radius:6px;padding:2rem;" onclick="event.stopPropagation()">
+                                        <h2 style="font-family:var(--font-display,serif);font-size:1.25rem;font-weight:600;margin-bottom:0.25rem;">Download Brochure</h2>
+                                        <p style="font-size:0.8rem;color:hsl(var(--muted-foreground));margin-bottom:1.5rem;">Please fill in your details to receive the brochure for <strong>{{ $project->title }}</strong>.</p>
+                                        <form id="brochure-form" onsubmit="submitBrochureForm(event)" style="display:flex;flex-direction:column;gap:0.875rem;">
+                                            @csrf
+                                            <div>
+                                                <label style="display:block;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.1em;color:hsl(var(--muted-foreground));margin-bottom:0.35rem;">Full Name</label>
+                                                <input name="name" type="text" required placeholder="Your name" style="width:100%;padding:0.6rem 0.75rem;background:hsl(var(--background));border:1px solid hsl(var(--border));border-radius:4px;color:hsl(var(--foreground));font-size:0.875rem;box-sizing:border-box;">
+                                            </div>
+                                            <div>
+                                                <label style="display:block;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.1em;color:hsl(var(--muted-foreground));margin-bottom:0.35rem;">Email Address</label>
+                                                <input name="email" type="email" required placeholder="you@example.com" style="width:100%;padding:0.6rem 0.75rem;background:hsl(var(--background));border:1px solid hsl(var(--border));border-radius:4px;color:hsl(var(--foreground));font-size:0.875rem;box-sizing:border-box;">
+                                            </div>
+                                            <div>
+                                                <label style="display:block;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.1em;color:hsl(var(--muted-foreground));margin-bottom:0.35rem;">Phone Number</label>
+                                                <input name="phone" type="tel" required placeholder="+234..." style="width:100%;padding:0.6rem 0.75rem;background:hsl(var(--background));border:1px solid hsl(var(--border));border-radius:4px;color:hsl(var(--foreground));font-size:0.875rem;box-sizing:border-box;">
+                                            </div>
+                                            <p id="brochure-error" style="display:none;font-size:0.78rem;color:#f87171;"></p>
+                                            <button type="submit" id="brochure-submit" style="margin-top:0.25rem;padding:0.65rem 1.25rem;background:hsl(var(--primary));color:hsl(var(--primary-foreground));border:none;border-radius:4px;font-size:0.8rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;">
+                                                Download Now
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                                <script>
+                                    function openBrochureModal() {
+                                        document.getElementById('brochure-modal').style.display = 'block';
+                                        document.body.style.overflow = 'hidden';
+                                    }
+                                    function closeBrochureModal(e) {
+                                        if (!e || e.target === document.getElementById('brochure-modal')) {
+                                            document.getElementById('brochure-modal').style.display = 'none';
+                                            document.body.style.overflow = '';
+                                        }
+                                    }
+                                    document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeBrochureModal(); });
+                                    function submitBrochureForm(e) {
+                                        e.preventDefault();
+                                        var form = document.getElementById('brochure-form');
+                                        var btn  = document.getElementById('brochure-submit');
+                                        var err  = document.getElementById('brochure-error');
+                                        btn.disabled = true;
+                                        btn.textContent = 'Please wait…';
+                                        err.style.display = 'none';
+                                        var data = new FormData(form);
+                                        fetch('{{ route('brochure.download', $project) }}', {
+                                            method: 'POST',
+                                            headers: { 'X-CSRF-TOKEN': data.get('_token'), 'Accept': 'application/json' },
+                                            body: data,
+                                        })
+                                        .then(function(r){ return r.json(); })
+                                        .then(function(json){
+                                            if (json.url) {
+                                                closeBrochureModal();
+                                                var a = document.createElement('a');
+                                                a.href = json.url;
+                                                a.download = '';
+                                                a.target = '_blank';
+                                                document.body.appendChild(a);
+                                                a.click();
+                                                document.body.removeChild(a);
+                                                form.reset();
+                                            } else {
+                                                err.textContent = json.message || 'Something went wrong.';
+                                                err.style.display = 'block';
+                                            }
+                                        })
+                                        .catch(function(){
+                                            err.textContent = 'Network error. Please try again.';
+                                            err.style.display = 'block';
+                                        })
+                                        .finally(function(){
+                                            btn.disabled = false;
+                                            btn.textContent = 'Download Now';
+                                        });
+                                    }
+                                </script>
                             @endif
                             <button type="button" onclick="shareProject()" class="luxury-btn-outline flex-1 justify-center py-2 text-xs" id="share-btn">
                                 <svg class="mr-1.5 h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.933-2.185 2.25 2.25 0 00-3.933 2.185z"/></svg>

@@ -538,8 +538,9 @@ class SiteData
                 ['label' => 'Footer',          'route' => 'admin.cms.footer',         'icon' => 'align-justify'],
             ],
             'System' => [
-                ['label' => 'Form Submissions', 'route' => 'admin.forms.index',        'icon' => 'inbox'],
-                ['label' => 'Newsletter',      'route' => 'admin.newsletter.index',   'icon' => 'mail'],
+                ['label' => 'Form Submissions',    'route' => 'admin.forms.index',              'icon' => 'inbox'],
+                ['label' => 'Brochure Downloads', 'route' => 'admin.brochure-downloads.index', 'icon' => 'download'],
+                ['label' => 'Newsletter',         'route' => 'admin.newsletter.index',         'icon' => 'mail'],
                 ['label' => 'Notifications',   'route' => 'admin.notifications.index', 'icon' => 'bell'],
                 ['label' => 'Settings',        'route' => 'admin.settings.edit',      'icon' => 'settings'],
                 ['label' => 'Roles',           'route' => 'admin.roles.index',        'icon' => 'key'],

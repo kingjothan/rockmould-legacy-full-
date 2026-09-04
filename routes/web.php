@@ -78,6 +78,7 @@ Route::controller(PublicFormController::class)->group(function () {
     Route::post('/newsletter', 'newsletter')->name('forms.newsletter');
     Route::post('/partnerships', 'partnership')->name('forms.partnership');
     Route::post('/projects/{project:slug}/inquire', 'projectInquiry')->name('forms.project-inquiry');
+    Route::post('/projects/{project:slug}/brochure', [\App\Http\Controllers\BrochureController::class, 'store'])->name('brochure.download');
     Route::post('/careers/{careerOpening:slug}/apply', 'career')->name('forms.career');
     Route::post('/testimonials', 'review')->name('forms.review');
 });
@@ -160,6 +161,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::delete('/projects/{project}', [AdminProjectController::class, 'destroy'])->name('projects.destroy');
             Route::post('/projects/{project}/assignments', [AdminProjectController::class, 'storeAssignment'])->name('projects.assignments.store');
             Route::match(['PUT', 'POST'], '/projects/{project}/assignments/{assignment}', [AdminProjectController::class, 'updateAssignment'])->name('projects.assignments.update');
+            Route::get('/brochure-downloads', [\App\Http\Controllers\Admin\BrochureDownloadController::class, 'index'])->name('brochure-downloads.index');
         });
 
         Route::middleware('role:admin,finance')->group(function () {
