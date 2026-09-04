@@ -9,9 +9,29 @@
     <meta name="developer:phone" content="+2349060037002">
     <meta name="developer:email" content="okoiruelejonathan@gmail.com">
     <meta name="developer:github" content="https://github.com/kingjothan">
-    <meta name="contact:phone" content="+2349060037002">
-    <meta name="contact:email" content="okoiruelejonathan@gmail.com">
     <link rel="me" href="https://github.com/kingjothan">
+    {{-- Company --}}
+    <meta name="author" content="Rockmould Limited">
+    <meta name="contact:phone" content="+2342014537464">
+    <meta name="contact:email" content="info@rockmould.com">
+    <meta name="contact:address" content="24A Taiye Olowu St, Lekki Phase 1, Lagos, Nigeria">
+    <meta name="contact:whatsapp" content="+2342014537464">
+    {{-- Open Graph --}}
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Rockmould Limited">
+    <meta property="og:title" content="{{ $title ?? 'Rockmould Limited' }}">
+    <meta property="og:description" content="{{ $description ?? 'Premium real estate and construction by Rockmould Limited.' }}">
+    <meta property="og:image" content="{{ asset('images/rockmould_logo.png') }}">
+    <meta property="og:url" content="{{ url()->current() }}">
+    {{-- Twitter / X --}}
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ $title ?? 'Rockmould Limited' }}">
+    <meta name="twitter:description" content="{{ $description ?? 'Premium real estate and construction by Rockmould Limited.' }}">
+    <meta name="twitter:image" content="{{ asset('images/rockmould_logo.png') }}">
+    {{-- Search / Robots --}}
+    <meta name="robots" content="index, follow">
+    <meta name="theme-color" content="#0a0a0a">
+    <link rel="canonical" href="{{ url()->current() }}">
     <link rel="icon" type="image/png" href="{{ asset('images/rockmould_logo.png') }}">
     <link rel="shortcut icon" type="image/png" href="{{ asset('images/rockmould_logo.png') }}">
     <link rel="apple-touch-icon" href="{{ asset('images/rockmould_logo.png') }}">
