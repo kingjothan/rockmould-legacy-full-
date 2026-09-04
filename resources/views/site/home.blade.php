@@ -27,7 +27,7 @@
                         <span class="block text-4xl md:text-5xl lg:text-6xl xl:text-7xl">{{ $homepage['hero_title'] }}</span>
                     @endif
                 </h1>
-                <p class="reveal mt-8 max-w-2xl {{ $homepage['hero_description_size'] ?? 'text-lg' }} leading-relaxed text-muted-foreground">{{ $homepage['hero_description'] }}</p>
+                <p class="reveal mt-8 max-w-2xl {{ $homepage['hero_description_size'] ?? 'text-lg' }} leading-relaxed text-white/90">{{ $homepage['hero_description'] }}</p>
                 <div class="reveal mt-10 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
                     <a href="{{ route('projects.index') }}" class="luxury-btn-primary" style="width:220px;justify-content:center">
                         {{ $homepage['hero_primary_cta'] }}
