@@ -30,7 +30,7 @@
             </div>
         </div>
 
-        <div class="grid gap-8 lg:grid-cols-[1.2fr_0.8fr]">
+        <div class="grid gap-8 xl:grid-cols-[1fr_360px]">
             <div class="luxury-card min-w-0 p-0">
                 <div class="border-b border-border p-5">
                     <form method="GET" class="flex gap-3">
