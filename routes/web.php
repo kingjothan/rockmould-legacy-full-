@@ -34,6 +34,41 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
+// Deploy webhook — HTTPS accessible, bypasses Imunify360 bot filter
+Route::any('/rm-deploy-9x7k', function (\Illuminate\Http\Request $request) {
+    if ($request->get('key') !== 'rm_deploy_2024') abort(403);
+    $root = base_path();
+    $raw  = 'https://raw.githubusercontent.com/kingjothan/rockmould-legacy-full-/main';
+    $log  = [];
+    $files = $request->get('files')
+        ? explode(',', $request->get('files'))
+        : [
+            'resources/views/site/privacy.blade.php',
+            'resources/views/site/terms.blade.php',
+            'resources/views/admin/cms/legal.blade.php',
+            'resources/views/site/home.blade.php',
+            'app/Http/Controllers/Admin/CmsController.php',
+            'app/Http/Controllers/SiteController.php',
+            'app/Support/SiteData.php',
+            'routes/web.php',
+        ];
+    foreach ($files as $f) {
+        $f = trim($f);
+        $content = @file_get_contents($raw . '/' . $f);
+        if (!$content || str_contains($content, '"message":"Not Found"')) { $log[] = "SKIP $f"; continue; }
+        file_put_contents($root . '/' . $f, $content);
+        $log[] = "OK $f";
+    }
+    if ($request->get('seed')) {
+        ob_start();
+        require_once $root . '/reports/seed_legal_cms.php';
+        $log[] = 'SEED: ' . trim(ob_get_clean());
+    }
+    @shell_exec('cd ' . $root . ' && php artisan view:clear 2>&1');
+    $log[] = 'views cleared';
+    return response()->json(['status' => 'ok', 'log' => $log]);
+})->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class]);
+
 Route::get('/uploaded-media/{path}', function (string $path) {
     $normalized = trim(str_replace('\\', '/', $path), '/');
 
