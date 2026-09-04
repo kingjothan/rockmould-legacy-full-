@@ -31,7 +31,7 @@
         </div>
 
         <div class="grid gap-8 lg:grid-cols-[1.2fr_0.8fr]">
-            <div class="luxury-card min-w-0 overflow-hidden p-0">
+            <div class="luxury-card min-w-0 p-0">
                 <div class="border-b border-border p-5">
                     <form method="GET" class="flex gap-3">
                         <input type="search" name="q" value="{{ request('q') }}" placeholder="Search projects..." class="input-shell flex-1">
@@ -40,7 +40,7 @@
                 </div>
 
                 <div class="overflow-x-auto">
-                    <table class="table-shell">
+                    <table class="table-shell" style="min-width:680px">
                         <thead>
                             <tr>
                                 <th>Project</th>
