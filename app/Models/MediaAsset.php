@@ -114,6 +114,11 @@ class MediaAsset extends Model
         ];
     }
 
+    public function getTitleAttribute($value): string
+    {
+        return rawurldecode((string) $value);
+    }
+
     public function getGallerySectionLabelAttribute(): string
     {
         return static::gallerySectionOptions()[$this->gallery_section]
