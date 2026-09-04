@@ -84,7 +84,7 @@
             <div>
                 <div class="mb-3 flex items-center justify-between">
                     <label class="admin-label mb-0">Sections</label>
-                    <button type="button" onclick="addSection('privacy')" class="luxury-btn-outline text-xs">+ Add Section</button>
+                    <button type="button" onclick="addSection('privacy')" class="text-xs text-primary hover:underline">+ Add Section</button>
                 </div>
                 <div id="privacy-sections" class="space-y-3">
                     @foreach ($privacySections as $i => $section)
@@ -204,7 +204,7 @@ function addSection(page) {
     row.innerHTML =
         '<div class="mb-3 flex items-center justify-between">'
         + '<span class="section-number text-xs font-medium text-muted-foreground">Section ' + count + '</span>'
-        + '<button type="button" onclick="removeSection(this)" class="rounded px-2 py-0.5 text-xs text-destructive ring-1 ring-destructive/30 hover:bg-destructive/10">Remove</button>'
+        + '<button type="button" onclick="removeSection(this)" class="text-xs text-destructive hover:underline">Remove</button>'
         + '</div>'
         + '<div class="grid gap-3 sm:grid-cols-[1fr_2fr]">'
         + '<div><label class="admin-label">Heading</label><input class="input-shell w-full section-title" value="" placeholder="Section heading"></div>'
