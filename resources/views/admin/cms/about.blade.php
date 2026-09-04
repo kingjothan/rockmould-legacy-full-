@@ -340,10 +340,10 @@
                             <form action="{{ route('admin.cms.about.timeline.update', $entry) }}" method="POST" class="space-y-4">
                                 @csrf
                                 @method('PUT')
-                                <div class="grid gap-3 md:grid-cols-[120px_1fr_120px]">
-                                    <input name="year" value="{{ $entry->year }}" class="input-shell">
-                                    <input name="title" value="{{ $entry->title }}" class="input-shell">
-                                    <input type="number" min="0" name="sort_order" value="{{ $entry->sort_order }}" class="input-shell">
+                                <div class="grid gap-3 md:grid-cols-[1fr_1fr_80px]">
+                                    <input name="year" value="{{ $entry->year }}" placeholder="e.g. 2021 — THE BEGINNING" class="input-shell">
+                                    <input name="title" value="{{ $entry->title }}" placeholder="Milestone title" class="input-shell">
+                                    <input type="number" min="0" name="sort_order" value="{{ $entry->sort_order }}" class="input-shell" title="Sort order">
                                 </div>
                                 <textarea name="description" rows="3" class="input-shell">{{ $entry->description }}</textarea>
                                 <div class="flex flex-wrap items-center justify-between gap-3">
@@ -370,7 +370,7 @@
                 <h2 class="font-display text-3xl">New Timeline Entry</h2>
                 <form action="{{ route('admin.cms.about.timeline.store') }}" method="POST" class="mt-6 space-y-4">
                     @csrf
-                    <input name="year" required placeholder="Year or date label" class="input-shell">
+                    <input name="year" required placeholder="e.g. 2027 — NEXT CHAPTER" class="input-shell">
                     <input name="title" required placeholder="Milestone title" class="input-shell">
                     <textarea name="description" rows="4" required placeholder="Milestone description" class="input-shell"></textarea>
                     <input type="number" min="0" name="sort_order" value="0" class="input-shell">
