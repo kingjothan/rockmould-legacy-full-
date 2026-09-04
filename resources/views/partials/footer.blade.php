@@ -64,9 +64,7 @@
         <div class="luxury-divider my-12"></div>
         <div class="flex flex-col items-center justify-between gap-4 md:flex-row">
             <p class="text-xs text-muted-foreground">
-                Copyright {{ now()->year }}
-                <a href="https://kingjothan.netlify.app/" target="_blank" rel="noopener noreferrer" class="text-primary transition-colors hover:text-primary/80">KJ</a><a href="https://www.instagram.com/king_jothan/" target="_blank" rel="noopener noreferrer" class="text-primary/70 transition-colors hover:text-primary" aria-label="KJ on Instagram">.</a>
-                All rights reserved.
+                Copyright {{ now()->year }} All rights reserved.
             </p>
             <div class="flex items-center gap-6">
                 <a href="{{ route('privacy') }}" class="text-xs text-muted-foreground hover:text-primary">Privacy Policy</a>
