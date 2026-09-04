@@ -255,7 +255,7 @@
         </div>
 
         <div class="flex justify-end">
-            <button type="submit" class="luxury-btn">Save Legal Pages</button>
+            <button type="submit" class="luxury-btn-primary">Save Legal Pages</button>
         </div>
     </form>
 
