@@ -729,46 +729,26 @@ class CmsController extends Controller
     {
         $data = $request->validate([
             'privacy_hero_description' => ['nullable', 'string'],
-            'privacy_s1_title'         => ['nullable', 'string', 'max:255'],
-            'privacy_s1_body'          => ['nullable', 'string'],
-            'privacy_s2_title'         => ['nullable', 'string', 'max:255'],
-            'privacy_s2_body'          => ['nullable', 'string'],
-            'privacy_s3_title'         => ['nullable', 'string', 'max:255'],
-            'privacy_s3_body'          => ['nullable', 'string'],
-            'privacy_s4_title'         => ['nullable', 'string', 'max:255'],
-            'privacy_s4_body'          => ['nullable', 'string'],
+            'privacy_sections_json'    => ['nullable', 'json'],
             'terms_hero_description'   => ['nullable', 'string'],
-            'terms_s1_title'           => ['nullable', 'string', 'max:255'],
-            'terms_s1_body'            => ['nullable', 'string'],
-            'terms_s2_title'           => ['nullable', 'string', 'max:255'],
-            'terms_s2_body'            => ['nullable', 'string'],
-            'terms_s3_title'           => ['nullable', 'string', 'max:255'],
-            'terms_s3_body'            => ['nullable', 'string'],
-            'terms_s4_title'           => ['nullable', 'string', 'max:255'],
-            'terms_s4_body'            => ['nullable', 'string'],
+            'terms_sections_json'      => ['nullable', 'json'],
         ]);
+
+        $parseSection = static function (?string $json, array $fallback): array {
+            if (empty($json)) {
+                return $fallback;
+            }
+            $rows = json_decode($json, true);
+            return is_array($rows) ? array_values(array_filter($rows, fn($r) => !empty($r['title']) || !empty($r['body']))) : $fallback;
+        };
 
         $current = SiteData::legalPages();
 
         $updated = array_merge($current, [
             'privacy_hero_description' => $data['privacy_hero_description'] ?? '',
-            'privacy_s1_title'         => $data['privacy_s1_title'] ?? '',
-            'privacy_s1_body'          => $data['privacy_s1_body'] ?? '',
-            'privacy_s2_title'         => $data['privacy_s2_title'] ?? '',
-            'privacy_s2_body'          => $data['privacy_s2_body'] ?? '',
-            'privacy_s3_title'         => $data['privacy_s3_title'] ?? '',
-            'privacy_s3_body'          => $data['privacy_s3_body'] ?? '',
-            'privacy_s4_title'         => $data['privacy_s4_title'] ?? '',
-            'privacy_s4_body'          => $data['privacy_s4_body'] ?? '',
+            'privacy_sections'         => $parseSection($data['privacy_sections_json'] ?? null, $current['privacy_sections'] ?? []),
             'terms_hero_description'   => $data['terms_hero_description'] ?? '',
-            'terms_s1_title'           => $data['terms_s1_title'] ?? '',
-            'terms_s1_body'            => $data['terms_s1_body'] ?? '',
-            'terms_s2_title'           => $data['terms_s2_title'] ?? '',
-            'terms_s2_body'            => $data['terms_s2_body'] ?? '',
-            'terms_s3_title'           => $data['terms_s3_title'] ?? '',
-            'terms_s3_body'            => $data['terms_s3_body'] ?? '',
-            'terms_s4_title'           => $data['terms_s4_title'] ?? '',
-            'terms_s4_body'            => $data['terms_s4_body'] ?? '',
+            'terms_sections'           => $parseSection($data['terms_sections_json'] ?? null, $current['terms_sections'] ?? []),
         ]);
 
         $this->saveSetting('legal_pages', $updated);
