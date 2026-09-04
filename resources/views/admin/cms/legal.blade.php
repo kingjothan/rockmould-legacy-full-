@@ -84,16 +84,16 @@
             <div>
                 <div class="mb-3 flex items-center justify-between">
                     <label class="admin-label mb-0">Sections</label>
-                    <button type="button" onclick="addSection('privacy')" class="text-xs text-primary hover:underline">+ Add Section</button>
+                    <button type="button" data-add-section="privacy" class="text-xs text-primary hover:underline">+ Add Section</button>
                 </div>
                 <div id="privacy-sections" class="space-y-3">
                     @foreach ($privacySections as $i => $section)
                     <div class="legal-section-row rounded-lg border border-border bg-background/40 p-4">
                         <div class="mb-3 flex items-center justify-between">
                             <span class="section-number text-xs font-medium text-muted-foreground">Section {{ $i + 1 }}</span>
-                            <button type="button" onclick="removeSection(this)" class="rounded px-2 py-0.5 text-xs text-destructive ring-1 ring-destructive/30 hover:bg-destructive/10">Remove</button>
+                            <button type="button" data-remove-section class="text-xs text-destructive hover:underline">Remove</button>
                         </div>
-                        <div class="grid gap-3 sm:grid-cols-[1fr_2fr]">
+                        <div style="display:grid;gap:0.75rem;grid-template-columns:1fr 2fr;">
                             <div>
                                 <label class="admin-label">Heading</label>
                                 <input class="input-shell w-full section-title" value="{{ $section['title'] }}" placeholder="Section heading">
@@ -164,16 +164,16 @@
             <div>
                 <div class="mb-3 flex items-center justify-between">
                     <label class="admin-label mb-0">Sections</label>
-                    <button type="button" onclick="addSection('terms')" class="luxury-btn-outline text-xs">+ Add Section</button>
+                    <button type="button" data-add-section="terms" class="text-xs text-primary hover:underline">+ Add Section</button>
                 </div>
                 <div id="terms-sections" class="space-y-3">
                     @foreach ($termsSections as $i => $section)
                     <div class="legal-section-row rounded-lg border border-border bg-background/40 p-4">
                         <div class="mb-3 flex items-center justify-between">
                             <span class="section-number text-xs font-medium text-muted-foreground">Section {{ $i + 1 }}</span>
-                            <button type="button" onclick="removeSection(this)" class="rounded px-2 py-0.5 text-xs text-destructive ring-1 ring-destructive/30 hover:bg-destructive/10">Remove</button>
+                            <button type="button" data-remove-section class="text-xs text-destructive hover:underline">Remove</button>
                         </div>
-                        <div class="grid gap-3 sm:grid-cols-[1fr_2fr]">
+                        <div style="display:grid;gap:0.75rem;grid-template-columns:1fr 2fr;">
                             <div>
                                 <label class="admin-label">Heading</label>
                                 <input class="input-shell w-full section-title" value="{{ $section['title'] }}" placeholder="Section heading">
@@ -196,50 +196,98 @@
     </form>
 
 <script>
-function addSection(page) {
-    var container = document.getElementById(page + '-sections');
-    var count = container.querySelectorAll('.legal-section-row').length + 1;
-    var row = document.createElement('div');
-    row.className = 'legal-section-row rounded-lg border border-border bg-background/40 p-4';
-    row.innerHTML =
-        '<div class="mb-3 flex items-center justify-between">'
-        + '<span class="section-number text-xs font-medium text-muted-foreground">Section ' + count + '</span>'
-        + '<button type="button" onclick="removeSection(this)" class="text-xs text-destructive hover:underline">Remove</button>'
-        + '</div>'
-        + '<div class="grid gap-3 sm:grid-cols-[1fr_2fr]">'
-        + '<div><label class="admin-label">Heading</label><input class="input-shell w-full section-title" value="" placeholder="Section heading"></div>'
-        + '<div><label class="admin-label">Body</label><textarea class="input-shell w-full section-body" rows="3" placeholder="Section body text"></textarea></div>'
-        + '</div>';
-    container.appendChild(row);
-    renumber(container);
-}
+(function () {
+    function makeRow(page, number) {
+        var wrap = document.createElement('div');
+        wrap.className = 'legal-section-row rounded-lg border border-border bg-background/40 p-4';
 
-function removeSection(btn) {
-    var row = btn.closest('.legal-section-row');
-    var container = row.parentElement;
-    row.remove();
-    renumber(container);
-}
+        var header = document.createElement('div');
+        header.className = 'mb-3 flex items-center justify-between';
 
-function renumber(container) {
-    container.querySelectorAll('.section-number').forEach(function(el, i) {
-        el.textContent = 'Section ' + (i + 1);
+        var label = document.createElement('span');
+        label.className = 'section-number text-xs font-medium text-muted-foreground';
+        label.textContent = 'Section ' + number;
+
+        var removeBtn = document.createElement('button');
+        removeBtn.type = 'button';
+        removeBtn.setAttribute('data-remove-section', '');
+        removeBtn.className = 'text-xs text-destructive hover:underline';
+        removeBtn.textContent = 'Remove';
+
+        header.appendChild(label);
+        header.appendChild(removeBtn);
+
+        var grid = document.createElement('div');
+        grid.style.cssText = 'display:grid;gap:0.75rem;grid-template-columns:1fr 2fr;';
+
+        var col1 = document.createElement('div');
+        var lbl1 = document.createElement('label');
+        lbl1.className = 'admin-label';
+        lbl1.textContent = 'Heading';
+        var inp = document.createElement('input');
+        inp.className = 'input-shell w-full section-title';
+        inp.placeholder = 'Section heading';
+        col1.appendChild(lbl1);
+        col1.appendChild(inp);
+
+        var col2 = document.createElement('div');
+        var lbl2 = document.createElement('label');
+        lbl2.className = 'admin-label';
+        lbl2.textContent = 'Body';
+        var ta = document.createElement('textarea');
+        ta.className = 'input-shell w-full section-body';
+        ta.rows = 3;
+        ta.placeholder = 'Section body text';
+        col2.appendChild(lbl2);
+        col2.appendChild(ta);
+
+        grid.appendChild(col1);
+        grid.appendChild(col2);
+        wrap.appendChild(header);
+        wrap.appendChild(grid);
+        return wrap;
+    }
+
+    function renumber(container) {
+        container.querySelectorAll('.section-number').forEach(function (el, i) {
+            el.textContent = 'Section ' + (i + 1);
+        });
+    }
+
+    function serializeSections(page) {
+        var sections = [];
+        document.querySelectorAll('#' + page + '-sections .legal-section-row').forEach(function (row) {
+            var title = row.querySelector('.section-title').value.trim();
+            var body  = row.querySelector('.section-body').value.trim();
+            if (title || body) sections.push({ title: title, body: body });
+        });
+        document.getElementById(page + '-sections-json').value = JSON.stringify(sections);
+    }
+
+    document.addEventListener('click', function (e) {
+        var addBtn = e.target.closest('[data-add-section]');
+        if (addBtn) {
+            var page = addBtn.getAttribute('data-add-section');
+            var container = document.getElementById(page + '-sections');
+            var count = container.querySelectorAll('.legal-section-row').length + 1;
+            container.appendChild(makeRow(page, count));
+            renumber(container);
+            return;
+        }
+
+        var removeBtn = e.target.closest('[data-remove-section]');
+        if (removeBtn) {
+            var row = removeBtn.closest('.legal-section-row');
+            var container = row.parentElement;
+            row.remove();
+            renumber(container);
+        }
     });
-}
 
-function serializeSections(page) {
-    var sections = [];
-    document.querySelectorAll('#' + page + '-sections .legal-section-row').forEach(function(row) {
-        var title = row.querySelector('.section-title').value.trim();
-        var body  = row.querySelector('.section-body').value.trim();
-        if (title || body) sections.push({ title: title, body: body });
+    document.getElementById('legal-form').addEventListener('submit', function () {
+        serializeSections('privacy');
+        serializeSections('terms');
     });
-    document.getElementById(page + '-sections-json').value = JSON.stringify(sections);
-}
-
-document.getElementById('legal-form').addEventListener('submit', function() {
-    serializeSections('privacy');
-    serializeSections('terms');
-});
+}());
 </script>
 </x-layouts.admin>
