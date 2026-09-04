@@ -74,7 +74,7 @@
                 :title-size="$fontSizes['services_title'] ?? null"
                 :description-size="$fontSizes['services_description'] ?? null"
             />
-            <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+            <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
                 @foreach ($services as $service)
                     <div class="luxury-card reveal">
                         <p class="section-label">{{ $service->tagline }}</p>
