@@ -1,8 +1,4 @@
 <x-layouts.public :company="$company" title="Terms of Service | Rockmould Limited">
-    <x-hero title="Terms of Service" subtitle="Legal"
-        description="{{ $legal['terms_hero_description'] ?? 'The core terms governing the use of the Rockmould website, portal, and client-facing digital services.' }}"
-        image="images/project-4.jpg" />
-
     @php
         $sections = $legal['terms_sections'] ?? [
             ['title' => 'Website Use', 'body' => 'Content on this website is provided for general information, project marketing, and relationship management purposes. Public site materials do not constitute a final commercial offer unless confirmed by Rockmould in writing.'],
@@ -10,7 +6,12 @@
             ['title' => 'Project Information', 'body' => 'Project timelines, visuals, payment schedules, and availability may change. Official transaction documents, agreements, and internal approvals govern final commercial terms.'],
             ['title' => 'Acceptance of Terms', 'body' => 'By using this website or portal, you agree to engage with Rockmould lawfully and in good faith. For questions about these terms, contact us.'],
         ];
+        $heroMedia = $legal['terms_hero_media_path'] ?? 'images/project-4.jpg';
     @endphp
+
+    <x-hero title="Terms of Service" subtitle="Legal"
+        description="{{ $legal['terms_hero_description'] ?? 'The core terms governing the use of the Rockmould website, portal, and client-facing digital services.' }}"
+        :image="$heroMedia" />
 
     <section class="section-padding">
         <div class="container-luxury">

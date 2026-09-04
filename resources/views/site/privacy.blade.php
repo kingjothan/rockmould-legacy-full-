@@ -1,8 +1,4 @@
 <x-layouts.public :company="$company" title="Privacy Policy | Rockmould Limited">
-    <x-hero title="Privacy Policy" subtitle="Legal"
-        description="{{ $legal['privacy_hero_description'] ?? 'How Rockmould collects, uses, and protects information shared across the website, portal, and client interactions.' }}"
-        image="images/project-1.jpg" />
-
     @php
         $sections = $legal['privacy_sections'] ?? [
             ['title' => 'Data Collection', 'body' => 'Rockmould Limited collects contact details, project inquiry information, client portal records, uploaded documents, and support communications to deliver services and maintain operational records.'],
@@ -10,7 +6,12 @@
             ['title' => 'Data Protection', 'body' => 'We do not sell personal information. Access to sensitive records is restricted to authorized Rockmould personnel who require it for legitimate operational, finance, project, or support purposes.'],
             ['title' => 'Contact & Corrections', 'body' => 'If you need corrections, account review, or record clarification, contact us or use the portal support channel.'],
         ];
+        $heroMedia = $legal['privacy_hero_media_path'] ?? 'images/project-1.jpg';
     @endphp
+
+    <x-hero title="Privacy Policy" subtitle="Legal"
+        description="{{ $legal['privacy_hero_description'] ?? 'How Rockmould collects, uses, and protects information shared across the website, portal, and client interactions.' }}"
+        :image="$heroMedia" />
 
     <section class="section-padding">
         <div class="container-luxury">
