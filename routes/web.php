@@ -217,6 +217,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::put('/cms/portfolio', [AdminCmsController::class, 'updatePortfolio'])->name('cms.portfolio.update');
             Route::get('/cms/footer', [AdminCmsController::class, 'footer'])->name('cms.footer');
             Route::match(['PUT', 'POST'], '/cms/footer', [AdminCmsController::class, 'updateFooter'])->name('cms.footer.update');
+            Route::get('/cms/legal', [AdminCmsController::class, 'legal'])->name('cms.legal');
+            Route::match(['PUT', 'POST'], '/cms/legal', [AdminCmsController::class, 'updateLegal'])->name('cms.legal.update');
             Route::get('/cms/blog', [AdminCmsController::class, 'blog'])->name('cms.blog');
             Route::post('/cms/blog', [AdminCmsController::class, 'storePost'])->name('cms.blog.store');
             Route::put('/cms/blog/{post}', [AdminCmsController::class, 'updatePost'])->name('cms.blog.update');

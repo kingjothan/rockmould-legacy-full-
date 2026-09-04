@@ -444,6 +444,11 @@ class SiteData
         ];
     }
 
+    public static function legalPages(): array
+    {
+        return Setting::query()->where('key', 'legal_pages')->value('value') ?? [];
+    }
+
     public static function footer(): array
     {
         return Setting::query()->where('key', 'footer')->value('value') ?? [];
@@ -536,6 +541,7 @@ class SiteData
                 ['label' => 'FAQ',             'route' => 'admin.cms.faq',            'icon' => 'help-circle'],
                 ['label' => 'Careers',         'route' => 'admin.cms.careers',        'icon' => 'briefcase'],
                 ['label' => 'Footer',          'route' => 'admin.cms.footer',         'icon' => 'align-justify'],
+                ['label' => 'Legal Pages',     'route' => 'admin.cms.legal',          'icon' => 'file-text'],
             ],
             'System' => [
                 ['label' => 'Form Submissions',    'route' => 'admin.forms.index',              'icon' => 'inbox'],

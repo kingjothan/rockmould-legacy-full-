@@ -279,12 +279,12 @@ class SiteController extends Controller
 
     public function privacy(): View
     {
-        return view('site.privacy', ['company' => SiteData::company()]);
+        return view('site.privacy', ['company' => SiteData::company(), 'legal' => SiteData::legalPages()]);
     }
 
     public function terms(): View
     {
-        return view('site.terms', ['company' => SiteData::company()]);
+        return view('site.terms', ['company' => SiteData::company(), 'legal' => SiteData::legalPages()]);
     }
 
     public function comingSoon(): View

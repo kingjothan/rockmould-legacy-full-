@@ -720,6 +720,63 @@ class CmsController extends Controller
         return back()->with('success', 'Footer updated.');
     }
 
+    public function legal(): View
+    {
+        return view('admin.cms.legal', ['company' => SiteData::company(), 'legal' => SiteData::legalPages()]);
+    }
+
+    public function updateLegal(Request $request): RedirectResponse
+    {
+        $data = $request->validate([
+            'privacy_hero_description' => ['nullable', 'string'],
+            'privacy_s1_title'         => ['nullable', 'string', 'max:255'],
+            'privacy_s1_body'          => ['nullable', 'string'],
+            'privacy_s2_title'         => ['nullable', 'string', 'max:255'],
+            'privacy_s2_body'          => ['nullable', 'string'],
+            'privacy_s3_title'         => ['nullable', 'string', 'max:255'],
+            'privacy_s3_body'          => ['nullable', 'string'],
+            'privacy_s4_title'         => ['nullable', 'string', 'max:255'],
+            'privacy_s4_body'          => ['nullable', 'string'],
+            'terms_hero_description'   => ['nullable', 'string'],
+            'terms_s1_title'           => ['nullable', 'string', 'max:255'],
+            'terms_s1_body'            => ['nullable', 'string'],
+            'terms_s2_title'           => ['nullable', 'string', 'max:255'],
+            'terms_s2_body'            => ['nullable', 'string'],
+            'terms_s3_title'           => ['nullable', 'string', 'max:255'],
+            'terms_s3_body'            => ['nullable', 'string'],
+            'terms_s4_title'           => ['nullable', 'string', 'max:255'],
+            'terms_s4_body'            => ['nullable', 'string'],
+        ]);
+
+        $current = SiteData::legalPages();
+
+        $updated = array_merge($current, [
+            'privacy_hero_description' => $data['privacy_hero_description'] ?? '',
+            'privacy_s1_title'         => $data['privacy_s1_title'] ?? '',
+            'privacy_s1_body'          => $data['privacy_s1_body'] ?? '',
+            'privacy_s2_title'         => $data['privacy_s2_title'] ?? '',
+            'privacy_s2_body'          => $data['privacy_s2_body'] ?? '',
+            'privacy_s3_title'         => $data['privacy_s3_title'] ?? '',
+            'privacy_s3_body'          => $data['privacy_s3_body'] ?? '',
+            'privacy_s4_title'         => $data['privacy_s4_title'] ?? '',
+            'privacy_s4_body'          => $data['privacy_s4_body'] ?? '',
+            'terms_hero_description'   => $data['terms_hero_description'] ?? '',
+            'terms_s1_title'           => $data['terms_s1_title'] ?? '',
+            'terms_s1_body'            => $data['terms_s1_body'] ?? '',
+            'terms_s2_title'           => $data['terms_s2_title'] ?? '',
+            'terms_s2_body'            => $data['terms_s2_body'] ?? '',
+            'terms_s3_title'           => $data['terms_s3_title'] ?? '',
+            'terms_s3_body'            => $data['terms_s3_body'] ?? '',
+            'terms_s4_title'           => $data['terms_s4_title'] ?? '',
+            'terms_s4_body'            => $data['terms_s4_body'] ?? '',
+        ]);
+
+        $this->saveSetting('legal_pages', $updated);
+        Activity::log('cms.legal.updated', 'Legal pages content updated.', $request->user());
+
+        return back()->with('success', 'Legal pages updated.');
+    }
+
     public function blog(): View
     {
         return view('admin.cms.blog', ['company' => SiteData::company(), 'posts' => Post::query()->latest('published_at')->get()]);
