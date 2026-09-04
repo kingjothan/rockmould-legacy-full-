@@ -1,7 +1,8 @@
 <?php
 // Seeds privacy_sections and terms_sections into the legal_pages setting
-require __DIR__ . '/vendor/autoload.php';
-$app = require_once __DIR__ . '/bootstrap/app.php';
+$appRoot = '/home/rockctyy/rockmould';
+require $appRoot . '/vendor/autoload.php';
+$app = require_once $appRoot . '/bootstrap/app.php';
 $app->make(\Illuminate\Contracts\Console\Kernel::class)->bootstrap();
 
 use App\Models\Setting;
