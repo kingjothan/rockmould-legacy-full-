@@ -1,4 +1,4 @@
-<x-layouts.public :company="$company" title="Services | Rockmould Limited">
+<x-layouts.public :company="$company" title="Services | Rockmould Limited" description="Explore Rockmould's full suite of real estate services — property development, construction management, sales, and client advisory across Lagos.">
     <x-hero
         :title="$page['hero_title'] ?? 'Comprehensive Solutions for Premium Properties'"
         :subtitle="$page['hero_subtitle'] ?? 'Our Services'"

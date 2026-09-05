@@ -1,4 +1,4 @@
-<x-layouts.public :company="$company" title="Rockmould Limited | Luxury Real Estate and Construction">
+<x-layouts.public :company="$company" title="Rockmould Limited | Luxury Real Estate and Construction" description="Rockmould Limited is a Lagos-based premium real estate developer delivering luxury residential and commercial developments across prime locations.">
     @php
         $heroMediaPath = $homepage['hero_media_path'] ?? 'images/project-1.jpg';
         $featuredSection = $homepage['featured_section'] ?? [];

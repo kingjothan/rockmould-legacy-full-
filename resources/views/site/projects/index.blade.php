@@ -1,4 +1,4 @@
-<x-layouts.public :company="$company" title="Projects | Rockmould Limited">
+<x-layouts.public :company="$company" title="Projects | Rockmould Limited" description="Browse Rockmould Limited's portfolio of premium residential and commercial developments across Lekki, Victoria Island, Ikoyi, and beyond.">
     <x-hero
         :title="$page['hero_title'] ?? 'Our Projects'"
         :subtitle="$page['hero_subtitle'] ?? 'Premium Developments'"

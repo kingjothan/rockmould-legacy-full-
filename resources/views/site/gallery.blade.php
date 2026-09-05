@@ -1,4 +1,4 @@
-<x-layouts.public :company="$company" title="Gallery | Rockmould Limited">
+<x-layouts.public :company="$company" title="Gallery | Rockmould Limited" description="View construction photography, project visuals, and curated media from Rockmould's developments across Lagos.">
     <x-hero
         :title="$page['hero_title'] ?? 'Project and Media Gallery'"
         :subtitle="$page['hero_subtitle'] ?? 'Gallery'"

@@ -1,4 +1,4 @@
-<x-layouts.public :company="$company" title="Contact | Rockmould Limited">
+<x-layouts.public :company="$company" title="Contact | Rockmould Limited" description="Get in touch with Rockmould Limited. Enquire about projects, investment opportunities, or schedule a consultation with our team in Lagos.">
     <x-hero
         :title="$page['hero_title'] ?? 'Get in Touch'"
         :subtitle="$page['hero_subtitle'] ?? 'Contact Us'"
