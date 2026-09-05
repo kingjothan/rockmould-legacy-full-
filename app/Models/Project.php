@@ -104,6 +104,20 @@ class Project extends Model
         return AssetPath::url($this->cover_image, 'images/project-1.jpg');
     }
 
+    public function getBuiltAreaAttribute(?string $value): ?string
+    {
+        if (! $value) {
+            return $value;
+        }
+        // Normalize sq.ft / sqft values to sqm for consistent display
+        if (preg_match('/^([\d,\.]+)\s*sq\.?\s*ft/i', $value, $m)) {
+            $sqm = (int) round((float) str_replace(',', '', $m[1]) * 0.0929);
+            $suffix = preg_replace('/^[\d,\.]+\s*sq\.?\s*ft\b/i', '', $value);
+            return number_format($sqm) . ' sqm' . ($suffix ? ' ' . trim($suffix) : '');
+        }
+        return $value;
+    }
+
     public function scopePublished(Builder $query): void
     {
         $query->where('is_published', true);
