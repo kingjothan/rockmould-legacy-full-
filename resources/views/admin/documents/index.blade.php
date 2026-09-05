@@ -40,11 +40,14 @@
                             <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-sm bg-muted text-sm font-semibold text-muted-foreground">DOC</div>
                             <div class="min-w-0 flex-1">
                                 <p class="truncate text-sm font-medium">{{ $document->title }}</p>
+                                @php
+                                    $displayProject = $document->assignment?->project?->title ?: $document->project?->title;
+                                @endphp
                                 <p class="mt-1 flex flex-wrap items-center gap-x-1.5 text-xs text-muted-foreground">
                                     <span class="whitespace-nowrap">{{ $document->assignment?->user?->name ?: 'No client' }}</span>
-                                    @if ($document->project?->title)
+                                    @if ($displayProject)
                                         <span aria-hidden="true">&middot;</span>
-                                        <span class="whitespace-nowrap">{{ $document->project->title }}</span>
+                                        <span class="whitespace-nowrap">{{ $displayProject }}</span>
                                     @endif
                                     <span aria-hidden="true">&middot;</span>
                                     <span class="whitespace-nowrap">{{ $size }}</span>
