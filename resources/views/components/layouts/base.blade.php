@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ $title ?? 'Rockmould Limited' }}</title>
-    <meta name="description" content="{{ $description ?? 'Premium real estate and construction by Rockmould Limited.' }}">
+    <meta name="description" content="{{ $description ?? 'Premium Real Estate Development by Rockmould Limited.' }}">
     <meta name="developer" content="KJ">
     <meta name="developer:github" content="https://github.com/kingjothan">
     <link rel="me" href="https://github.com/kingjothan">
@@ -18,13 +18,13 @@
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="Rockmould Limited">
     <meta property="og:title" content="{{ $title ?? 'Rockmould Limited' }}">
-    <meta property="og:description" content="{{ $description ?? 'Premium real estate and construction by Rockmould Limited.' }}">
+    <meta property="og:description" content="{{ $description ?? 'Premium Real Estate Development by Rockmould Limited.' }}">
     <meta property="og:image" content="{{ asset('images/rockmould_logo.png') }}">
     <meta property="og:url" content="{{ url()->current() }}">
     {{-- Twitter / X --}}
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="{{ $title ?? 'Rockmould Limited' }}">
-    <meta name="twitter:description" content="{{ $description ?? 'Premium real estate and construction by Rockmould Limited.' }}">
+    <meta name="twitter:description" content="{{ $description ?? 'Premium Real Estate Development by Rockmould Limited.' }}">
     <meta name="twitter:image" content="{{ asset('images/rockmould_logo.png') }}">
     {{-- Search / Robots --}}
     <meta name="robots" content="index, follow">
