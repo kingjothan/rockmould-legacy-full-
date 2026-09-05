@@ -152,11 +152,11 @@
                                                 $previewPath = $isVideoAsset ? $asset->file_path : ($asset->thumbnail_path ?: $asset->file_path);
                                             @endphp
                                             @if ($isVideoAsset && $asset->file_url)
-                                                <a href="{{ $asset->file_url }}" data-video-lightbox-trigger data-video-src="{{ $asset->file_url }}" data-video-title="{{ $asset->title }}" aria-label="{{ $asset->title }}" class="group gallery-item aspect-square border border-border bg-card">
+                                                <button type="button" data-video-lightbox-trigger data-video-src="{{ $asset->file_url }}" data-video-title="{{ $asset->title }}" aria-label="{{ $asset->title }}" class="group gallery-item aspect-square border border-border bg-card">
                                             @elseif ($asset->file_url)
-                                                <a href="{{ $asset->file_url }}" data-image-lightbox-trigger data-image-src="{{ $asset->file_url }}" data-image-title="{{ $asset->title }}" aria-label="{{ $asset->title }}" class="group gallery-item aspect-square border border-border bg-card">
+                                                <button type="button" data-image-lightbox-trigger data-image-src="{{ $asset->file_url }}" data-image-title="{{ $asset->title }}" aria-label="{{ $asset->title }}" class="group gallery-item aspect-square border border-border bg-card">
                                             @else
-                                                <a href="#" aria-label="{{ $asset->title }}" class="group gallery-item aspect-square border border-border bg-card">
+                                                <button type="button" aria-label="{{ $asset->title }}" class="group gallery-item aspect-square border border-border bg-card">
                                             @endif
                                                 @php $assetAlt = (strlen($asset->title ?? '') > 4) ? $asset->title : $project->title.' – '.($tab['label'] ?? ucfirst($key)).' photo'; @endphp
                                 <x-media :path="$previewPath" fallback="images/project-1.jpg" alt="{{ $assetAlt }}" class="h-full w-full object-cover" :loop="false" />
@@ -166,7 +166,7 @@
                                                     </div>
                                                 </div>
                                                 <span class="sr-only">{{ $asset->title }}</span>
-                                            </a>
+                                            </button>
                                         @endforeach
                                     </div>
                                 </div>
@@ -307,6 +307,10 @@
                                         document.body.style.overflow = '';
                                     }
                                     document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closePublicLightbox(); });
+                                    document.addEventListener('click', function (e) {
+                                        var el = e.target.closest('[data-image-lightbox-trigger]');
+                                        if (el) { e.preventDefault(); openPublicLightbox(el.dataset.imageSrc); }
+                                    });
                                 </script>
                             @endif
 
