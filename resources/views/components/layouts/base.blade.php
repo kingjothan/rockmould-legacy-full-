@@ -6,8 +6,6 @@
     <title>{{ $title ?? 'Rockmould Limited' }}</title>
     <meta name="description" content="{{ $description ?? 'Premium real estate and construction by Rockmould Limited.' }}">
     <meta name="developer" content="KJ">
-    <meta name="developer:phone" content="+2349060037002">
-    <meta name="developer:email" content="okoiruelejonathan@gmail.com">
     <meta name="developer:github" content="https://github.com/kingjothan">
     <link rel="me" href="https://github.com/kingjothan">
     {{-- Company --}}
