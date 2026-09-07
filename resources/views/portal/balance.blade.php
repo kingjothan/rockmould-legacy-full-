@@ -80,19 +80,20 @@
                         </div>
                     </div>
 
-                    @if ($assignment->payments->isNotEmpty())
-                        <div class="mt-8">
-                            <div class="mb-4 flex items-center justify-between gap-4">
-                                <h3 class="font-display text-2xl">{{ $content['history_title'] ?? 'Payment History' }}</h3>
-                                <p class="text-xs uppercase tracking-[0.18em] text-muted-foreground">{{ $assignment->payments->count() }} recorded payments</p>
-                            </div>
+                    <div class="mt-8">
+                        <div class="mb-4 flex items-center justify-between gap-4">
+                            <h3 class="font-display text-2xl">{{ $content['history_title'] ?? 'Payment History' }}</h3>
+                            <p class="text-xs uppercase tracking-[0.18em] text-muted-foreground">{{ $assignment->payments->count() }} recorded {{ Str::plural('payment', $assignment->payments->count()) }}</p>
+                        </div>
+
+                        @if ($assignment->payments->isNotEmpty())
                             <div class="space-y-1">
                                 @foreach ($assignment->payments as $index => $payment)
                                     <div class="flex flex-col gap-4 border-border py-4 md:flex-row md:items-center md:justify-between {{ $index > 0 ? 'border-t' : '' }}">
                                         <div class="flex items-start gap-4">
                                             <div class="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary">
-                                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 14.25l6-6m4.5-3.493V21.75l-3.75-1.5-3.75 1.5-3.75-1.5-3.75 1.5V4.757c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0111.186 0c1.1.128 1.907 1.077 1.907 2.185z"/></svg>
-                            </div>
+                                                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 14.25l6-6m4.5-3.493V21.75l-3.75-1.5-3.75 1.5-3.75-1.5-3.75 1.5V4.757c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0111.186 0c1.1.128 1.907 1.077 1.907 2.185z"/></svg>
+                                            </div>
                                             <div>
                                                 <p class="text-sm font-medium">{{ $payment->reference ?: 'Project payment record' }}</p>
                                                 <p class="mt-1 text-xs text-muted-foreground">
@@ -115,7 +116,6 @@
                                             </div>
                                             <x-status-badge :value="$payment->status" />
 
-                                            {{-- Download PDF --}}
                                             <a href="{{ route('portal.balance.receipt', $payment) }}"
                                                class="inline-flex items-center gap-1.5 rounded-sm border border-primary/40 px-3 py-1.5 text-xs font-medium text-primary transition hover:bg-primary/10"
                                                title="Download PDF Receipt">
@@ -123,7 +123,6 @@
                                                 Download PDF
                                             </a>
 
-                                            {{-- Email Receipt --}}
                                             <form action="{{ route('portal.balance.email-receipt', $payment) }}" method="POST"
                                                   onsubmit="return confirm('Send this receipt to your registered email address?')">
                                                 @csrf
@@ -137,12 +136,12 @@
                                     </div>
                                 @endforeach
                             </div>
-                        </div>
-                    @else
-                        <div class="mt-8 rounded-sm border border-dashed border-border px-5 py-8 text-center">
-                            <p class="text-sm text-muted-foreground">No payment records have been published for this project yet.</p>
-                        </div>
-                    @endif
+                        @else
+                            <div class="rounded-sm border border-dashed border-border px-5 py-8 text-center">
+                                <p class="text-sm text-muted-foreground">No payment records have been published for this project yet.</p>
+                            </div>
+                        @endif
+                    </div>
                 </section>
             @empty
                 <div class="luxury-card py-16 text-center">
