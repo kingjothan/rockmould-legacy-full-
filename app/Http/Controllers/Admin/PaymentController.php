@@ -73,6 +73,52 @@ class PaymentController extends Controller
         return back()->with('success', 'Client financial details updated.');
     }
 
+    public function update(Request $request, Payment $payment): RedirectResponse
+    {
+        $old = clone $payment;
+
+        $data = $request->validate([
+            'amount'         => ['required', 'numeric', 'min:0'],
+            'status'         => ['required', 'string', 'max:50'],
+            'reference'      => ['nullable', 'string', 'max:255'],
+            'payment_method' => ['nullable', 'string', 'max:255'],
+            'due_at'         => ['nullable', 'date'],
+            'paid_at'        => ['nullable', 'date'],
+            'notes'          => ['nullable', 'string'],
+        ]);
+
+        $payment->update($data);
+
+        // Recalculate assignment amount_paid from all paid records
+        $assignment = $payment->assignment;
+        if ($assignment) {
+            $assignment->amount_paid = (float) $assignment->payments()->where('status', 'paid')->sum('amount');
+            $assignment->outstanding_balance = max(0, (float) $assignment->contract_amount - (float) $assignment->amount_paid);
+            $assignment->save();
+        }
+
+        Activity::log('payment.updated', 'Payment record updated.', $request->user(), $payment);
+
+        return back()->with('success', 'Payment updated successfully.');
+    }
+
+    public function destroy(Request $request, Payment $payment): RedirectResponse
+    {
+        $assignment = $payment->assignment;
+
+        $payment->delete();
+
+        if ($assignment) {
+            $assignment->amount_paid = (float) $assignment->payments()->where('status', 'paid')->sum('amount');
+            $assignment->outstanding_balance = max(0, (float) $assignment->contract_amount - (float) $assignment->amount_paid);
+            $assignment->save();
+        }
+
+        Activity::log('payment.deleted', 'Payment record removed.', $request->user(), $payment);
+
+        return back()->with('success', 'Payment removed.');
+    }
+
     public function receipt(Payment $payment)
     {
         $payment->load('assignment.project', 'assignment.user', 'assignment.unit');

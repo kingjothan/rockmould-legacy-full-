@@ -215,6 +215,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::post('/payments', [AdminPaymentController::class, 'store'])->name('payments.store');
             Route::put('/payments/assignments/{assignment}', [AdminPaymentController::class, 'updateAssignmentFinancials'])->name('payments.assignments.update');
             Route::get('/payments/{payment}/receipt', [AdminPaymentController::class, 'receipt'])->name('payments.receipt');
+            Route::put('/payments/{payment}', [AdminPaymentController::class, 'update'])->name('payments.update');
+            Route::delete('/payments/{payment}', [AdminPaymentController::class, 'destroy'])->name('payments.destroy');
         });
 
         Route::middleware('role:admin,project_manager')->group(function () {

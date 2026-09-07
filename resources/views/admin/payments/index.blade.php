@@ -1,5 +1,11 @@
 <x-layouts.admin :company="$company" page-heading="Payments">
     <div class="space-y-6">
+        @if (session('success'))
+            <div class="flex items-center gap-3 rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-400">
+                <svg class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                {{ session('success') }}
+            </div>
+        @endif
         <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
                 <h1 class="font-display text-3xl">Payments</h1>
@@ -53,7 +59,52 @@
                                     <td class="text-sm">NGN {{ number_format((float) $payment->amount) }}</td>
                                     <td class="text-sm">{{ optional($payment->paid_at ?: $payment->due_at)->format('M j, Y') ?: '—' }}</td>
                                     <td><x-status-badge :value="$payment->status" /></td>
-                                    <td><a href="{{ route('admin.payments.receipt', $payment) }}" class="text-xs text-primary hover:underline">Receipt</a></td>
+                                    <td class="flex items-center gap-3">
+                                        <a href="{{ route('admin.payments.receipt', $payment) }}" class="text-xs text-primary hover:underline">Receipt</a>
+                                        <button type="button" onclick="togglePaymentEdit({{ $payment->id }})" class="text-xs text-muted-foreground hover:text-foreground">Edit</button>
+                                        <form action="{{ route('admin.payments.destroy', $payment) }}" method="POST" onsubmit="return confirm('Remove this payment? The assignment balance will be recalculated.')">
+                                            @csrf @method('DELETE')
+                                            <button type="submit" class="text-xs text-red-500 hover:text-red-400">Remove</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                <tr id="payment-edit-{{ $payment->id }}" class="hidden bg-muted/20">
+                                    <td colspan="7" class="px-4 py-4">
+                                        <form action="{{ route('admin.payments.update', $payment) }}" method="POST" class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7">
+                                            @csrf @method('PUT')
+                                            <div>
+                                                <label class="admin-label">Amount (NGN)</label>
+                                                <input type="number" step="0.01" name="amount" value="{{ $payment->amount }}" required class="input-shell">
+                                            </div>
+                                            <div>
+                                                <label class="admin-label">Status</label>
+                                                <select name="status" class="input-shell">
+                                                    @foreach (['paid', 'due', 'pending', 'overdue'] as $s)
+                                                        <option value="{{ $s }}" @selected($payment->status === $s)>{{ ucfirst($s) }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                            <div>
+                                                <label class="admin-label">Reference</label>
+                                                <input name="reference" value="{{ $payment->reference }}" class="input-shell">
+                                            </div>
+                                            <div>
+                                                <label class="admin-label">Method</label>
+                                                <input name="payment_method" value="{{ $payment->payment_method }}" class="input-shell">
+                                            </div>
+                                            <div>
+                                                <label class="admin-label">Due Date</label>
+                                                <input type="date" name="due_at" value="{{ optional($payment->due_at)->format('Y-m-d') }}" class="input-shell">
+                                            </div>
+                                            <div>
+                                                <label class="admin-label">Paid Date</label>
+                                                <input type="date" name="paid_at" value="{{ optional($payment->paid_at)->format('Y-m-d') }}" class="input-shell">
+                                            </div>
+                                            <div class="flex items-end">
+                                                <button class="luxury-btn-primary w-full text-xs">Save</button>
+                                            </div>
+                                        </form>
+                                    </td>
                                 </tr>
                             @empty
                                 <tr>
@@ -163,4 +214,10 @@
             </div>
         </div>
     </div>
+    <script>
+        function togglePaymentEdit(id) {
+            const row = document.getElementById('payment-edit-' + id);
+            if (row) row.classList.toggle('hidden');
+        }
+    </script>
 </x-layouts.admin>
