@@ -54,8 +54,20 @@
                             @forelse ($payments as $payment)
                                 <tr class="table-row-shell">
                                     <td class="font-mono text-xs text-muted-foreground">{{ $payment->reference ?: '—' }}</td>
-                                    <td class="text-sm">{{ $payment->assignment?->user?->name ?: 'Unassigned' }}</td>
-                                    <td class="text-sm">{{ $payment->assignment?->project?->title ?: '—' }}</td>
+                                    <td class="text-sm">
+                                        @if ($payment->assignment?->user)
+                                            <a href="{{ route('admin.clients.show', $payment->assignment->user) }}" class="hover:text-primary hover:underline">{{ $payment->assignment->user->name }}</a>
+                                        @else
+                                            Unassigned
+                                        @endif
+                                    </td>
+                                    <td class="text-sm">
+                                        @if ($payment->assignment?->project)
+                                            <a href="{{ route('admin.projects.show', $payment->assignment->project) }}" class="hover:text-primary hover:underline">{{ $payment->assignment->project->title }}</a>
+                                        @else
+                                            —
+                                        @endif
+                                    </td>
                                     <td class="text-sm">NGN {{ number_format((float) $payment->amount) }}</td>
                                     <td class="text-sm">{{ optional($payment->paid_at ?: $payment->due_at)->format('M j, Y') ?: '—' }}</td>
                                     <td><x-status-badge :value="$payment->status" /></td>
