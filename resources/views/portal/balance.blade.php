@@ -38,9 +38,16 @@
                 <section class="luxury-card">
                     <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                         <div>
-                            <p class="text-xs uppercase tracking-[0.24em] text-primary/70">{{ $assignment->project?->title ?? 'Project' }}</p>
-                            <h2 class="mt-2 font-display text-3xl">{{ $assignment->unit?->label ?? $assignment->unit_label }}</h2>
-                            <p class="mt-2 text-sm text-muted-foreground">{{ $assignment->project?->location ?? 'Location pending' }} &middot; {{ str($assignment->status)->title() }}</p>
+                            <a href="{{ route('portal.projects.show', $assignment) }}" class="group/proj inline-block">
+                                <p class="text-xs uppercase tracking-[0.24em] text-primary/70 group-hover/proj:text-primary">{{ $assignment->project?->title ?? 'Project' }}</p>
+                                <h2 class="mt-2 font-display text-3xl group-hover/proj:underline decoration-primary underline-offset-4">{{ $assignment->unit?->label ?? $assignment->unit_label }}</h2>
+                            </a>
+                            <p class="mt-2 text-sm text-muted-foreground">
+                                {{ $assignment->project?->location ?? 'Location pending' }} &middot; {{ str($assignment->status)->title() }}
+                                @if ($assignment->project?->slug)
+                                    &middot; <a href="{{ route('projects.show', $assignment->project) }}" target="_blank" class="hover:text-primary hover:underline">View project &nearr;</a>
+                                @endif
+                            </p>
                         </div>
                         <div class="flex flex-wrap items-center gap-3">
                             <x-status-badge :value="$assignment->status" />
