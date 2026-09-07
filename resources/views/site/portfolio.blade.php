@@ -19,9 +19,6 @@
 
                         @php
                             $cards = [];
-                            if ($project->total_units)     $cards[] = ['label' => 'Total Units',     'value' => $project->total_units];
-                            if ($project->available_units !== null && $project->total_units)
-                                                            $cards[] = ['label' => 'Available Units',  'value' => $project->available_units];
                             if ($project->built_area)      $cards[] = ['label' => 'Built Area',       'value' => $project->built_area];
                             if ($project->completion_date) $cards[] = ['label' => 'Completion',       'value' => \Carbon\Carbon::parse($project->completion_date)->format('M Y')];
                         @endphp

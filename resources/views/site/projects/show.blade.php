@@ -364,20 +364,6 @@
                                 <span class="text-muted-foreground">Progress</span>
                                 <span class="font-medium">{{ $computedProgress }}%</span>
                             </div>
-                            @if ($project->total_units)
-                                <div class="luxury-divider"></div>
-                                <div class="flex justify-between gap-2">
-                                    <span class="text-muted-foreground">Total Units</span>
-                                    <span class="font-medium">{{ $project->total_units }}</span>
-                                </div>
-                            @endif
-                            @if ($project->available_units !== null && $project->total_units)
-                                <div class="luxury-divider"></div>
-                                <div class="flex justify-between gap-2">
-                                    <span class="text-muted-foreground">Available Units</span>
-                                    <span class="font-medium text-primary">{{ $project->available_units }}</span>
-                                </div>
-                            @endif
                             @if ($project->built_area)
                                 <div class="luxury-divider"></div>
                                 <div class="flex justify-between gap-2">
