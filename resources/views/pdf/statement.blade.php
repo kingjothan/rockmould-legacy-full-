@@ -9,8 +9,8 @@
         .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 36px; border-bottom: 2px solid #c6a96a; padding-bottom: 20px; }
         .brand { font-size: 22px; font-weight: 800; letter-spacing: 1px; color: #1f3a5f; }
         .brand-sub { font-size: 10px; text-transform: uppercase; letter-spacing: 3px; color: #888; margin-top: 2px; }
-        .doc-title h1 { font-size: 26px; color: #1f3a5f; font-weight: 300; text-transform: uppercase; letter-spacing: 3px; text-align: right; }
-        .doc-title p { font-size: 11px; color: #888; margin-top: 4px; text-align: right; }
+        .doc-title h1 { font-size: 26px; color: #1f3a5f; font-weight: 300; text-transform: uppercase; letter-spacing: 3px; text-align: left; }
+        .doc-title p { font-size: 11px; color: #888; margin-top: 4px; text-align: left; }
         .info-grid { display: table; width: 100%; margin-bottom: 28px; }
         .info-col { display: table-cell; width: 50%; vertical-align: top; }
         .info-label { font-size: 9px; text-transform: uppercase; letter-spacing: 2px; color: #c6a96a; font-weight: 700; margin-bottom: 3px; margin-top: 12px; }
@@ -40,17 +40,15 @@
 <body>
 
     <div class="header">
-        <div>
-            @php($logoPath = public_path('images/rockmould_logo.png'))
-            @if (file_exists($logoPath))
-                <img src="{{ $logoPath }}" alt="Rockmould Limited" style="height: 48px; width: auto; margin-bottom: 6px;">
-            @endif
-            <div class="brand">ROCKMOULD</div>
-            <div class="brand-sub">Limited</div>
-        </div>
         <div class="doc-title">
             <h1>Account Statement</h1>
             <p>Generated {{ now()->format('F j, Y') }}</p>
+        </div>
+        <div style="text-align: right;">
+            @php($logoPath = public_path('images/rockmould_logo.png'))
+            @if (file_exists($logoPath))
+                <img src="{{ $logoPath }}" alt="Rockmould Limited" style="height: 48px; width: auto;">
+            @endif
         </div>
     </div>
 
