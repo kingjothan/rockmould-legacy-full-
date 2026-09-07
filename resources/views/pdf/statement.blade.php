@@ -6,9 +6,10 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Helvetica Neue', Arial, sans-serif; font-size: 13px; color: #1a1a1a; line-height: 1.6; padding: 40px; }
-        .header { position: relative; margin-bottom: 36px; border-bottom: 2px solid #c6a96a; padding-bottom: 20px; min-height: 80px; }
-        .header-logo { position: absolute; top: 0; right: 0; text-align: right; }
-        .header-title { position: absolute; bottom: 20px; left: 0; }
+        .header { width: 100%; border-collapse: collapse; margin-bottom: 36px; border-bottom: 2px solid #c6a96a; }
+        .header td { padding-bottom: 20px; }
+        .header-logo { text-align: right; vertical-align: top; width: 160px; }
+        .header-title { vertical-align: bottom; }
         .brand { font-size: 22px; font-weight: 800; letter-spacing: 1px; color: #1f3a5f; }
         .brand-sub { font-size: 10px; text-transform: uppercase; letter-spacing: 3px; color: #888; margin-top: 2px; }
         .doc-title h1 { font-size: 26px; color: #1f3a5f; font-weight: 300; text-transform: uppercase; letter-spacing: 3px; text-align: left; }
@@ -41,18 +42,20 @@
 </head>
 <body>
 
-    <div class="header">
-        <div class="header-logo">
-            @php($logoPath = public_path('images/rockmould_logo.png'))
-            @if (file_exists($logoPath))
-                <img src="{{ $logoPath }}" alt="Rockmould Limited" style="height: 52px; width: auto;">
-            @endif
-        </div>
-        <div class="header-title">
-            <h1>Account Statement</h1>
-            <p>Generated {{ now()->format('F j, Y') }}</p>
-        </div>
-    </div>
+    <table class="header">
+        <tr>
+            <td class="header-title">
+                <h1>Account Statement</h1>
+                <p>Generated {{ now()->format('F j, Y') }}</p>
+            </td>
+            <td class="header-logo">
+                @php($logoPath = public_path('images/rockmould_logo.png'))
+                @if (file_exists($logoPath))
+                    <img src="{{ $logoPath }}" alt="Rockmould Limited" style="height: 52px; width: auto;">
+                @endif
+            </td>
+        </tr>
+    </table>
 
     <div class="info-grid">
         <div class="info-col">
