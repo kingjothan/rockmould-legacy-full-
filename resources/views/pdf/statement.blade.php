@@ -8,7 +8,8 @@
         body { font-family: 'Helvetica Neue', Arial, sans-serif; font-size: 13px; color: #1a1a1a; line-height: 1.6; padding: 40px; }
         .header { width: 100%; border-collapse: collapse; margin-bottom: 36px; border-bottom: 2px solid #c6a96a; }
         .header td { padding-bottom: 20px; }
-        .header-logo { text-align: right; vertical-align: top; width: 160px; }
+        .header-logo { text-align: right; vertical-align: top; width: 160px; padding-top: 0; }
+        .header-logo img { margin-top: -12px; }
         .header-title { vertical-align: bottom; }
         .brand { font-size: 22px; font-weight: 800; letter-spacing: 1px; color: #1f3a5f; }
         .brand-sub { font-size: 10px; text-transform: uppercase; letter-spacing: 3px; color: #888; margin-top: 2px; }
