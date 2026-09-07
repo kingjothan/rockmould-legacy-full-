@@ -6,7 +6,7 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Helvetica Neue', Arial, sans-serif; font-size: 13px; color: #1a1a1a; line-height: 1.6; padding: 40px; }
-        .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 36px; border-bottom: 2px solid #c6a96a; padding-bottom: 20px; }
+        .header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 36px; border-bottom: 2px solid #c6a96a; padding-bottom: 20px; }
         .brand { font-size: 22px; font-weight: 800; letter-spacing: 1px; color: #1f3a5f; }
         .brand-sub { font-size: 10px; text-transform: uppercase; letter-spacing: 3px; color: #888; margin-top: 2px; }
         .doc-title h1 { font-size: 26px; color: #1f3a5f; font-weight: 300; text-transform: uppercase; letter-spacing: 3px; text-align: left; }
