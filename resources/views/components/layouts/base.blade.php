@@ -27,7 +27,7 @@
     <meta name="twitter:description" content="{{ $description ?? 'Premium Real Estate Development by Rockmould Limited.' }}">
     <meta name="twitter:image" content="{{ asset('images/rockmould_logo.png') }}">
     {{-- Search / Robots --}}
-    <meta name="robots" content="index, follow">
+    <meta name="robots" content="noindex, nofollow">
     <meta name="theme-color" content="#0a0a0a">
     <link rel="canonical" href="{{ url()->current() }}">
     <link rel="icon" type="image/png" href="{{ asset('images/rockmould_logo.png') }}">
