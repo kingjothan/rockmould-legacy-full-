@@ -1,5 +1,5 @@
 <x-layouts.public :company="$company" title="Portfolio | Rockmould Limited">
-    <x-hero :title="$portfolio['hero_title']" :subtitle="$portfolio['hero_subtitle']" :description="$portfolio['hero_description']" image="images/project-4.jpg" height="medium" :title-size="$portfolio['font_sizes']['hero_title'] ?? null" :description-size="$portfolio['font_sizes']['hero_description'] ?? null" />
+    <x-hero :title="$portfolio['hero_title']" :subtitle="$portfolio['hero_subtitle']" :description="$portfolio['hero_description']" :image="$page['hero_media_path'] ?? 'images/project-4.jpg'" height="medium" :title-size="$portfolio['font_sizes']['hero_title'] ?? null" :description-size="$portfolio['font_sizes']['hero_description'] ?? null" />
 
     <section class="section-padding">
         <div class="container-luxury space-y-16">

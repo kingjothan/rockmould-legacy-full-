@@ -263,6 +263,13 @@ class CmsController extends Controller
             'gallery_hero_media_upload' => ['nullable', 'file', 'max:204800'],
             'gallery_empty_title' => ['required', 'string', 'max:255'],
             'gallery_empty_description' => ['required', 'string'],
+
+            'portfolio_hero_subtitle' => ['required', 'string', 'max:255'],
+            'portfolio_hero_title' => ['required', 'string', 'max:255'],
+            'portfolio_hero_description' => ['required', 'string'],
+            'portfolio_hero_media_path' => ['nullable', 'string', 'max:2048'],
+            'portfolio_hero_media_upload' => ['nullable', 'file', 'max:204800'],
+
             'font_sizes' => ['nullable', 'array'],
             'font_sizes.*' => ['string', 'max:20'],
         ]);
@@ -359,10 +366,15 @@ class CmsController extends Controller
                 'empty_title' => $data['gallery_empty_title'],
                 'empty_description' => $data['gallery_empty_description'],
             ],
+            'portfolio' => [
+                'hero_subtitle' => $data['portfolio_hero_subtitle'],
+                'hero_title' => $data['portfolio_hero_title'],
+                'hero_description' => $data['portfolio_hero_description'],
+            ],
         ]);
 
         $submittedFontSizes = $data['font_sizes'] ?? [];
-        foreach (['services', 'projects', 'blog', 'faq', 'careers', 'contact', 'partnerships', 'testimonials', 'gallery'] as $pageKey) {
+        foreach (['services', 'projects', 'blog', 'faq', 'careers', 'contact', 'partnerships', 'testimonials', 'gallery', 'portfolio'] as $pageKey) {
             $pageFontSizes = [];
             foreach ($submittedFontSizes as $sizeKey => $sizeVal) {
                 if (str_starts_with($sizeKey, $pageKey.'_')) {

@@ -124,9 +124,11 @@ class SiteController extends Controller
 
     public function portfolio(): View
     {
+        $page = SiteData::publicPage('portfolio');
         return view('site.portfolio', [
             'company' => SiteData::company(),
             'portfolio' => SiteData::portfolio(),
+            'page' => $page,
             'projects' => Project::query()->published()->where('is_portfolio', true)->orderByDesc('completion_date')->get(),
             'testimonials' => Testimonial::query()->where('is_visible', true)->orderBy('sort_order')->get(),
         ]);

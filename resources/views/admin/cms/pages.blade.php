@@ -1,6 +1,6 @@
 <x-layouts.admin :company="$company" page-heading="Public Pages CMS">
     @php
-        $pageKeys = ['services', 'projects', 'blog', 'faq', 'careers', 'contact', 'partnerships', 'testimonials', 'gallery'];
+        $pageKeys = ['services', 'projects', 'blog', 'faq', 'careers', 'contact', 'partnerships', 'testimonials', 'gallery', 'portfolio'];
         $pageHeroPreview = collect($pageKeys)->mapWithKeys(function (string $key) use ($pages) {
             $path = data_get($pages, $key.'.hero_media_path');
             $url = $path ? \App\Support\AssetPath::url($path) : null;
@@ -23,6 +23,7 @@
             'partnerships' => ['label' => 'Partnerships Page', 'title' => 'Investment Messaging and Opportunities', 'description' => 'Control the investment hero, reasons, metrics, form heading, and project-opportunities section.'],
             'testimonials' => ['label' => 'Testimonials Page', 'title' => 'Testimonials Hero', 'description' => 'Edit the trust-page intro and swap the hero background image or video.'],
             'gallery' => ['label' => 'Gallery Page', 'title' => 'Gallery Hero and Empty State', 'description' => 'Manage the gallery intro and the fallback message used when no public assets match the filters.'],
+            'portfolio' => ['label' => 'Portfolio Page', 'title' => 'Portfolio Hero', 'description' => 'Swap the hero background image or video shown on the Portfolio page.'],
         ];
 
         $careerBenefitsText = collect(data_get($pages, 'careers.benefits', []))

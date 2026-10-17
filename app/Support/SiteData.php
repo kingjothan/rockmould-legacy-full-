@@ -229,6 +229,12 @@ class SiteData
                 'empty_title' => 'No Media Found',
                 'empty_description' => 'There are no gallery assets matching your selected filter.',
             ],
+            'portfolio' => [
+                'hero_subtitle' => 'Proven Excellence',
+                'hero_title' => 'Our Portfolio',
+                'hero_description' => 'A showcase of our finest developments, construction achievements, and the impact we have made across Nigeria\'s property landscape.',
+                'hero_media_path' => 'images/project-4.jpg',
+            ],
         ]);
     }
 
@@ -439,7 +445,7 @@ class SiteData
             ['label' => 'Projects', 'route' => 'projects.index'],
             ['label' => 'Portfolio', 'route' => 'portfolio'],
             ['label' => 'Insights', 'route' => 'blog.index'],
-            ['label' => 'Careers', 'route' => 'careers'],
+            ['label' => 'Careers', 'route' => 'careers', 'href' => 'https://rockmouldhrms.com/careers'],
             ['label' => 'Contact', 'route' => 'contact'],
         ];
     }
@@ -468,7 +474,7 @@ class SiteData
                     ['label' => 'About Us', 'url' => route('about')],
                     ['label' => 'Our Services', 'url' => route('services')],
                     ['label' => 'Portfolio', 'url' => route('portfolio')],
-                    ['label' => 'Careers', 'url' => route('careers')],
+                    ['label' => 'Careers', 'url' => 'https://rockmouldhrms.com/careers'],
                     ['label' => 'Contact', 'url' => route('contact')],
                 ],
             ],
