@@ -33,8 +33,8 @@
                         {{ $homepage['hero_primary_cta'] }}
                         <svg class="ml-1.5 h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
                     </a>
-                    <a href="{{ route('consultations.create') }}" class="luxury-btn-outline" style="width:220px;justify-content:center">{{ $homepage['hero_secondary_cta'] }}</a>
-                    <a href="{{ route('portal.login') }}" class="luxury-btn-ghost text-primary" style="width:220px;justify-content:center">{{ $homepage['hero_portal_cta'] }} &rsaquo;</a>
+                    <a href="{{ route('consultations.create') }}" class="luxury-btn-outline" style="width:220px;justify-content:center;border-color:rgba(255,255,255,0.65);color:#fff;">{{ $homepage['hero_secondary_cta'] }}</a>
+                    <a href="{{ route('portal.login') }}" class="luxury-btn-ghost" style="width:220px;justify-content:center;color:rgba(255,255,255,0.80);">{{ $homepage['hero_portal_cta'] }} &rsaquo;</a>
                 </div>
             </div>
         </div>
