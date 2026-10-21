@@ -44,7 +44,7 @@
             @endif
             <h1 class="public-hero-title font-display font-bold leading-[1.1] {{ $titleSize ?? 'text-4xl md:text-5xl lg:text-7xl' }}">{{ $title }}</h1>
             @if ($description)
-                <p class="mx-auto mt-6 max-w-2xl leading-relaxed text-muted-foreground {{ $descriptionSize ?? 'text-lg md:text-xl' }} {{ $align === 'left' ? 'mx-0' : '' }}">{{ $description }}</p>
+                <p class="mx-auto mt-6 max-w-2xl leading-relaxed {{ $descriptionSize ?? 'text-lg md:text-xl' }} {{ $align === 'left' ? 'mx-0' : '' }}" style="color:#fff;text-shadow:0 1px 8px rgba(0,0,0,0.7);">{{ $description }}</p>
             @endif
             @if (trim($slot))
                 <div class="mt-10 flex flex-wrap gap-4 {{ $align === 'left' ? 'justify-start' : 'justify-center' }}">
