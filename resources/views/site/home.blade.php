@@ -33,8 +33,8 @@
                         {{ $homepage['hero_primary_cta'] }}
                         <svg class="ml-1.5 h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
                     </a>
-                    <a href="{{ route('consultations.create') }}" class="luxury-btn-outline" style="width:220px;justify-content:center;border:2px solid hsl(var(--primary));color:hsl(var(--primary));background:hsl(var(--primary)/0.45);font-weight:700;letter-spacing:0.08em;">{{ $homepage['hero_secondary_cta'] }}</a>
-                    <a href="{{ route('portal.login') }}" class="luxury-btn-ghost" style="width:220px;justify-content:center;color:hsl(var(--primary));font-weight:700;font-size:1rem;opacity:1;text-shadow:0 0 30px hsl(var(--primary)/0.9),0 0 8px hsl(var(--primary)/0.7);">{{ $homepage['hero_portal_cta'] }} &rsaquo;</a>
+                    <a href="{{ route('consultations.create') }}" class="luxury-btn-outline" style="width:220px;justify-content:center;border:2px solid hsl(var(--primary));color:#000;background:hsl(var(--primary)/0.45);font-weight:700;letter-spacing:0.08em;">{{ $homepage['hero_secondary_cta'] }}</a>
+                    <a href="{{ route('portal.login') }}" class="luxury-btn-ghost" style="width:220px;justify-content:center;color:#000;font-weight:700;font-size:1rem;opacity:1;">{{ $homepage['hero_portal_cta'] }} &rsaquo;</a>
                 </div>
             </div>
         </div>
